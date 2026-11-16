@@ -1,0 +1,6 @@
+{
+  "agents": [{"name": "nop"}],
+  "n_attempts": 1,
+  "n_concurrent_trials": 1,
+  "retry": {"max_retries": 0}
+}

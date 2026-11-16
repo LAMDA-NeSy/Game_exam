@@ -1,0 +1,10 @@
+{
+  "image": "ghcr.io/mll-lab-nu/efe:textworld-files-0.4.1@sha256:15e74c5427de7afcf88864f64b29c19acf11f16e007afa6905422518058679c1",
+  "source": "game_first_exam/benchmarks/textworld",
+  "files": {
+    "adapter.py": "b6ac6eaba4ba9bc9c2dab96b6bbc352c112be28b6790d43112ce6dfbf9457cc2",
+    "metric_rules.py": "1025d3ee3f4dea83973791fcdd667e11ed138ba268e021bf3bda02dbcbfd02b3",
+    "requirements.txt": "fd417d942250dccaf086d8873f308b19d18a48505c05534c6b171fc42d391db2",
+    "instance_schema.py": "53a2b0c78dc17e5f153dde3a3b4c71a9cda669b91213ad7eea37668424550348"
+  }
+}

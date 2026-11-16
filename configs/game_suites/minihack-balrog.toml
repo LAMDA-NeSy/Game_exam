@@ -1,0 +1,45 @@
+schema_version = "game-suite/2.1"
+version = "0.1.0"
+tier = "smoke"
+name = "games-minihack-balrog-selection-v0.1.0"
+files_images = ["connection-files", "game-files", "minihack-files"]
+
+[[tasks]]
+name = "minihack-mazewalk-9x9-i01-standard"
+benchmark = "minihack"
+family = "mazewalk-9x9"
+
+[[tasks]]
+name = "minihack-mazewalk-15x15-i01-standard"
+benchmark = "minihack"
+family = "mazewalk-15x15"
+
+[[tasks]]
+name = "minihack-corridor-r3-i01-standard"
+benchmark = "minihack"
+family = "corridor-r3"
+
+[[tasks]]
+name = "minihack-corridorbattle-dark-i01-standard"
+benchmark = "minihack"
+family = "corridorbattle-dark"
+
+[[tasks]]
+name = "minihack-quest-easy-i01-standard"
+benchmark = "minihack"
+family = "quest-easy"
+
+[[tasks]]
+name = "minihack-quest-medium-i01-standard"
+benchmark = "minihack"
+family = "quest-medium"
+
+[[tasks]]
+name = "minihack-boxoban-medium-i01-standard"
+benchmark = "minihack"
+family = "boxoban-medium"
+
+[[tasks]]
+name = "minihack-boxoban-hard-i01-standard"
+benchmark = "minihack"
+family = "boxoban-hard"

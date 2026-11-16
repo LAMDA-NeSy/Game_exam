@@ -1,0 +1,27 @@
+{
+  "env_id": "MiniGrid-Empty-Random-6x6-v0",
+  "family": "empty-random",
+  "seed": 2117382936,
+  "max_steps": 144,
+  "minigrid_version": "3.2.0",
+  "gymnasium_version": "1.4.0",
+  "initial_state_sha256": "582e6756a2b232f45344b953bc71f7907d6690dd4b7b94e5be32cd816809d6bb",
+  "benchmark": "minigrid",
+  "observation_profile": "native-observation-v1",
+  "metric_spec": {
+    "primary": "success",
+    "reducer": "family_macro",
+    "success_label": "goal_reached",
+    "reducer_version": "1.0.0"
+  },
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": false,
+    "action_mode": "enum",
+    "timing": "action-stepped",
+    "native_truncation": true
+  },
+  "native_max_steps": 144
+}

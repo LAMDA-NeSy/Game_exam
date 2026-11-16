@@ -1,0 +1,9 @@
+certifi==2026.10.23
+charset-normalizer==3.5.2
+idna==3.20
+imageio==2.37.0
+imageio-ffmpeg==0.6.0
+numpy==1.26.4
+pillow==10.4.0
+requests==2.34.2
+urllib3==2.8.0

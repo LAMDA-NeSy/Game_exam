@@ -1,0 +1,19 @@
+{
+  "agents": [
+    {
+      "name": "claude-code",
+      "model_name": "deepseek-flash",
+      "kwargs": {
+        "max_turns": 12,
+        "max_budget_usd": "1.00",
+        "disallowed_tools": "WebSearch,WebFetch,Task,Agent",
+        "version": "2.1.325"
+      }
+    }
+  ],
+  "n_attempts": 1,
+  "n_concurrent_trials": 1,
+  "retry": {
+    "max_retries": 0
+  }
+}

@@ -1,0 +1,10 @@
+cloudpickle==3.1.2
+Farama-Notifications==0.0.6
+gymnasium==1.4.0
+ImageIO==2.38.1
+imageio-ffmpeg==0.8.1
+minigrid==3.2.0
+numpy==2.5.4
+pillow==13.0.0
+pygame-ce==2.5.8
+typing_extensions==4.16.0

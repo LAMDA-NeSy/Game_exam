@@ -1,0 +1,27 @@
+{
+  "env_id": "MiniGrid-MultiRoom-N4-S5-v1",
+  "family": "multiroom",
+  "seed": 470363396,
+  "max_steps": 80,
+  "minigrid_version": "3.2.0",
+  "gymnasium_version": "1.4.0",
+  "initial_state_sha256": "65f3b030c9ed73b817cdeec62ea0d452e3d54d5d60763699ad5fe07e3762bad7",
+  "benchmark": "minigrid",
+  "observation_profile": "native-observation-v1",
+  "metric_spec": {
+    "primary": "success",
+    "reducer": "family_macro",
+    "success_label": "goal_reached",
+    "reducer_version": "1.0.0"
+  },
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": false,
+    "action_mode": "enum",
+    "timing": "action-stepped",
+    "native_truncation": true
+  },
+  "native_max_steps": 80
+}

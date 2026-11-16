@@ -1,0 +1,14 @@
+[
+  "inventory",
+  "go east",
+  "go north",
+  "examine cookbook",
+  "open fridge",
+  "take carrot from fridge",
+  "cook carrot with stove",
+  "take knife from table",
+  "dice carrot with knife",
+  "drop knife",
+  "prepare meal",
+  "eat meal"
+]

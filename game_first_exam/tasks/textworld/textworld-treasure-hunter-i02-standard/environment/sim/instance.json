@@ -1,0 +1,37 @@
+{
+  "benchmark": "textworld",
+  "env_id": "TextWorld-treasure-hunter-1.7.0",
+  "family": "treasure-hunter",
+  "seed": 1056882141,
+  "max_steps": null,
+  "observation_profile": "player-text-v2",
+  "engine_versions": {
+    "textworld": "1.7.0",
+    "jericho": "3.3.1",
+    "numpy": "1.26.4"
+  },
+  "challenge_settings": {
+    "level": 12
+  },
+  "asset_sha256": {
+    "game.z8": "fb5c3ce1e9f14e86a185dd1a1074d937b744d6648a4eced8c6d41dea78559c31",
+    "game.json": "9996bbf6721699f2d72284e8d51991fdfd518a66e02b3ca7d792a7ab089b7016"
+  },
+  "max_score": 1,
+  "metric_spec": {
+    "primary": "normalized_score",
+    "reducer": "family_macro",
+    "success_label": "game_won",
+    "reducer_version": "1.0.0"
+  },
+  "initial_state_sha256": "bf0475de562b6dfef11fc1a3210be3a9d2d34721f7267178bd053a08dd1823b0",
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": false,
+    "action_mode": "text",
+    "timing": "action-stepped",
+    "native_truncation": false
+  }
+}

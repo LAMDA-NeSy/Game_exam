@@ -1,0 +1,12 @@
+[
+  "inventory",
+  "go west",
+  "examine cookbook",
+  "take tomato from counter",
+  "cook tomato with stove",
+  "take knife from counter",
+  "slice tomato with knife",
+  "drop knife",
+  "prepare meal",
+  "eat meal"
+]

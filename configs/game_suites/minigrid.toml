@@ -1,0 +1,95 @@
+schema_version = "game-suite/2.1"
+version = "3.0.0"
+tier = "development"
+name = "games-minigrid-v3.0.0"
+files_images = ["connection-files", "game-files", "minigrid-adapter-files"]
+
+[[tasks]]
+name = "minigrid-doorkey-i01-standard"
+benchmark = "minigrid"
+family = "doorkey"
+
+[[tasks]]
+name = "minigrid-doorkey-i02-standard"
+benchmark = "minigrid"
+family = "doorkey"
+
+[[tasks]]
+name = "minigrid-doorkey-i03-standard"
+benchmark = "minigrid"
+family = "doorkey"
+
+[[tasks]]
+name = "minigrid-dynamic-obstacles-i01-standard"
+benchmark = "minigrid"
+family = "dynamic-obstacles"
+
+[[tasks]]
+name = "minigrid-dynamic-obstacles-i02-standard"
+benchmark = "minigrid"
+family = "dynamic-obstacles"
+
+[[tasks]]
+name = "minigrid-dynamic-obstacles-i03-standard"
+benchmark = "minigrid"
+family = "dynamic-obstacles"
+
+[[tasks]]
+name = "minigrid-empty-random-i01-standard"
+benchmark = "minigrid"
+family = "empty-random"
+
+[[tasks]]
+name = "minigrid-empty-random-i02-standard"
+benchmark = "minigrid"
+family = "empty-random"
+
+[[tasks]]
+name = "minigrid-empty-random-i03-standard"
+benchmark = "minigrid"
+family = "empty-random"
+
+[[tasks]]
+name = "minigrid-lava-crossing-i01-standard"
+benchmark = "minigrid"
+family = "lava-crossing"
+
+[[tasks]]
+name = "minigrid-lava-crossing-i02-standard"
+benchmark = "minigrid"
+family = "lava-crossing"
+
+[[tasks]]
+name = "minigrid-lava-crossing-i03-standard"
+benchmark = "minigrid"
+family = "lava-crossing"
+
+[[tasks]]
+name = "minigrid-memory-i01-standard"
+benchmark = "minigrid"
+family = "memory"
+
+[[tasks]]
+name = "minigrid-memory-i02-standard"
+benchmark = "minigrid"
+family = "memory"
+
+[[tasks]]
+name = "minigrid-memory-i03-standard"
+benchmark = "minigrid"
+family = "memory"
+
+[[tasks]]
+name = "minigrid-multiroom-i01-standard"
+benchmark = "minigrid"
+family = "multiroom"
+
+[[tasks]]
+name = "minigrid-multiroom-i02-standard"
+benchmark = "minigrid"
+family = "multiroom"
+
+[[tasks]]
+name = "minigrid-multiroom-i03-standard"
+benchmark = "minigrid"
+family = "multiroom"

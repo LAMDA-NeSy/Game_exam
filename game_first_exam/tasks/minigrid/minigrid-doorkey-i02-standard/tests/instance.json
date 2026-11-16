@@ -1,0 +1,27 @@
+{
+  "env_id": "MiniGrid-DoorKey-8x8-v0",
+  "family": "doorkey",
+  "seed": 1056882141,
+  "max_steps": 640,
+  "minigrid_version": "3.2.0",
+  "gymnasium_version": "1.4.0",
+  "initial_state_sha256": "07b4abd2873471383346b955fe57ceecb7ae30ab08a43d407dba3e503cdaf333",
+  "benchmark": "minigrid",
+  "observation_profile": "native-observation-v1",
+  "metric_spec": {
+    "primary": "success",
+    "reducer": "family_macro",
+    "success_label": "goal_reached",
+    "reducer_version": "1.0.0"
+  },
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": false,
+    "action_mode": "enum",
+    "timing": "action-stepped",
+    "native_truncation": true
+  },
+  "native_max_steps": 640
+}

@@ -1,0 +1,5 @@
+{
+  "mode": "privileged",
+  "version": "1.0.0",
+  "max_actions": 100
+}

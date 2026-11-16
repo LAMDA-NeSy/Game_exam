@@ -1,0 +1,10 @@
+{
+  "image": "ghcr.io/mll-lab-nu/efe:crafter-files-0.4.0@sha256:33828bd8d621bcfe7486a8d717d53272a1bbe2115f5c9a8f52fd608afa8c5cab",
+  "source": "game_first_exam/benchmarks/crafter",
+  "files": {
+    "adapter.py": "79735feaf5c05760a3870e40deb48808ca05faad5a120cc5de245112443eb329",
+    "metric_rules.py": "2cef6121936f8b1ba26b8763992cb98068c04b197c017286c4222c5bfd1a7154",
+    "requirements.txt": "b7217a2b6ebb7f6a0dd97289e786c39c38daa4c99de92db9746b0894a734defd",
+    "instance_schema.py": "5bce52526eec2178bf4cdffe37b2dfcdf7137abddb6ab32435f6d1406cd750c4"
+  }
+}

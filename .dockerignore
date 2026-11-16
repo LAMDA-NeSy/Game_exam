@@ -1,0 +1,11 @@
+**/.venv
+**/__pycache__
+**/outputs
+exps/
+jobs/
+.git
+.env
+.env.*
+website/
+.local/
+output/

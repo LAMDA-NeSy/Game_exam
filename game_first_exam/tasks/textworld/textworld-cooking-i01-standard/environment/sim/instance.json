@@ -1,0 +1,45 @@
+{
+  "benchmark": "textworld",
+  "env_id": "TextWorld-cooking-1.7.0",
+  "family": "cooking",
+  "seed": 2117382936,
+  "max_steps": null,
+  "observation_profile": "player-text-v2",
+  "engine_versions": {
+    "textworld": "1.7.0",
+    "jericho": "3.3.1",
+    "numpy": "1.26.4"
+  },
+  "challenge_settings": {
+    "recipe": 1,
+    "take": 1,
+    "open": true,
+    "cook": true,
+    "cut": true,
+    "drop": false,
+    "go": 6,
+    "recipe_seed": 0,
+    "split": "test"
+  },
+  "asset_sha256": {
+    "game.z8": "8dfe66d61c5c8e45de81ab68b1596af816d4fb47c1d45c6aeaff5d66df9faf6c",
+    "game.json": "29d4e106b7e4d5f6ca987c8a552bd8cbbfa131979c12b36a0bc9ecbcc3de9c18"
+  },
+  "max_score": 5,
+  "metric_spec": {
+    "primary": "normalized_score",
+    "reducer": "family_macro",
+    "success_label": "game_won",
+    "reducer_version": "1.0.0"
+  },
+  "initial_state_sha256": "50627e107925e765d392307886d9a8bff6969a08ec493b172cd6af7483324295",
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": false,
+    "action_mode": "text",
+    "timing": "action-stepped",
+    "native_truncation": false
+  }
+}

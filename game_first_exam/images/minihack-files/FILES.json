@@ -1,0 +1,12 @@
+{
+  "image": "ghcr.io/mll-lab-nu/efe:minihack-files-0.1.5@sha256:62bae9e9facce6755dd0dbf38d2d7677fd6a8225fdc83c5e9bae7eac6c28e207",
+  "source": "game_first_exam/benchmarks/minihack",
+  "files": {
+    "SOURCE.json": "4d0453d40884e1b5603bf98a57dede66ff8617591c7a9c9b9ae32bb36ce4903c",
+    "adapter.py": "1ae7f52ee252e244c3285b05a2fe4e0107ac4f190aeb173e3d03d824cc840ccc",
+    "install_clock.py": "6ad6faebc71e9e1ed6c9048f2ae540ec950ec1b85e7a8cc775a68001bb42edb3",
+    "instance_schema.py": "0390518229670988bd764cff4d98a8e2dabafe4690f9d3c2b24d58a59f7101a8",
+    "metric_rules.py": "202b49f277977ebaf07e77670af3ed3a76f6749621d8236b83c9487ccf9482a5",
+    "requirements.txt": "3b7f3ae6297f2c6fc2a2eb8c5e45b64821e4519fe66d9114f99af6ee2db216f0"
+  }
+}

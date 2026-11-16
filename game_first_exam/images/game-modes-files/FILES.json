@@ -1,0 +1,11 @@
+{
+  "image": "ghcr.io/mll-lab-nu/efe:game-modes-files-0.2.0@sha256:f04281f547b3889635e456088ab2ef9d7821bdece0acac9cae3762965e66e615",
+  "source": "game_first_exam/runtime/modes",
+  "files": {
+    "mode_config.py": "bc59bf9d4a6d519c05ee7106ed782de5d9e7a5e63fd65f7415a480dd928a2089",
+    "mode_grade.py": "25af0e2a755acb821101df7ce2fca855e18cf9d1b45a554d5b12dc17445adf9a",
+    "privileged.py": "aaabc8fcf6246cb9fa8702b7f5953ae577964c0b4e07d5c561d6f93a76ff81d3",
+    "realtime_client.py": "7f4ebab2cd000ef884b27d62ee8a60505754b0d462794848d45f65ae31fc0dbe",
+    "realtime_server.py": "e19841255a25c4dd84427e9c28e22994ce5d30665ce623fd86968ce77dcc70c9"
+  }
+}

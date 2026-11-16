@@ -1,0 +1,37 @@
+{
+  "benchmark": "textworld",
+  "env_id": "TextWorld-coin-collector-1.7.0",
+  "family": "coin-collector",
+  "seed": 470363396,
+  "max_steps": null,
+  "observation_profile": "player-text-v2",
+  "engine_versions": {
+    "textworld": "1.7.0",
+    "jericho": "3.3.1",
+    "numpy": "1.26.4"
+  },
+  "challenge_settings": {
+    "level": 105
+  },
+  "asset_sha256": {
+    "game.z8": "536523d978fbe15253f1c670c554b13540f342e14dabafc955207693d0256628",
+    "game.json": "b46e6210acf034dac47501497f78cb1d8f135bd9d7f07b7f51cd0a7ffc7b7d3c"
+  },
+  "max_score": 1,
+  "metric_spec": {
+    "primary": "normalized_score",
+    "reducer": "family_macro",
+    "success_label": "game_won",
+    "reducer_version": "1.0.0"
+  },
+  "initial_state_sha256": "92b6b63b762800144036f9e791685b2b728e38e4f41168b3a29df3db883366ba",
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": false,
+    "action_mode": "text",
+    "timing": "action-stepped",
+    "native_truncation": false
+  }
+}

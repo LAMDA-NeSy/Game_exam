@@ -1,0 +1,20 @@
+schema_version = "game-suite/2.1"
+version = "3.0.2"
+tier = "smoke"
+name = "games-smoke-v3.0.2"
+files_images = ["connection-files", "game-files", "minigrid-adapter-files", "crafter-files", "textworld-files"]
+
+[[tasks]]
+name = "minigrid-doorkey-i01-standard"
+benchmark = "minigrid"
+family = "doorkey"
+
+[[tasks]]
+name = "crafter-survival-i01-standard"
+benchmark = "crafter"
+family = "survival"
+
+[[tasks]]
+name = "textworld-cooking-i01-standard"
+benchmark = "textworld"
+family = "cooking"

@@ -1,0 +1,17 @@
+{
+  "repository": "https://github.com/nacloos/baba-is-ai",
+  "commit": "40ae1b29dbc67f2ecea06cc161ed5ca51719e5e3",
+  "files": {
+    "LICENSE": "3a55cb783d4f0c06932030075ec8d191ee96063bf23157491b8fdc52e414d4a7",
+    "baba/__init__.py": "bf4cf6e40db06f1de3353fee49476d019852be30e04efa221a587e3a40034545",
+    "baba/envs.py": "0813cfff3836cc97e19516e44c5f06cb34d3cfc25cda43ab3ffbfb1c72a3aa7e",
+    "baba/grid.py": "a7c7c118cf7b7e5128c933a98522425d7b9cb837ab4fa9a01449bf6b07e7ef26",
+    "baba/play.py": "2a1c6f66e48ad0343dd346207bb2a90029591bea75285a03a5699834fe97b850",
+    "baba/registration.py": "f345f1189f233c2ac455a46ab096f3d8062373794d0e470fbbe6a4a94846328a",
+    "baba/rendering.py": "450ebb59227f1af487ecf6c76dfd499e19ba23e953f4d629512d6ff50d5c390f",
+    "baba/rule.py": "2b5df401b6351ee58482672c4f9f674dcbeb9362e88813f1a79135de33096362",
+    "baba/utils.py": "eec9e2fedc01e88f6717359f63bae874751f2c91634e1e37eade31dea96916ae",
+    "baba/world_object.py": "23019e8dbe53f21e355d9473445ff864cc44a70b3dce92fbae536dffa08f4773"
+  },
+  "modifications": []
+}

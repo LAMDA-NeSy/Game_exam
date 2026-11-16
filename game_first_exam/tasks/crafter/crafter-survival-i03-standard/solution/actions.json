@@ -1,0 +1,22 @@
+[
+  "move_right",
+  "move_up",
+  "move_up",
+  "move_up",
+  "move_up",
+  "do",
+  "move_right",
+  "move_right",
+  "move_up",
+  "do",
+  "move_right",
+  "move_right",
+  "do",
+  "move_right",
+  "move_left",
+  "move_right",
+  "move_left",
+  "move_right",
+  "place_table",
+  "make_wood_pickaxe"
+]

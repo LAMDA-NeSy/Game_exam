@@ -1,0 +1,32 @@
+[project]
+name = "game-exam"
+version = "0.1.0"
+description = "Game benchmarks with native Harbor coding agents"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12,<3.15"
+dependencies = ["harbor==0.23.0"]
+
+[project.urls]
+Repository = "https://github.com/LAMDA-NeSy/Game_exam"
+
+[project.scripts]
+game-exam = "efe:main"
+efe = "efe:main"
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+only-include = ["scripts"]
+exclude = ["scripts/tests", "**/__pycache__"]
+sources = ["scripts"]
+dev-mode-dirs = ["scripts"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"scripts/efe-harbor.pth" = "efe-harbor.pth"
+
+[tool.hatch.build.targets.sdist]
+exclude = ["/jobs", "/website", "/output", "/.venv"]

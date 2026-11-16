@@ -1,0 +1,56 @@
+[protocols]
+standard = ["game-standard/2.2"]
+
+[[tasks]]
+name = "minihack-room-i01-standard"
+source_task = "MiniHack-Room-5x5-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minihack-river-i01-standard"
+source_task = "MiniHack-River-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minihack-mazewalk-9x9-i01-standard"
+source_task = "MiniHack-MazeWalk-9x9-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minihack-mazewalk-15x15-i01-standard"
+source_task = "MiniHack-MazeWalk-15x15-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minihack-corridor-r3-i01-standard"
+source_task = "MiniHack-Corridor-R3-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minihack-corridorbattle-dark-i01-standard"
+source_task = "MiniHack-CorridorBattle-Dark-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minihack-quest-easy-i01-standard"
+source_task = "MiniHack-Quest-Easy-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minihack-quest-medium-i01-standard"
+source_task = "MiniHack-Quest-Medium-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minihack-boxoban-medium-i01-standard"
+source_task = "MiniHack-Boxoban-Medium-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minihack-boxoban-hard-i01-standard"
+source_task = "MiniHack-Boxoban-Hard-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minihack-room-i01-privileged"
+source_task = "MiniHack-Room-5x5-v0"

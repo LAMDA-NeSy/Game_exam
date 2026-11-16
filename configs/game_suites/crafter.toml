@@ -1,0 +1,25 @@
+schema_version = "game-suite/2.1"
+version = "3.2.1"
+tier = "development"
+name = "games-crafter-v3.2.1"
+files_images = ["connection-files", "game-files", "game-modes-files", "crafter-files"]
+
+[[tasks]]
+name = "crafter-survival-i01-standard"
+benchmark = "crafter"
+family = "survival"
+
+[[tasks]]
+name = "crafter-survival-i02-standard"
+benchmark = "crafter"
+family = "survival"
+
+[[tasks]]
+name = "crafter-survival-i03-standard"
+benchmark = "crafter"
+family = "survival"
+
+[[tasks]]
+name = "crafter-survival-i01-realtime"
+benchmark = "crafter"
+family = "survival"

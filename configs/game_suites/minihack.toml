@@ -1,0 +1,20 @@
+schema_version = "game-suite/2.1"
+version = "0.2.2"
+tier = "smoke"
+name = "games-minihack-native-smoke-v0.2.2"
+files_images = ["connection-files", "game-files", "game-modes-files", "minihack-files"]
+
+[[tasks]]
+name = "minihack-room-i01-standard"
+benchmark = "minihack"
+family = "room"
+
+[[tasks]]
+name = "minihack-river-i01-standard"
+benchmark = "minihack"
+family = "river"
+
+[[tasks]]
+name = "minihack-room-i01-privileged"
+benchmark = "minihack"
+family = "room"

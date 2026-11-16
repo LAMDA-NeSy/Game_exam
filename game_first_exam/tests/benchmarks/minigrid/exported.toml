@@ -1,0 +1,98 @@
+# MiniGrid uses discrete actions and partial tile observations; Appendix H still applies.
+[protocols]
+standard = ["game-standard/1.0", "game-standard/2.2"]
+
+[[tasks]]
+name = "minigrid-doorkey-i00-standard"
+source_task = "MiniGrid-DoorKey-8x8-v0"
+protocol = "game-standard/1.0"
+
+[[tasks]]
+name = "minigrid-empty-random-i01-standard"
+source_task = "MiniGrid-Empty-Random-6x6-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-empty-random-i02-standard"
+source_task = "MiniGrid-Empty-Random-6x6-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-empty-random-i03-standard"
+source_task = "MiniGrid-Empty-Random-6x6-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-doorkey-i01-standard"
+source_task = "MiniGrid-DoorKey-8x8-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-doorkey-i02-standard"
+source_task = "MiniGrid-DoorKey-8x8-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-doorkey-i03-standard"
+source_task = "MiniGrid-DoorKey-8x8-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-multiroom-i01-standard"
+source_task = "MiniGrid-MultiRoom-N4-S5-v1"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-multiroom-i02-standard"
+source_task = "MiniGrid-MultiRoom-N4-S5-v1"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-multiroom-i03-standard"
+source_task = "MiniGrid-MultiRoom-N4-S5-v1"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-lava-crossing-i01-standard"
+source_task = "MiniGrid-LavaCrossingS9N1-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-lava-crossing-i02-standard"
+source_task = "MiniGrid-LavaCrossingS9N1-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-lava-crossing-i03-standard"
+source_task = "MiniGrid-LavaCrossingS9N1-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-memory-i01-standard"
+source_task = "MiniGrid-MemoryS11-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-memory-i02-standard"
+source_task = "MiniGrid-MemoryS11-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-memory-i03-standard"
+source_task = "MiniGrid-MemoryS11-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-dynamic-obstacles-i01-standard"
+source_task = "MiniGrid-Dynamic-Obstacles-8x8-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-dynamic-obstacles-i02-standard"
+source_task = "MiniGrid-Dynamic-Obstacles-8x8-v0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "minigrid-dynamic-obstacles-i03-standard"
+source_task = "MiniGrid-Dynamic-Obstacles-8x8-v0"
+protocol = "game-standard/2.2"

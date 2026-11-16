@@ -1,0 +1,15 @@
+schema_version = "game-suite/2.1"
+version = "1.0.0"
+tier = "smoke"
+name = "games-babaisai-minimal-v1.0.0"
+files_images = ["connection-files", "game-files", "babaisai-files"]
+
+[[tasks]]
+name = "babaisai-goto-win-i01-standard"
+benchmark = "babaisai"
+family = "goto-win"
+
+[[tasks]]
+name = "babaisai-break-stop-make-win-i01-standard"
+benchmark = "babaisai"
+family = "break-stop-make-win"

@@ -1,0 +1,16 @@
+# Trusted host registration; never read from an Agent-controlled instance.
+
+[benchmarks.minigrid]
+schema = "game_first_exam/benchmarks/minigrid/instance_schema.py"
+
+[benchmarks.crafter]
+schema = "game_first_exam/benchmarks/crafter/instance_schema.py"
+
+[benchmarks.textworld]
+schema = "game_first_exam/benchmarks/textworld/instance_schema.py"
+
+[benchmarks.babaisai]
+schema = "game_first_exam/benchmarks/babaisai/instance_schema.py"
+
+[benchmarks.minihack]
+schema = "game_first_exam/benchmarks/minihack/instance_schema.py"

@@ -1,0 +1,14 @@
+cloudpickle==3.1.2
+Farama-Notifications==0.0.6
+gymnasium==1.0.0
+imageio==2.37.0
+imageio-ffmpeg==0.6.0
+importlib_resources==7.1.0
+nle==1.1.0
+numpy==1.26.4
+pillow==10.4.0
+pybind11==3.1.0
+setuptools==84.2.1
+typing_extensions==4.16.0
+wheel==0.45.1
+minihack @ https://codeload.github.com/NetHack-LE/minihack/tar.gz/95b11cc8db68d72a7fe6e7540e75b568b7a811d8#sha256=8a277171302b0b5b34633001283cdff5aa8eaeadb940256df02c8fdae67a48eb

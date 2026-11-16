@@ -1,0 +1,21 @@
+{
+  "image": "ghcr.io/mll-lab-nu/efe:babaisai-files-0.3.0@sha256:15bc33bb6f4d90c4a09185c8ef96a170c6ee7fcee9ccc8635196926c14bc95ac",
+  "source": "game_first_exam/benchmarks/babaisai",
+  "files": {
+    "requirements.txt": "1cc95e5a56a940a048fe97546a2d73add3d62813293bfd91b71a8afac0ae3a4d",
+    "adapter.py": "bdf63b7f5bbd0008449876e8f6cf7f31556d4893a1d8b3c4e7a9415e4aef2908",
+    "metric_rules.py": "fce658b784545278acefed5be5a5447a5a7d10cf0257f6e650e1cf8cad26bedc",
+    "vendor/LICENSE": "3a55cb783d4f0c06932030075ec8d191ee96063bf23157491b8fdc52e414d4a7",
+    "vendor/SOURCE.json": "84b94e89b5bf77442692b3e383a48ca25668907b593cbc6a260ca09f8f5876da",
+    "vendor/baba/registration.py": "f345f1189f233c2ac455a46ab096f3d8062373794d0e470fbbe6a4a94846328a",
+    "vendor/baba/envs.py": "0813cfff3836cc97e19516e44c5f06cb34d3cfc25cda43ab3ffbfb1c72a3aa7e",
+    "vendor/baba/grid.py": "a7c7c118cf7b7e5128c933a98522425d7b9cb837ab4fa9a01449bf6b07e7ef26",
+    "vendor/baba/rendering.py": "450ebb59227f1af487ecf6c76dfd499e19ba23e953f4d629512d6ff50d5c390f",
+    "vendor/baba/__init__.py": "bf4cf6e40db06f1de3353fee49476d019852be30e04efa221a587e3a40034545",
+    "vendor/baba/play.py": "2a1c6f66e48ad0343dd346207bb2a90029591bea75285a03a5699834fe97b850",
+    "vendor/baba/rule.py": "2b5df401b6351ee58482672c4f9f674dcbeb9362e88813f1a79135de33096362",
+    "vendor/baba/utils.py": "eec9e2fedc01e88f6717359f63bae874751f2c91634e1e37eade31dea96916ae",
+    "vendor/baba/world_object.py": "23019e8dbe53f21e355d9473445ff864cc44a70b3dce92fbae536dffa08f4773",
+    "instance_schema.py": "eb6ac5f147531871edfdabc8e5f15fc2eeae22c389d0f752c4bbd9c892655504"
+  }
+}

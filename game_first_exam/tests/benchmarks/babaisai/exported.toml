@@ -1,0 +1,12 @@
+[protocols]
+standard = ["game-standard/2.2"]
+
+[[tasks]]
+name = "babaisai-goto-win-i01-standard"
+source_task = "BabaIsAI-goto_win"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "babaisai-break-stop-make-win-i01-standard"
+source_task = "BabaIsAI-two_room-break_stop-make_win"
+protocol = "game-standard/2.2"

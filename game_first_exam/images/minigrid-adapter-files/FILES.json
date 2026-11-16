@@ -1,0 +1,10 @@
+{
+  "image": "ghcr.io/mll-lab-nu/efe:minigrid-adapter-files-0.4.0@sha256:6758b2d54b158359d74b167728f0261eb43b61b5c64913bbc0c9c6d24a5f6523",
+  "source": "game_first_exam/benchmarks/minigrid",
+  "files": {
+    "adapter.py": "ee794409e430472a4e918006d0fd945a2eb97de6dff98b712cedffc4f27f6224",
+    "metric_rules.py": "67d95048b4c58a6d9f3a07f686fc72cf055e3f5900834a67a1abb8226f9ad6d7",
+    "requirements-v2.txt": "4efae8be49070e9cab649af2768a2dca9bdda0b8f75a86c033e1924e9093b2d2",
+    "instance_schema.py": "d7900828c6723bba3da9b06fbd582c69699411c4c1978af921a0e7509aab50fb"
+  }
+}

@@ -1,0 +1,53 @@
+# {{BENCHMARK}} · {{TASK_NAME}}
+
+{{PLAYER_ROLE_AND_INITIAL_VISIBLE_SCENE}}
+
+**Task.** Use the Python client below. {{OBSERVABLE_GOAL_AND_COMPLETION_CONDITION}}
+
+## Rules
+- **Drive the game with a program.** Use the Python client to read observations and execute actions. Your program may run multiple actions in a loop.
+- {{EPISODE_RESET_AND_ACTION_LIMITS}} Stop when `done` is true.
+- Score: {{SCORING_RULE_THAT_AFFECTS_ACTION_CHOICES}}.
+- The service records your live episode and grades it. {{CONTROL_SCRIPT_RECORD_REQUIREMENT_IF_APPLICABLE}}
+- **Nothing is put into your context automatically.** {{OBSERVATION_RETURN_FORMAT}} What you inspect and store is your code's decision.
+
+## Client (`/app/game_client.py`)
+```python
+from game_client import GameClient
+
+game = GameClient()
+spec = game.spec()                        # action schema and session limits
+print(spec["action_schema"])              # show the accepted action format
+obs = game.observe()                      # one current snapshot without spending an action
+print(obs["step"], obs["done"])           # accepted actions so far and whether the episode ended
+if not obs["done"]:
+    print(obs["observation"])             # replace with task-specific decoding or field access
+
+# Replace the example action with one chosen from the observation.
+# if not obs["done"]:
+#     obs = game.step("{{EXAMPLE_ACTION}}", expected_step=obs["step"])  # one action, one updated snapshot
+```
+
+### Observations
+{{OBSERVATION_DETAILS_NOT_COVERED_IN_THE_CODE_EXAMPLE}}
+
+### Actions and feedback
+{{ACTION_RULES_NOT_COVERED_IN_THE_CODE_EXAMPLE}}
+
+`observe()` and `step()` return `observation`, `step`, `done`, `steps_remaining` and `time_left_s`.
+{{BUDGET_FIELDS_AND_PUBLIC_FEEDBACK_MEANING_NEEDED_FOR_THIS_TASK}}
+
+Pass the current `step` as `expected_step`. If the step number is stale or the action response is lost, call `observe()` before choosing your next action.
+
+<!-- AUTHOR ONLY: replace all placeholders and remove this comment before freezing.
+     Include only facts needed to understand the goal, use observations/actions, or obey restrictions.
+     Explain parameters, returned fields and decoding next to the calls that use them. Use prose for
+     shared return fields, dimensions in context and episode rules. Use a table only for a reference
+     that is easier to scan in columns, such as a long indexed observation layout.
+     Leave runtime topology, protocol versions, seeds/calendar, audit implementation and history in README/config.
+     If a control script is required for audit, state its path and confirm that task.toml collects it.
+     For example, save the main script at /app/output/gen.py when /app/output/ is collected.
+     Give the number of observations per call, when the game advances, and the units and start of any timers.
+     For image observations, give dimensions, frame counts or rate as applicable, and the viewing/saving method.
+     Supply the task's authorized External material paragraph if using public network, then generate
+     External material, Resources and Time limit with scripts/task_conventions.py. Read this folder's README.md. -->

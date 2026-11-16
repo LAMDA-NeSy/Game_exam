@@ -1,0 +1,47 @@
+[protocols]
+standard = ["game-standard/2.2"]
+
+[[tasks]]
+name = "textworld-coin-collector-i01-standard"
+source_task = "TextWorld-coin-collector-1.7.0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "textworld-coin-collector-i02-standard"
+source_task = "TextWorld-coin-collector-1.7.0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "textworld-coin-collector-i03-standard"
+source_task = "TextWorld-coin-collector-1.7.0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "textworld-cooking-i01-standard"
+source_task = "TextWorld-cooking-1.7.0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "textworld-cooking-i02-standard"
+source_task = "TextWorld-cooking-1.7.0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "textworld-cooking-i03-standard"
+source_task = "TextWorld-cooking-1.7.0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "textworld-treasure-hunter-i01-standard"
+source_task = "TextWorld-treasure-hunter-1.7.0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "textworld-treasure-hunter-i02-standard"
+source_task = "TextWorld-treasure-hunter-1.7.0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "textworld-treasure-hunter-i03-standard"
+source_task = "TextWorld-treasure-hunter-1.7.0"
+protocol = "game-standard/2.2"

@@ -1,0 +1,23 @@
+# Game task resource caps; shared rendering and monitor enforcement are inherited from upstream.
+
+[[cap]]
+match = "^minigrid-.*-standard$"
+main = { cpus = 1, memory_gb = 1, pids = 256, disk_gb = 2 }
+sim = { cpus = 1, memory_gb = 1, pids = 128 }
+measured = "CPU-only initial integration; caps chosen conservatively, to be measured during trials"
+
+# Initial CPU-only game integration caps; measure before increasing concurrency.
+
+[[cap]]
+match = "^(crafter|textworld|babaisai)-.*-standard$"
+main = { cpus = 1, memory_gb = 1, pids = 256, disk_gb = 2 }
+sim = { cpus = 1, memory_gb = 1, pids = 128 }
+measured = "Initial integration caps; CPU only, fixed-model evaluation"
+
+# MiniHack native CPU integration; caps are not native game parameters.
+
+[[cap]]
+match = "^minihack-.*-standard$"
+main = { cpus = 1, memory_gb = 1, pids = 256, disk_gb = 2 }
+sim = { cpus = 1, memory_gb = 1, pids = 128 }
+measured = "Initial CPU-only integration caps; measure during validation"

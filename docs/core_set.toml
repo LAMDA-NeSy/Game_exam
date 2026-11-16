@@ -1,0 +1,91 @@
+# Game core only; authoritative execution selection: configs/game_suites/core.toml
+
+[[task]]
+task = "minigrid-doorkey-i01"
+
+[[task]]
+task = "minigrid-doorkey-i02"
+
+[[task]]
+task = "minigrid-doorkey-i03"
+
+[[task]]
+task = "minigrid-dynamic-obstacles-i01"
+
+[[task]]
+task = "minigrid-dynamic-obstacles-i02"
+
+[[task]]
+task = "minigrid-dynamic-obstacles-i03"
+
+[[task]]
+task = "minigrid-empty-random-i01"
+
+[[task]]
+task = "minigrid-empty-random-i02"
+
+[[task]]
+task = "minigrid-empty-random-i03"
+
+[[task]]
+task = "minigrid-lava-crossing-i01"
+
+[[task]]
+task = "minigrid-lava-crossing-i02"
+
+[[task]]
+task = "minigrid-lava-crossing-i03"
+
+[[task]]
+task = "minigrid-memory-i01"
+
+[[task]]
+task = "minigrid-memory-i02"
+
+[[task]]
+task = "minigrid-memory-i03"
+
+[[task]]
+task = "minigrid-multiroom-i01"
+
+[[task]]
+task = "minigrid-multiroom-i02"
+
+[[task]]
+task = "minigrid-multiroom-i03"
+
+[[task]]
+task = "crafter-survival-i01"
+
+[[task]]
+task = "crafter-survival-i02"
+
+[[task]]
+task = "crafter-survival-i03"
+
+[[task]]
+task = "textworld-coin-collector-i01"
+
+[[task]]
+task = "textworld-coin-collector-i02"
+
+[[task]]
+task = "textworld-coin-collector-i03"
+
+[[task]]
+task = "textworld-cooking-i01"
+
+[[task]]
+task = "textworld-cooking-i02"
+
+[[task]]
+task = "textworld-cooking-i03"
+
+[[task]]
+task = "textworld-treasure-hunter-i01"
+
+[[task]]
+task = "textworld-treasure-hunter-i02"
+
+[[task]]
+task = "textworld-treasure-hunter-i03"

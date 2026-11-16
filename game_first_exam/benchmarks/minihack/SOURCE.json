@@ -1,0 +1,17 @@
+{
+  "repository": "https://github.com/NetHack-LE/minihack",
+  "commit": "95b11cc8db68d72a7fe6e7540e75b568b7a811d8",
+  "archive_url": "https://codeload.github.com/NetHack-LE/minihack/tar.gz/95b11cc8db68d72a7fe6e7540e75b568b7a811d8",
+  "archive_sha256": "8a277171302b0b5b34633001283cdff5aa8eaeadb940256df02c8fdae67a48eb",
+  "version": "1.0.2",
+  "modifications": "none",
+  "nle": "PyPI nle==1.1.0",
+  "nle_git_commit": "731f2aaa94f6d67838228f9c9b5b04faa31cb862",
+  "runtime_clock": {
+    "start_utc": "2026-11-13T12:00:00Z",
+    "implementation": "libfaketime",
+    "version": "0.9.12",
+    "monotonic": "real",
+    "source_sha256": "4fc32218697c052adcdc5ee395581f2554ca56d086ac817ced2be0d6f1f8a9fa"
+  }
+}

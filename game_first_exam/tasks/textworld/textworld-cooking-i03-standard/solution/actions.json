@@ -1,0 +1,12 @@
+[
+  "inventory",
+  "go east",
+  "examine cookbook",
+  "take yellow potato from counter",
+  "cook yellow potato with oven",
+  "take knife from counter",
+  "slice yellow potato with knife",
+  "drop knife",
+  "prepare meal",
+  "eat meal"
+]

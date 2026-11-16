@@ -1,0 +1,61 @@
+{
+  "engine_patch": null,
+  "benchmark": "crafter",
+  "env_id": "CrafterReward-v1",
+  "family": "survival",
+  "seed": 2117382936,
+  "max_steps": 10000,
+  "area": [
+    64,
+    64
+  ],
+  "milestone": "make_wood_pickaxe",
+  "achievement_names": [
+    "collect_coal",
+    "collect_diamond",
+    "collect_drink",
+    "collect_iron",
+    "collect_sapling",
+    "collect_stone",
+    "collect_wood",
+    "defeat_skeleton",
+    "defeat_zombie",
+    "eat_cow",
+    "eat_plant",
+    "make_iron_pickaxe",
+    "make_iron_sword",
+    "make_stone_pickaxe",
+    "make_stone_sword",
+    "make_wood_pickaxe",
+    "make_wood_sword",
+    "place_furnace",
+    "place_plant",
+    "place_stone",
+    "place_table",
+    "wake_up"
+  ],
+  "engine_versions": {
+    "crafter": "1.8.3",
+    "numpy": "1.26.4",
+    "Pillow": "10.4.0",
+    "opensimplex": "0.4.5.1"
+  },
+  "observation_profile": "native-rgb-v1",
+  "metric_spec": {
+    "primary": "achievement_fraction",
+    "reducer": "crafter_achievements",
+    "success_label": "make_wood_pickaxe_milestone",
+    "reducer_version": "1.0.0"
+  },
+  "initial_state_sha256": "b79e0e3e105405d6e420276d5f953dd4769364b0f1f0fa0229facdfcd8209d80",
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": true,
+    "action_mode": "enum",
+    "timing": "action-stepped",
+    "native_truncation": true
+  },
+  "native_max_steps": 10000
+}

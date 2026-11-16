@@ -1,0 +1,14 @@
+{
+  "image": "ghcr.io/mll-lab-nu/efe:game-files-0.6.0@sha256:bfb708928954d5cc194a614ab772a65b1e56f381b49dfeb2227c3d609e5f2ecc",
+  "source": "game_first_exam/runtime",
+  "files": {
+    "server.py": "0a842faa1da5438183810762cc0e4c5201711ea902f4ba440d6f32ffda4ee05d",
+    "game_client.py": "b8e64a7e356940ecfce629fb845707e5ba427fbff2ebd84709af80572f225500",
+    "grade.py": "d39cbc89b772ab3804b50fbdc67ee1a01136aad6604217cb9d5a374670d57d96",
+    "contracts.py": "66593e5864bf5d9727dee86839d38ec1e025cb9814a240b4b7433d25e6edc749",
+    "encoding.py": "52c88938a8284647a6271f865fa6dac35fd502b57a55e5e5f0ea599c1af52b2c",
+    "recording.py": "95aeeaa19a3511c93a9672c5ce821beecc6a1bed79c1d11e7cebaaa4e0c04cdc",
+    "config_schema.py": "9f24b8da13037915ada7700b53073b54859f9f7983ed69f207e920b557509f91",
+    "reducers.py": "593014f2bc9946d9867234fa93c44512c591db61530e6ec2c599a5f453bc9101"
+  }
+}

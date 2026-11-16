@@ -1,0 +1,7 @@
+{
+  "mode": "realtime",
+  "version": "1.1.0",
+  "tick_seconds": 0.2,
+  "idle_action": "noop",
+  "max_plan_steps": 128
+}

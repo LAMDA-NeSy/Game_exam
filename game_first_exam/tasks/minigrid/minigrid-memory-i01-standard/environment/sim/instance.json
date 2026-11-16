@@ -1,0 +1,27 @@
+{
+  "env_id": "MiniGrid-MemoryS11-v0",
+  "family": "memory",
+  "seed": 2117382936,
+  "max_steps": 605,
+  "minigrid_version": "3.2.0",
+  "gymnasium_version": "1.4.0",
+  "initial_state_sha256": "95c3392a0d3a32928bfb40352d28330ab6a025a5c18844d3e56c275ee8be760c",
+  "benchmark": "minigrid",
+  "observation_profile": "native-observation-v1",
+  "metric_spec": {
+    "primary": "success",
+    "reducer": "family_macro",
+    "success_label": "goal_reached",
+    "reducer_version": "1.0.0"
+  },
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": false,
+    "action_mode": "enum",
+    "timing": "action-stepped",
+    "native_truncation": true
+  },
+  "native_max_steps": 605
+}

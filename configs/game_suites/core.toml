@@ -1,0 +1,155 @@
+schema_version = "game-suite/2.1"
+version = "3.0.2"
+tier = "development"
+name = "games-core-v3.0.2"
+files_images = ["connection-files", "game-files", "minigrid-adapter-files", "crafter-files", "textworld-files"]
+
+[[tasks]]
+name = "minigrid-doorkey-i01-standard"
+benchmark = "minigrid"
+family = "doorkey"
+
+[[tasks]]
+name = "minigrid-doorkey-i02-standard"
+benchmark = "minigrid"
+family = "doorkey"
+
+[[tasks]]
+name = "minigrid-doorkey-i03-standard"
+benchmark = "minigrid"
+family = "doorkey"
+
+[[tasks]]
+name = "minigrid-dynamic-obstacles-i01-standard"
+benchmark = "minigrid"
+family = "dynamic-obstacles"
+
+[[tasks]]
+name = "minigrid-dynamic-obstacles-i02-standard"
+benchmark = "minigrid"
+family = "dynamic-obstacles"
+
+[[tasks]]
+name = "minigrid-dynamic-obstacles-i03-standard"
+benchmark = "minigrid"
+family = "dynamic-obstacles"
+
+[[tasks]]
+name = "minigrid-empty-random-i01-standard"
+benchmark = "minigrid"
+family = "empty-random"
+
+[[tasks]]
+name = "minigrid-empty-random-i02-standard"
+benchmark = "minigrid"
+family = "empty-random"
+
+[[tasks]]
+name = "minigrid-empty-random-i03-standard"
+benchmark = "minigrid"
+family = "empty-random"
+
+[[tasks]]
+name = "minigrid-lava-crossing-i01-standard"
+benchmark = "minigrid"
+family = "lava-crossing"
+
+[[tasks]]
+name = "minigrid-lava-crossing-i02-standard"
+benchmark = "minigrid"
+family = "lava-crossing"
+
+[[tasks]]
+name = "minigrid-lava-crossing-i03-standard"
+benchmark = "minigrid"
+family = "lava-crossing"
+
+[[tasks]]
+name = "minigrid-memory-i01-standard"
+benchmark = "minigrid"
+family = "memory"
+
+[[tasks]]
+name = "minigrid-memory-i02-standard"
+benchmark = "minigrid"
+family = "memory"
+
+[[tasks]]
+name = "minigrid-memory-i03-standard"
+benchmark = "minigrid"
+family = "memory"
+
+[[tasks]]
+name = "minigrid-multiroom-i01-standard"
+benchmark = "minigrid"
+family = "multiroom"
+
+[[tasks]]
+name = "minigrid-multiroom-i02-standard"
+benchmark = "minigrid"
+family = "multiroom"
+
+[[tasks]]
+name = "minigrid-multiroom-i03-standard"
+benchmark = "minigrid"
+family = "multiroom"
+
+[[tasks]]
+name = "crafter-survival-i01-standard"
+benchmark = "crafter"
+family = "survival"
+
+[[tasks]]
+name = "crafter-survival-i02-standard"
+benchmark = "crafter"
+family = "survival"
+
+[[tasks]]
+name = "crafter-survival-i03-standard"
+benchmark = "crafter"
+family = "survival"
+
+[[tasks]]
+name = "textworld-coin-collector-i01-standard"
+benchmark = "textworld"
+family = "coin-collector"
+
+[[tasks]]
+name = "textworld-coin-collector-i02-standard"
+benchmark = "textworld"
+family = "coin-collector"
+
+[[tasks]]
+name = "textworld-coin-collector-i03-standard"
+benchmark = "textworld"
+family = "coin-collector"
+
+[[tasks]]
+name = "textworld-cooking-i01-standard"
+benchmark = "textworld"
+family = "cooking"
+
+[[tasks]]
+name = "textworld-cooking-i02-standard"
+benchmark = "textworld"
+family = "cooking"
+
+[[tasks]]
+name = "textworld-cooking-i03-standard"
+benchmark = "textworld"
+family = "cooking"
+
+[[tasks]]
+name = "textworld-treasure-hunter-i01-standard"
+benchmark = "textworld"
+family = "treasure-hunter"
+
+[[tasks]]
+name = "textworld-treasure-hunter-i02-standard"
+benchmark = "textworld"
+family = "treasure-hunter"
+
+[[tasks]]
+name = "textworld-treasure-hunter-i03-standard"
+benchmark = "textworld"
+family = "treasure-hunter"

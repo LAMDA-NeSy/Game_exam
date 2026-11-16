@@ -1,0 +1,7 @@
+{
+  "source": "shared/connection",
+  "files": {
+    "service_connection.py": "3b04268c36de47176460b2b03d7fced1dd71595dca53e545bb566cd311000cfa"
+  },
+  "image": "ghcr.io/mll-lab-nu/efe:connection-files-0.1.0@sha256:6d1002dea6ca507b4148d3196e233838e645b33bcfa9a27ae4a43027ae519999"
+}

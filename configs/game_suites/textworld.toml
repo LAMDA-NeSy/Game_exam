@@ -1,0 +1,50 @@
+schema_version = "game-suite/2.1"
+version = "3.0.1"
+tier = "development"
+name = "games-textworld-v3.0.1"
+files_images = ["connection-files", "game-files", "textworld-files"]
+
+[[tasks]]
+name = "textworld-coin-collector-i01-standard"
+benchmark = "textworld"
+family = "coin-collector"
+
+[[tasks]]
+name = "textworld-coin-collector-i02-standard"
+benchmark = "textworld"
+family = "coin-collector"
+
+[[tasks]]
+name = "textworld-coin-collector-i03-standard"
+benchmark = "textworld"
+family = "coin-collector"
+
+[[tasks]]
+name = "textworld-cooking-i01-standard"
+benchmark = "textworld"
+family = "cooking"
+
+[[tasks]]
+name = "textworld-cooking-i02-standard"
+benchmark = "textworld"
+family = "cooking"
+
+[[tasks]]
+name = "textworld-cooking-i03-standard"
+benchmark = "textworld"
+family = "cooking"
+
+[[tasks]]
+name = "textworld-treasure-hunter-i01-standard"
+benchmark = "textworld"
+family = "treasure-hunter"
+
+[[tasks]]
+name = "textworld-treasure-hunter-i02-standard"
+benchmark = "textworld"
+family = "treasure-hunter"
+
+[[tasks]]
+name = "textworld-treasure-hunter-i03-standard"
+benchmark = "textworld"
+family = "treasure-hunter"

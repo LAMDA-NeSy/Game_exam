@@ -1,0 +1,23 @@
+[protocols]
+standard = ["game-standard/2.2"]
+realtime = ["game-realtime/1.0"]
+
+[[tasks]]
+name = "crafter-survival-i01-standard"
+source_task = "CrafterReward-v1"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "crafter-survival-i02-standard"
+source_task = "CrafterReward-v1"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "crafter-survival-i03-standard"
+source_task = "CrafterReward-v1"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "crafter-survival-i01-realtime"
+source_task = "CrafterReward-v1"
+protocol = "game-realtime/1.0"

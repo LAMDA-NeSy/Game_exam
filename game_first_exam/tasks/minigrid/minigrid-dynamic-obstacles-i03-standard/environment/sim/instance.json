@@ -1,0 +1,27 @@
+{
+  "env_id": "MiniGrid-Dynamic-Obstacles-8x8-v0",
+  "family": "dynamic-obstacles",
+  "seed": 470363396,
+  "max_steps": 256,
+  "minigrid_version": "3.2.0",
+  "gymnasium_version": "1.4.0",
+  "initial_state_sha256": "64ca9d9bba8baa90255dcf90d521843ee883875a895fbe49f70b33fcac242ae5",
+  "benchmark": "minigrid",
+  "observation_profile": "native-observation-v1",
+  "metric_spec": {
+    "primary": "success",
+    "reducer": "family_macro",
+    "success_label": "goal_reached",
+    "reducer_version": "1.0.0"
+  },
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": false,
+    "action_mode": "enum",
+    "timing": "action-stepped",
+    "native_truncation": true
+  },
+  "native_max_steps": 256
+}

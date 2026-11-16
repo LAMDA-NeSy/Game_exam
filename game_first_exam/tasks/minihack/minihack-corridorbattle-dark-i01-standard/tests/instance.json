@@ -1,0 +1,41 @@
+{
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": false,
+    "action_mode": "enum",
+    "timing": "action-stepped",
+    "native_truncation": true
+  },
+  "benchmark": "minihack",
+  "env_id": "MiniHack-CorridorBattle-Dark-v0",
+  "family": "corridorbattle-dark",
+  "seed": 2117382936,
+  "max_steps": null,
+  "native_max_steps": 350,
+  "engine_commit": "95b11cc8db68d72a7fe6e7540e75b568b7a811d8",
+  "engine_versions": {
+    "minihack": "1.0.2",
+    "nle": "1.1.0",
+    "gymnasium": "1.0.0",
+    "numpy": "1.26.4"
+  },
+  "initial_state_sha256": "6e52b68a380d652d9077e7e631844b7f2b020cf0a6a0ce08dcbc00249d00da7b",
+  "observation_profile": "player-crop-9x9-v1",
+  "metric_spec": {
+    "primary": "completion_score",
+    "reducer": "family_macro",
+    "reducer_version": "1.0.0",
+    "success_label": "native_task_successful"
+  },
+  "engine_archive_sha256": "8a277171302b0b5b34633001283cdff5aa8eaeadb940256df02c8fdae67a48eb",
+  "native_seed_policy": "core=disp=instance.seed;reseed=false;gym-reset-seed-v1",
+  "native_clock": {
+    "start_utc": "2026-11-13T12:00:00Z",
+    "implementation": "libfaketime",
+    "version": "0.9.12",
+    "monotonic": "real",
+    "source_sha256": "4fc32218697c052adcdc5ee395581f2554ca56d086ac817ced2be0d6f1f8a9fa"
+  }
+}

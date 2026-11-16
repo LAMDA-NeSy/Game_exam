@@ -1,0 +1,31 @@
+{
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": true,
+    "action_mode": "enum",
+    "timing": "action-stepped",
+    "native_truncation": true
+  },
+  "benchmark": "babaisai",
+  "env_id": "env/goto_win",
+  "family": "goto-win",
+  "seed": 2117382936,
+  "max_steps": 100,
+  "native_max_steps": 100,
+  "engine_commit": "40ae1b29dbc67f2ecea06cc161ed5ca51719e5e3",
+  "engine_versions": {
+    "gym": "0.25.0",
+    "numpy": "1.26.4",
+    "opencv-python": "4.11.0.86"
+  },
+  "initial_state_sha256": "85a420d349d82e08c18547d163c6a1a0a39ccdaf645013a6acef132c466e5a8a",
+  "observation_profile": "native-rgb-v1",
+  "metric_spec": {
+    "primary": "success",
+    "reducer": "family_macro",
+    "reducer_version": "1.0.0",
+    "success_label": "native_win"
+  }
+}

@@ -1,0 +1,8 @@
+crafter==1.8.3
+imageio==2.37.0
+imageio-ffmpeg==0.6.0
+numpy==1.26.4
+opensimplex==0.4.5.1
+pillow==10.4.0
+ruamel.yaml==0.18.6
+ruamel.yaml.clib==0.2.15

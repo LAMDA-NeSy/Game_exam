@@ -1,0 +1,21 @@
+{
+ "agent_timeout_sec": 600,
+ "caps": {
+  "main": {
+   "cpus": 1.0,
+   "disk_gb": 2.0,
+   "memory_gb": 1.0,
+   "pids": 256
+  }
+ },
+ "disk_gb": 2.0,
+ "disk_tick_sec": 60,
+ "format": "rcb-limits/2",
+ "gpu": false,
+ "mode": "privileged",
+ "scope_services": [
+  "main"
+ ],
+ "task": "minihack-room-i01-privileged",
+ "tick_sec": 5
+}
