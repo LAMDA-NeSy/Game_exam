@@ -17,7 +17,7 @@
   "observation_profile": "native-vector-v1",
   "metric_spec": {
     "primary": "win",
-    "reducer": "vgc_win_rate",
+    "reducer": "family_macro",
     "reducer_version": "1.0.0",
     "success_label": "native_battle_won"
   },

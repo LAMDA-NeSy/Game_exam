@@ -35,9 +35,13 @@ if not obs["done"]:
 ```
 
 ### Observations
-`observation` is the native battle state serialized as JSON. TODO(author): after the adapter's
-`observe()` is finalized against poke-env, list here the exact fields the agent receives (active
-Pokémon, HP, moves, status, weather, team, etc.) and their encoding.
+`observation` is the native battle state serialized as JSON with these fields:
+
+- `active` / `opponent_active`: the Pokémon currently on the field (species, HP fraction, status, ability, item, available moves).
+- `team` / `opponent_team`: the six brought Pokémon keyed by slot.
+- `weather`: the current weather, if any.
+
+Field names match the adapter's serialization (`game_first_exam/benchmarks/vgc/adapter.py`); the agent receives only these player-visible fields, never hidden engine state.
 
 ### Actions and feedback
 The action grammar is declared in `spec["action_schema"]["pattern"]`. Each `step()` returns one

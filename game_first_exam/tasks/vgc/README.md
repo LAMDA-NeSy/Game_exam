@@ -12,7 +12,8 @@ LLM agent and evaluation tools are not migrated.
   opponent at construction (`opponent_policy`).
 - The joint doubles action (two Pokémon) is expressed as one text action per turn.
 - The Showdown engine PRNG is not seeded from Python, so a single battle is not
-  bit-reproducible. Scoring uses the `vgc_win_rate` reducer over frozen instances.
+  bit-reproducible. `win` is the primary metric; the framework's `mean_primary_score`
+  (win rate) aggregates frozen instances.
 - Isolation: Showdown and the adapter run inside the `sim` container; the agent
   reaches the game only through the `server.py` HTTP protocol.
 
@@ -25,7 +26,7 @@ LLM agent and evaluation tools are not migrated.
 | Observation | Native battle state serialized as JSON; see the adapter and instruction |
 | Action | One text action per turn (the joint doubles order) |
 | Feedback | observe/step return observation, step, done, steps_remaining, time_left_s |
-| Score | `win` (0/1) per episode; `vgc_win_rate` reducer aggregates a family |
+| Score | `win` (0/1) per episode; `mean_primary_score` (win rate) aggregates a family |
 | Ending | Native win/loss; timeout/agent exit seals the episode without fabricating a win |
 
 ## Task instructions

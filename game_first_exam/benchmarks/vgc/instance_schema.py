@@ -25,7 +25,7 @@ METRICS = {'win', 'completion_score', 'native_return', 'native_steps'}
 # One observation profile for now: the native 12-chunk vector, JSON-serialized.
 PROFILES = {'native-vector-v1'}
 
-REDUCERS = {('vgc_win_rate', '1.0.0')}
+REDUCERS = {('family_macro', '1.0.0')}
 
 REGS = {'ma', 'mb'}
 OPPONENTS = {'random', 'max_base_power', 'simple_heuristics'}

@@ -17,7 +17,7 @@ Win a frozen VGC doubles battle (regulation MA, `gen9championsvgc2026regma`) aga
 ## Compatibility and deviations
 - Only the native battle environment (poke-env fork + Pokemon Showdown) is reused. VGC-Bench's RL/BC training, LLM agent, and evaluation tools are not migrated.
 - The two-player battle is reduced to a single-agent episode by fixing the opponent at construction.
-- The Showdown engine PRNG is not seeded from Python; single-battle outcomes are therefore not bit-reproducible. Scoring across a family uses the `vgc_win_rate` reducer (win rate over frozen instances) rather than a single-seed binary claim.
+- The Showdown engine PRNG is not seeded from Python; single-battle outcomes are therefore not bit-reproducible. `win` is the primary metric; the framework's `mean_primary_score` (win rate over frozen instances) aggregates a family rather than claiming a single-seed binary score.
 - Isolation: the Showdown server and the adapter run inside the `sim` container; the agent reaches the game only through the `server.py` HTTP protocol. Showdown must bind loopback only.
 
 ## Verification
