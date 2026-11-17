@@ -1,0 +1,33 @@
+{
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": false,
+    "action_mode": "text",
+    "timing": "action-stepped",
+    "native_truncation": false
+  },
+  "benchmark": "vgc",
+  "env_id": "gen9championsvgc2026regma",
+  "family": "vs-random",
+  "seed": 0,
+  "max_steps": null,
+  "initial_state_sha256": "PLACEHOLDER_INITIAL_STATE_SHA256_RUN_SCRIPTS_TASK_SEED_OR_COMPUTE_FINGERPRINT",
+  "observation_profile": "native-vector-v1",
+  "metric_spec": {
+    "primary": "win",
+    "reducer": "vgc_win_rate",
+    "reducer_version": "1.0.0",
+    "success_label": "native_battle_won"
+  },
+  "reg": "ma",
+  "team1": "TODO_REPLACE_WITH_FROZEN_TEAM1_TEXT",
+  "team2": "TODO_REPLACE_WITH_FROZEN_TEAM2_TEXT",
+  "opponent_policy": "random",
+  "engine_versions": {
+    "poke-env": "TODO_PIN_POKE_ENV_VERSION"
+  },
+  "engine_commit": "TODO_PIN_POKE_ENV_COMMIT",
+  "battle_format": "gen9championsvgc2026regma"
+}

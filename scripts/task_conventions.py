@@ -77,6 +77,7 @@ BENCHMARK_TABLE = [
     ("crafter-", "Crafter", "crafter"),
     ("textworld-", "TextWorld", "textworld"),
     ("minigrid-", "MiniGrid", "minigrid"),
+    ("vgc-", "VGC", "vgc"),
 ]
 BENCHMARKS = [(p, label) for p, label, _ in BENCHMARK_TABLE]   # (directory prefix, label): the first matching prefix wins
 # Modes (PROTOCOL §3): a benchmark ships any subset of the modes. A standard or realtime

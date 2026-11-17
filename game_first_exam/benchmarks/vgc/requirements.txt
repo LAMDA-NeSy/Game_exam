@@ -1,0 +1,6 @@
+# VGC adapter runtime dependencies. Pin to exact versions after a clean install
+# (pip freeze) for full reproducibility; the fork reference below must become a
+# pinned commit@sha256 before freezing the instance.
+numpy==1.26.4
+pillow==10.4.0
+poke-env @ git+https://github.com/cameronangliss/poke-env.git@vgc-bench

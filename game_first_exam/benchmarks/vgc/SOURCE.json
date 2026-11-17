@@ -1,0 +1,24 @@
+{
+  "benchmark": "vgc-bench",
+  "repository": "https://github.com/cameronangliss/vgc-bench",
+  "paper": "https://arxiv.org/abs/2506.10326",
+  "environment": {
+    "library": "poke-env",
+    "repository": "https://github.com/cameronangliss/poke-env",
+    "branch": "vgc-bench",
+    "commit": "TODO_PIN_POKE_ENV_COMMIT",
+    "modifications": "none"
+  },
+  "simulator": {
+    "library": "pokemon-showdown",
+    "repository": "https://github.com/smogon/pokemon-showdown",
+    "commit": "TODO_PIN_SHOWDOWN_COMMIT",
+    "modifications": "none"
+  },
+  "team_source": {
+    "repository": "https://github.com/cameronangliss/vgc-bench",
+    "path": "teams/reg_ma",
+    "license_note": "Team text files are redistributed research data; verify upstream license before publication."
+  },
+  "note": "Only the native battle environment (poke-env + Pokemon Showdown) is reused. VGC-Bench RL/BC training, LLM agent and evaluation tools are not migrated."
+}

@@ -1,0 +1,11 @@
+{
+  "image": "PLACEHOLDER_RUN_python_scripts_files_image.py_build_vgc-files_then_pin",
+  "source": "game_first_exam/benchmarks/vgc",
+  "files": {
+    "adapter.py": "",
+    "instance_schema.py": "",
+    "metric_rules.py": "",
+    "requirements.txt": "",
+    "SOURCE.json": ""
+  }
+}

@@ -22,8 +22,24 @@ def crafter_achievements(rows, complete):
             "crafter_score": score if complete else None}
 
 
+def vgc_win_rate(rows, complete):
+    """Win rate across a family of frozen battle instances (each a single episode)."""
+    if not rows:
+        return {"win_rate": None, "observed_win_rate": None, "wins": 0, "games": 0}
+    for row in rows:
+        win = row.get("native_metrics", {}).get("win")
+        if type(win) is not int or win not in (0, 1):
+            raise ValueError("invalid VGC win flag")
+    wins = sum(1 for row in rows if row["native_metrics"]["win"] == 1)
+    games = len(rows)
+    rate = wins / games
+    return {"wins": wins, "games": games, "observed_win_rate": rate,
+            "win_rate": rate if complete else None}
+
+
 REGISTRY = {("family_macro", "1.0.0"): family_macro,
-            ("crafter_achievements", "1.0.0"): crafter_achievements}
+            ("crafter_achievements", "1.0.0"): crafter_achievements,
+            ("vgc_win_rate", "1.0.0"): vgc_win_rate}
 
 
 def resolve(name, version):
