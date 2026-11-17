@@ -12,7 +12,8 @@
   },
   "simulator": {
     "library": "pokemon-showdown",
-    "repository": "https://github.com/smogon/pokemon-showdown",
+    "repository": "https://github.com/cameronangliss/pokemon-showdown",
+    "branch": "vgc-bench",
     "commit": "913da3602a3aa1db79f9fdc5d5222eaf8d39569d",
     "modifications": "none"
   },

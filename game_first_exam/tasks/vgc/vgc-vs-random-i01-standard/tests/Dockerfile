@@ -3,8 +3,8 @@ COPY test.sh instance.json /tests/
 COPY --from=ghcr.io/mll-lab-nu/efe:game-files-0.6.0@sha256:bfb708928954d5cc194a614ab772a65b1e56f381b49dfeb2227c3d609e5f2ecc /grade.py /tests/grade.py
 COPY --from=ghcr.io/mll-lab-nu/efe:game-files-0.6.0@sha256:bfb708928954d5cc194a614ab772a65b1e56f381b49dfeb2227c3d609e5f2ecc /reducers.py /tests/reducers.py
 COPY --from=ghcr.io/mll-lab-nu/efe:game-files-0.6.0@sha256:bfb708928954d5cc194a614ab772a65b1e56f381b49dfeb2227c3d609e5f2ecc /config_schema.py /tests/config_schema.py
-COPY --from=ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:dc627df46c11cc6bbc5d513b351cdc07be2d5f27ff4081195133901b827b066c /instance_schema.py /tests/instance_schema.py
-COPY --from=ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:dc627df46c11cc6bbc5d513b351cdc07be2d5f27ff4081195133901b827b066c /metric_rules.py /tests/metric_rules.py
+COPY --from=ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:756743b70f350ca403ef23c9ae235b00cd56907e129708ab773215dcbc443399 /instance_schema.py /tests/instance_schema.py
+COPY --from=ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:756743b70f350ca403ef23c9ae235b00cd56907e129708ab773215dcbc443399 /metric_rules.py /tests/metric_rules.py
 RUN chmod +x /tests/test.sh
 # resources (PROTOCOL §6) # rcb-monitor
 COPY --from=ghcr.io/mll-lab-nu/efe:monitor-0.5.0@sha256:ecc5f24f1516ca11711d7c2d3ac07c89f79cd9220812c1244498ec71e352402a /opt/rcb_monitor/rcb_limits.py /tests/rcb_limits.py
