@@ -3,4 +3,4 @@
 # pinned commit@sha256 before freezing the instance.
 numpy==1.26.4
 pillow==10.4.0
-poke-env @ git+https://github.com/cameronangliss/poke-env.git@vgc-bench
+poke-env @ git+https://github.com/cameronangliss/poke-env.git@379a04628e42b2a2c94790c0788204b652f7ae1b

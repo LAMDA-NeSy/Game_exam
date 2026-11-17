@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends git ca-certific
     && rm -rf /var/lib/apt/lists/*
 
 # Native poke-env fork (VGC doubles support) and pinned runtime deps.
-COPY --from=ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:PLACEHOLDER_VGC_FILES_DIGEST /requirements.txt /srv/requirements.txt
+COPY --from=ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:dc627df46c11cc6bbc5d513b351cdc07be2d5f27ff4081195133901b827b066c /requirements.txt /srv/requirements.txt
 RUN pip install --no-cache-dir -r /srv/requirements.txt
 
 # Pin the native Pokemon Showdown simulator to the vgc-bench submodule commit.
@@ -24,8 +24,8 @@ COPY --from=ghcr.io/mll-lab-nu/efe:game-files-0.6.0@sha256:bfb708928954d5cc194a6
 COPY --from=ghcr.io/mll-lab-nu/efe:game-files-0.6.0@sha256:bfb708928954d5cc194a614ab772a65b1e56f381b49dfeb2227c3d609e5f2ecc /contracts.py /srv/contracts.py
 COPY --from=ghcr.io/mll-lab-nu/efe:game-files-0.6.0@sha256:bfb708928954d5cc194a614ab772a65b1e56f381b49dfeb2227c3d609e5f2ecc /encoding.py /srv/encoding.py
 COPY --from=ghcr.io/mll-lab-nu/efe:game-files-0.6.0@sha256:bfb708928954d5cc194a614ab772a65b1e56f381b49dfeb2227c3d609e5f2ecc /recording.py /srv/recording.py
-COPY --from=ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:PLACEHOLDER_VGC_FILES_DIGEST /adapter.py /srv/adapter.py
-COPY --from=ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:PLACEHOLDER_VGC_FILES_DIGEST /instance_schema.py /srv/instance_schema.py
+COPY --from=ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:dc627df46c11cc6bbc5d513b351cdc07be2d5f27ff4081195133901b827b066c /adapter.py /srv/adapter.py
+COPY --from=ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:dc627df46c11cc6bbc5d513b351cdc07be2d5f27ff4081195133901b827b066c /instance_schema.py /srv/instance_schema.py
 COPY instance.json /srv/instance.json
 WORKDIR /srv
 # Start the native Showdown server on loopback, wait for it, then run the trusted

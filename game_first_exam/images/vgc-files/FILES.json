@@ -1,11 +1,11 @@
 {
-  "image": "PLACEHOLDER_RUN_python_scripts_files_image.py_build_vgc-files_then_pin",
-  "source": "game_first_exam/benchmarks/vgc",
-  "files": {
-    "adapter.py": "",
-    "instance_schema.py": "",
-    "metric_rules.py": "",
-    "requirements.txt": "",
-    "SOURCE.json": ""
-  }
+ "image": "ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:dc627df46c11cc6bbc5d513b351cdc07be2d5f27ff4081195133901b827b066c",
+ "source": "game_first_exam/benchmarks/vgc",
+ "files": {
+  "SOURCE.json": "4c54527b95ada594f4f01fa34b43d18c66565a74a27a200729d836300bbd721d",
+  "adapter.py": "232e57fa1bba7dc32ca7cae30c5b109857a17bdcf8817ba7b81477be86698a6a",
+  "instance_schema.py": "6728becf418817aa1b65ecea00a6dfb40505338b417db57da0a8773c6264b4f0",
+  "metric_rules.py": "4ed7df882cc22c79d19dd65036167fc212fb79060e0ead606d908d08286081cc",
+  "requirements.txt": "84e7ab16bfc365021d55ab8686f4c75cf13db937e0e760fa686a35f008ecdba1"
+ }
 }

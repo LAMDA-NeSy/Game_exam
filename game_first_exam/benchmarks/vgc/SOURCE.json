@@ -6,7 +6,8 @@
     "library": "poke-env",
     "repository": "https://github.com/cameronangliss/poke-env",
     "branch": "vgc-bench",
-    "commit": "TODO_PIN_POKE_ENV_COMMIT",
+    "commit": "379a04628e42b2a2c94790c0788204b652f7ae1b",
+    "version": "0.15.0",
     "modifications": "none"
   },
   "simulator": {

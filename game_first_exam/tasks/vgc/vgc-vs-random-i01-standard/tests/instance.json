@@ -13,7 +13,7 @@
   "family": "vs-random",
   "seed": 0,
   "max_steps": null,
-  "initial_state_sha256": "PLACEHOLDER_INITIAL_STATE_SHA256_RUN_SCRIPTS_TASK_SEED_OR_COMPUTE_FINGERPRINT",
+  "initial_state_sha256": "0cbbde64228b69076fa94cad59cf70d34a3bc52795048ad0d99598bbd0058f56",
   "observation_profile": "native-vector-v1",
   "metric_spec": {
     "primary": "win",
@@ -22,12 +22,12 @@
     "success_label": "native_battle_won"
   },
   "reg": "ma",
-  "team1": "TODO_REPLACE_WITH_FROZEN_TEAM1_TEXT",
-  "team2": "TODO_REPLACE_WITH_FROZEN_TEAM2_TEXT",
+  "team1": "Meganium @ Meganiumite\nAbility: Overgrow\nLevel: 50\nEVs: 21 HP / 32 SpA / 1 SpD / 12 Spe\nModest Nature\n- Solar Beam\n- Earth Power\n- Dazzling Gleam\n- Protect\n\nArchaludon @ White Herb\nAbility: Sturdy\nLevel: 50\nEVs: 2 HP / 32 SpA / 32 Spe\nTimid Nature\n- Flash Cannon\n- Electro Shot\n- Draco Meteor\n- Protect\n\nBasculegion (M) @ Choice Scarf\nAbility: Adaptability\nLevel: 50\nEVs: 1 HP / 32 Atk / 1 Def / 32 Spe\nJolly Nature\n- Wave Crash\n- Flip Turn\n- Last Respects\n- Aqua Jet\n\nMaushold-Four @ Focus Sash\nAbility: Technician\nLevel: 50\nEVs: 1 HP / 32 Atk / 1 SpD / 32 Spe\nJolly Nature\n- Population Bomb\n- Bite\n- Follow Me\n- Protect\n\nPolitoed @ Sitrus Berry\nAbility: Drizzle\nLevel: 50\nEVs: 32 HP / 15 Def / 19 SpD\nRelaxed Nature\n- Weather Ball\n- Icy Wind\n- Helping Hand\n- Protect\n\nTalonflame @ Lum Berry\nAbility: Gale Wings\nLevel: 50\nEVs: 1 Def / 32 SpA / 1 SpD / 32 Spe\nTimid Nature\n- Hurricane\n- Rain Dance\n- Tailwind\n- Quick Guard",
+  "team2": "Charizard @ Charizardite Y\nAbility: Blaze\nLevel: 50\nEVs: 20 HP / 14 Def / 21 SpA / 11 Spe\nModest Nature\n- Heat Wave\n- Solar Beam\n- Weather Ball\n- Protect\n\nWhimsicott @ Focus Sash\nAbility: Prankster\nLevel: 50\nEVs: 2 HP / 32 SpA / 32 Spe\nTimid Nature\n- Moonblast\n- Sunny Day\n- Encore\n- Tailwind\n\nGarchomp @ Yache Berry\nAbility: Rough Skin\nLevel: 50\nEVs: 2 HP / 32 Atk / 32 Spe\nJolly Nature\n- Earthquake\n- Dragon Claw\n- Rock Slide\n- Protect\n\nSneasler @ White Herb\nAbility: Unburden\nLevel: 50\nEVs: 2 HP / 32 Atk / 32 Spe\nAdamant Nature\n- Close Combat\n- Dire Claw\n- Rock Tomb\n- Protect\n\nMaushold-Four @ Chople Berry\nAbility: Friend Guard\nLevel: 50\nEVs: 24 HP / 9 Def / 1 SpD / 32 Spe\nJolly Nature\n- Super Fang\n- Taunt\n- Follow Me\n- Protect\n\nIncineroar @ Sitrus Berry\nAbility: Intimidate\nLevel: 50\nEVs: 32 HP / 5 Atk / 11 Def / 8 SpD / 10 Spe\nAdamant Nature\n- Flare Blitz\n- Darkest Lariat\n- Parting Shot\n- Fake Out",
   "opponent_policy": "random",
   "engine_versions": {
-    "poke-env": "TODO_PIN_POKE_ENV_VERSION"
+    "poke-env": "0.15.0"
   },
-  "engine_commit": "TODO_PIN_POKE_ENV_COMMIT",
+  "engine_commit": "379a04628e42b2a2c94790c0788204b652f7ae1b",
   "battle_format": "gen9championsvgc2026regma"
 }

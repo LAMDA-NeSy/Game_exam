@@ -37,9 +37,9 @@ FORMATS = {
 # Pin the poke-env fork and engine. Fill after a clean install (pip freeze / importlib.metadata).
 # Expected values are exact strings; see SOURCE.json for the upstream commit.
 ENGINE_VERSIONS = {
-    'poke-env': 'TODO_PIN_POKE_ENV_VERSION',
+    'poke-env': '0.15.0',
 }
-ENGINE_COMMIT = 'TODO_PIN_POKE_ENV_COMMIT'
+ENGINE_COMMIT = '379a04628e42b2a2c94790c0788204b652f7ae1b'
 
 
 def validate(value):
