@@ -1,0 +1,10 @@
+schema_version = "game-suite/2.1"
+version = "0.1.1"
+tier = "smoke"
+name = "games-chess-native-smoke-v0.1.1"
+files_images = ["connection-files", "game-files", "chess-files"]
+
+[[tasks]]
+name = "chess-match-i01-standard"
+benchmark = "chess"
+family = "standard-start"
