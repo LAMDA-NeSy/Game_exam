@@ -1,7 +1,7 @@
 schema_version = "game-suite/2.1"
-version = "0.1.1"
+version = "0.1.2"
 tier = "smoke"
-name = "games-chess-native-smoke-v0.1.1"
+name = "games-chess-native-smoke-v0.1.2"
 files_images = ["connection-files", "game-files", "chess-files"]
 
 [[tasks]]

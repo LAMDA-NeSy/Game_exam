@@ -21,7 +21,7 @@ Engineering smoke match against a deterministic legal-move policy. Difficulty re
 The frozen client route reaches a native White checkmate in 26 decisions and 51 board plies. The `solution/` directory is reserved for reference runs.
 
 ## Verification
-The isolated verifier checks the final result, decision counts, trace digest and black replies against the frozen policy.
+The isolated verifier replays the UCI trace from the standard position and checks the final result, decision counts, trace digest and black replies against the frozen policy.
 
 ## Resources
 Caps per container (PROTOCOL §6).

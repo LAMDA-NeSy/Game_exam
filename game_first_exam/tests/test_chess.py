@@ -43,9 +43,9 @@ class ChessIntegrationTests(unittest.TestCase):
         action = next(key for key, move in game.observe()['observation']['legal_moves'].items() if move == uci)
         return game.submit({'action': action, 'expected_step': game.steps, 'request_id': str(game.steps)})
 
-    def score(self, game, outcome, points, trace=True):
+    def score(self, game, outcome, points):
         self.assertEqual(game.final['metrics']['outcome'], outcome)
-        with patch.dict(os.environ, {'CHESS_VERIFY_TRACE': str(self.trace) if trace else ''}):
+        with patch.dict(os.environ, {'CHESS_VERIFY_TRACE': str(self.trace)}):
             result = grade(game.final, self.instance, validate_metrics)
         self.assertEqual(result['primary_score'], points)
         self.assertEqual(result['success'], float(outcome == 'win'))
@@ -113,7 +113,42 @@ class ChessIntegrationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'return'):
             grade(invalid, self.instance, validate_metrics)
 
-    def scripted(self, responses):
+    def test_verifier_rejects_consistent_digest_and_fen_chain_with_wrong_board(self):
+        game = self.open_game()
+        self.play(game, 'e2e4')
+        game.finalize('agent_finished')
+        first, second = [json.loads(line) for line in self.trace.read_bytes().splitlines()]
+        # The old verifier accepted this because it matched both sides of the FEN link.
+        first['fen_after'] = second['fen_before'] = first['fen_after'].replace(' b ', ' w ')
+        payload = b''.join((json.dumps(row) + '\n').encode() for row in (first, second))
+        self.trace.write_bytes(payload)
+        final = copy.deepcopy(game.final)
+        final['metrics']['trace_sha256'] = hashlib.sha256(payload).hexdigest()
+        with patch.dict(os.environ, {'CHESS_VERIFY_TRACE': str(self.trace)}):
+            with self.assertRaisesRegex(ValueError, 'board disagrees with replay'):
+                grade(final, self.instance, validate_metrics)
+
+    def test_verifier_rejects_win_on_unfinished_board(self):
+        self.instance['max_steps'] = 1
+        game = self.open_game()
+        with self.scripted('e7e5'):
+            self.play(game, 'e2e4')
+        first, _ = [json.loads(line) for line in self.trace.read_bytes().splitlines()]
+        first.update(terminated=True, rewards=[1, -1])
+        payload = (json.dumps(first) + '\n').encode()
+        self.trace.write_bytes(payload)
+        final = copy.deepcopy(game.final)
+        final.update(terminated=True, success=True, reason='native_terminated', end_source='native')
+        final['return'] = 1
+        final['metrics'].update(outcome='win', match_points=100, success=1, native_result='1-0',
+                                native_return=1, native_rewards=[1, -1], opponent_plies=0,
+                                total_board_plies=1, final_fen=first['fen_after'],
+                                trace_sha256=hashlib.sha256(payload).hexdigest())
+        with patch.dict(os.environ, {'CHESS_VERIFY_TRACE': str(self.trace)}):
+            with self.assertRaisesRegex(ValueError, 'termination disagrees with replay'):
+                grade(final, self.instance, validate_metrics)
+
+    def scripted(self, responses, target='adapter.choose'):
         """Use real AEC moves while forcing a terminal test fixture for Black."""
         remaining = iter(responses.split())
 
@@ -121,14 +156,16 @@ class ChessIntegrationTests(unittest.TestCase):
             response = next(remaining)
             return next(key for key, move in legal.items() if move == response)
 
-        return patch('adapter.choose', side_effect=policy)
+        return patch(target, side_effect=policy)
 
     def test_native_loss(self):
         game = self.open_game()
-        with self.scripted('e7e5 d8h4'):
+        with self.scripted('e7e5 d8h4') as black:
             self.play(game, 'f2f3')
             self.assertTrue(self.play(game, 'g2g4')['done'])
-        self.score(game, 'loss', 0, trace=False)
+            self.assertEqual(black.call_count, 2)
+        with self.scripted('e7e5 d8h4', 'metric_rules.choose'):
+            self.score(game, 'loss', 0)
         self.assertEqual(game.final['metrics']['total_board_plies'], 4)
 
     def test_native_win_on_last_decision(self):
@@ -141,7 +178,8 @@ class ChessIntegrationTests(unittest.TestCase):
         self.assertTrue(result['done'])
         self.assertTrue(game.final['budget_exhausted'])
         self.assertEqual(game.final['reason'], 'native_terminated')
-        self.score(game, 'win', 100, trace=False)
+        with self.scripted('e7e5 b8c6 g8f6', 'metric_rules.choose'):
+            self.score(game, 'win', 100)
 
     def test_native_draw(self):
         game = self.open_game()
@@ -150,7 +188,25 @@ class ChessIntegrationTests(unittest.TestCase):
                 result = self.play(game, uci)
         self.assertTrue(result['done'])
         self.assertEqual(game.final['metrics']['draw_reason'], 'threefold_repetition')
-        self.score(game, 'draw', 50, trace=False)
+        with self.scripted('g8f6 f6g8 g8f6', 'metric_rules.choose'):
+            self.score(game, 'draw', 50)
+
+    def test_stale_step_does_not_advance_and_timeout_is_unfinished(self):
+        game = self.open_game()
+        with patch('server.time.monotonic', return_value=100.0):
+            response = self.play(game, 'e2e4')
+        trace = self.trace.read_bytes()
+        next_action = next(iter(response['observation']['legal_moves']))
+        request = {'action': next_action, 'expected_step': 0, 'request_id': 'stale'}
+        with patch('server.time.monotonic', return_value=101.0):
+            with self.assertRaisesRegex(ValueError, 'stale expected_step'):
+                game.submit(request)
+        self.assertEqual(self.trace.read_bytes(), trace)
+        self.assertEqual(game.steps, 1)
+        with patch('server.time.monotonic', return_value=701.0):
+            self.assertTrue(game.observe()['done'])
+        self.assertEqual(game.final['reason'], 'time_limit')
+        self.score(game, 'unfinished', 0)
 
     def test_zero_decisions_are_unfinished(self):
         game = self.open_game()
