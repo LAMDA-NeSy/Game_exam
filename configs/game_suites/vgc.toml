@@ -1,0 +1,10 @@
+schema_version = "game-suite/2.1"
+version = "0.1.0"
+tier = "smoke"
+name = "games-vgc-native-smoke-v0.1.0"
+files_images = ["connection-files", "game-files", "vgc-files"]
+
+[[tasks]]
+name = "vgc-vs-random-i01-standard"
+benchmark = "vgc"
+family = "vs-random"

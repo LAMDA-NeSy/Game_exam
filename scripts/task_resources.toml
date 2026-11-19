@@ -21,3 +21,12 @@ match = "^minihack-.*-standard$"
 main = { cpus = 1, memory_gb = 1, pids = 256, disk_gb = 2 }
 sim = { cpus = 1, memory_gb = 1, pids = 128 }
 measured = "Initial CPU-only integration caps; measure during validation"
+
+# VGC runs the native Pokemon Showdown server (Node.js) plus the Python adapter in one sim.
+# The simulator must not be reachable by the agent except through the game protocol.
+
+[[cap]]
+match = "^vgc-.*-standard$"
+main = { cpus = 1, memory_gb = 1, pids = 256, disk_gb = 2 }
+sim = { cpus = 1, memory_gb = 2, pids = 128 }
+measured = "Initial CPU-only integration caps; Showdown Node + Python adapter share the sim"

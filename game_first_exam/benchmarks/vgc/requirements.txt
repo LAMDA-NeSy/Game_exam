@@ -1,0 +1,8 @@
+# VGC adapter runtime dependencies. poke-env 0.15.0 requires numpy>=2.0.2.
+# Pin all transitive deps exactly (pip freeze) after a clean install for full
+# reproducibility; the fork reference below is pinned to the vgc-bench commit.
+numpy==2.0.2
+pillow==10.4.0
+imageio==2.37.0
+imageio-ffmpeg==0.6.0
+poke-env @ git+https://github.com/cameronangliss/poke-env.git@379a04628e42b2a2c94790c0788204b652f7ae1b

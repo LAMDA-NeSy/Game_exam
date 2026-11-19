@@ -86,7 +86,10 @@ def stamp_tree(t: str, full: bool = False, check: bool = False) -> dict:
                     if check:
                         c["bad"] += 1
                         continue
-                    os.utime(p, ns=(st.st_atime_ns, want), follow_symlinks=False)
+                    try:
+                        os.utime(p, ns=(st.st_atime_ns, want), follow_symlinks=False)
+                    except NotImplementedError:  # Windows: os.utime has no follow_symlinks
+                        os.utime(p, ns=(st.st_atime_ns, want))
                     c["changed"] += 1
             except OSError as e:
                 c["err"] += 1
