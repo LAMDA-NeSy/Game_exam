@@ -13,7 +13,7 @@
   "family": "vs-random",
   "seed": 0,
   "max_steps": null,
-  "initial_state_sha256": "0cbbde64228b69076fa94cad59cf70d34a3bc52795048ad0d99598bbd0058f56",
+  "initial_state_sha256": "2978e83ffc44253fedc80a471f65fd6667ecd5632658b6caf8d14aa7f8dfd8df",
   "observation_profile": "native-vector-v1",
   "metric_spec": {
     "primary": "win",

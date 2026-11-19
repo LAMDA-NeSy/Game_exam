@@ -43,7 +43,5 @@ Caps per container (PROTOCOL §6).
 - Isolation: the Showdown server and the adapter run inside the `sim` container; the agent reaches the game only through the `server.py` HTTP protocol. Showdown must bind loopback only.
 
 ### Remaining before freeze
-- Build/push the `vgc-files` image (digest `dc627df4…` is computed; `scripts/files_image.py build` needs a running Docker daemon).
-- Verify the adapter's fork-specific touchpoints (see the `VERIFY` note in `adapter.py`): fixed-team construction, `SingleAgentWrapper` interface, joint-action encoding, won/lost access.
-- Strengthen `fingerprint()` to hash the parsed initial battle state (not just the frozen config) once poke-env is installed.
-- Fill `solution/` with a real winning reference trajectory (oracle).
+- Fill `solution/` with a real winning reference trajectory (oracle); the adapter, action grammar, observation and fingerprint are finalized.
+- Resolve the loopback binding: the Showdown server currently listens on `0.0.0.0:7200`; bind it to `127.0.0.1` inside the sim container so the agent cannot reach it over the compose network.

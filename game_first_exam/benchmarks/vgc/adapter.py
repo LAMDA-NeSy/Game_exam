@@ -7,21 +7,21 @@ opponent's reply in the same native turn.
 
 The agent sees only the serialized observation returned by `observe()`; the native
 battle object and the Showdown websocket stay inside the trusted sim.
-
-VERIFY (against the pinned poke-env fork, once it is installed): the DoublesEnv
-constructor accepts a fixed `team` string (not just a RandomTeamBuilder), the
-SingleAgentWrapper observation/action/reward surface, the joint-action encoding the
-native env expects, and how a finished battle reports won/lost. These are the only
-fork-specific touchpoints; the contract (spec/observe/step/success/metrics/fingerprint/
-frame/close) and the below serialization are already in final shape.
 """
 import importlib.metadata
+import re
+import textwrap
+
+import numpy as np
+from PIL import Image, ImageDraw
 
 from contracts import Capabilities, Transition
 from encoding import state_hash
 
-# One text action per turn: the joint doubles order (moves/switch/terastallize).
-ACTION_PATTERN = r"(?i)^(move|switch|terastallize)[^\r\n]{1,200}$"
+# One joint doubles action per turn: two space-separated native action indices
+# (each in [0, act_len)). The legal indices and their meanings are exposed in the
+# observation (`available_moves`, `available_switches`, `can_tera`).
+ACTION_PATTERN = r"^\d{1,3} \d{1,3}$"
 
 
 def _opponent_factory(policy):
@@ -44,6 +44,7 @@ class Adapter:
             if importlib.metadata.version(name) != version:
                 raise ValueError(f"engine version mismatch: {name}")
 
+        from gymnasium.spaces import Box
         from poke_env.environment import DoublesEnv, SingleAgentWrapper
         from poke_env.ps_client import ServerConfiguration
 
@@ -59,9 +60,21 @@ class Adapter:
             team=instance["team1"],
         )
         opponent_cls = _opponent_factory(instance["opponent_policy"])
-        opponent = opponent_cls(battle_format=instance["battle_format"], team=instance["team2"])
+        opponent = opponent_cls(
+            battle_format=instance["battle_format"],
+            team=instance["team2"],
+            server_configuration=server,
+        )
+        # poke-env's SingleAgentWrapper reads the PettingZoo-style dict that
+        # vgc-bench's ShowdownEnv adds on top of DoublesEnv; supply a real Box
+        # space for each agent (the adapter serves its own JSON observation).
+        env.observation_spaces = {
+            agent: Box(0, 1, shape=(1,), dtype=np.float32)
+            for agent in env.possible_agents
+        }
         self.env = SingleAgentWrapper(env, opponent)
         self.obs, self.info = self.env.reset(seed=instance["seed"])
+        self.battle = self.env.env.battle1
         self.return_ = 0.0
         self.steps = 0
         self.ended = False
@@ -70,7 +83,7 @@ class Adapter:
         return {
             "adapter_version": "1.0.0",
             "capabilities": Capabilities(images=False, action_mode="text", native_truncation=False).to_dict(),
-            "action_schema": {"type": "string", "max_length": 200, "pattern": ACTION_PATTERN},
+            "action_schema": {"type": "string", "max_length": 20, "pattern": ACTION_PATTERN},
             "observation": "native VGC battle state serialized as JSON; see instruction.md",
             "opponent": self.instance["opponent_policy"],
             "format": self.instance["battle_format"],
@@ -82,15 +95,18 @@ class Adapter:
     def step(self, action):
         if self.ended:
             raise ValueError("episode closed")
-        self.obs, reward, terminated, truncated, self.info = self.env.step(action)
+        parts = action.split()
+        if len(parts) != 2 or not all(p.isdigit() for p in parts):
+            raise ValueError("expected two space-separated action indices")
+        joint = np.array([int(parts[0]), int(parts[1])], dtype=np.int64)
+        self.obs, reward, terminated, truncated, self.info = self.env.step(joint)
         self.steps += 1
         self.return_ += float(reward)
         self.ended = bool(terminated or truncated)
         return Transition(float(reward), bool(terminated), bool(truncated))
 
     def success(self):
-        won = self.info.get("win") if isinstance(self.info, dict) else None
-        return bool(won if won is not None else getattr(self.env, "won", False))
+        return bool(self.battle.won)
 
     def metrics(self):
         win = int(self.success())
@@ -102,48 +118,93 @@ class Adapter:
         }
 
     def fingerprint(self):
-        # Deterministic initial state only: teams, ruleset and seed. The Showdown
-        # engine PRNG is deliberately excluded (it is not seedable from Python).
-        return state_hash({
-            "reg": self.instance["reg"],
-            "format": self.instance["battle_format"],
-            "team1": self.instance["team1"],
-            "team2": self.instance["team2"],
-            "opponent_policy": self.instance["opponent_policy"],
-            "seed": self.instance["seed"],
-        })
+        # Deterministic initial battle state: both teams' species, moves, items,
+        # abilities, types and tera types, plus turn/weather/fields. The Showdown
+        # engine PRNG (damage rolls, speed ties) is excluded; it only unfolds after
+        # the first action and is not seedable from Python.
+        return state_hash(self._battle_state())
 
     def frame(self):
-        return None
+        """Audit-video transcript of the battle state; not an added observation."""
+        state = self._state()
+
+        def pkmn(p):
+            if p is None:
+                return "?"
+            hp = f"{p['hp_fraction'] * 100:.0f}%" if p.get("hp_fraction") is not None else "?%"
+            status = f" [{p['status']}]" if p.get("status") else ""
+            item = p.get("item") or "no item"
+            moves = "/".join(p.get("moves") or []) or "no moves"
+            return f"{p['species']} {hp}{status} | {item} | {moves}"
+
+        lines = [f"VGC | {self.instance['battle_format']} | turn {state['turn']} | step {self.steps}"]
+        if state.get("won") is True:
+            lines.append("RESULT: WON")
+        elif state.get("lost") is True:
+            lines.append("RESULT: LOST")
+        if state.get("weather"):
+            lines.append("Weather: " + ", ".join(state["weather"]))
+        if state.get("fields"):
+            lines.append("Fields: " + ", ".join(state["fields"]))
+        lines += ["", "== YOUR ACTIVE =="] + [pkmn(p) for p in state["active"]]
+        lines += ["", "== OPPONENT ACTIVE =="] + [pkmn(p) for p in state["opponent_active"]]
+        lines += ["", "== YOUR TEAM =="] + [pkmn(p) for p in state["team"]]
+        lines += ["", "== OPPONENT TEAM =="] + [pkmn(p) for p in state["opponent_team"]]
+
+        text = re.sub(r"[^\x20-\x7e\n]", "?", "\n".join(lines))
+        canvas = Image.new("RGB", (960, 640), (245, 246, 248))
+        draw = ImageDraw.Draw(canvas)
+        wrapped = []
+        for line in text.splitlines():
+            wrapped.extend(textwrap.wrap(line, width=130) or [""])
+        draw.multiline_text((20, 18), "\n".join(wrapped[:46]), fill=(20, 25, 35), spacing=3)
+        return np.asarray(canvas)
 
     def close(self):
         self.env.close()
 
-    def _state(self):
-        """Player-visible battle state, serialized from the poke-env battle object.
+    # ------------------------------------------------------------------ serialization
 
-        Only the fields the agent is allowed to see are included (no hidden engine
-        state). Field access mirrors poke-env's DoubleBattle; the exact attribute
-        names are part of the fork verification above.
-        """
-        battle = getattr(self.env, "battle", self.env)
-        active = getattr(battle, "active_pokemon", [])
-        opponent_active = getattr(battle, "opponent_active_pokemon", [])
-
-        def pokemon(p):
-            return {
-                "species": getattr(p, "species", None),
-                "hp_fraction": getattr(p, "current_hp_fraction", None),
-                "status": str(getattr(p, "status", None)),
-                "ability": getattr(p, "ability", None),
-                "item": getattr(p, "item", None),
-                "moves": [m for m in getattr(p, "moves", {})],
-            }
-
+    def _pokemon(self, p):
+        if p is None:
+            return None
         return {
-            "active": [pokemon(p) for p in active],
-            "opponent_active": [pokemon(p) for p in opponent_active],
-            "team": {k: pokemon(p) for k, p in getattr(battle, "team", {}).items()},
-            "opponent_team": {k: pokemon(p) for k, p in getattr(battle, "opponent_team", {}).items()},
-            "weather": str(getattr(battle, "weather", None)),
+            "species": p.base_species,
+            "hp_fraction": round(float(p.current_hp_fraction), 4),
+            "status": p.status.name if p.status is not None else None,
+            "ability": p.ability,
+            "item": p.item,
+            "moves": sorted(m.id for m in p.moves.values()),
+            "types": sorted(t.name for t in p.types),
+            "tera_type": p.tera_type.name if p.tera_type is not None else None,
+            "fainted": bool(p.fainted),
         }
+
+    def _team(self, team):
+        states = [self._pokemon(p) for p in team.values() if p is not None]
+        return sorted(states, key=lambda s: s["species"])
+
+    def _battle_state(self):
+        b = self.battle
+        return {
+            "turn": int(b.turn),
+            "team": self._team(b.team),
+            "opponent_team": self._team(b.opponent_team),
+            "weather": sorted(w.name for w in b.weather),
+            "fields": sorted(f.name for f in b.fields),
+            "active": [self._pokemon(p) for p in b.active_pokemon],
+            "opponent_active": [self._pokemon(p) for p in b.opponent_active_pokemon],
+        }
+
+    def _state(self):
+        """Player-visible battle state plus the legal-action summary."""
+        b = self.battle
+        state = self._battle_state()
+        state["won"] = b.won
+        state["lost"] = b.lost
+        state["available_moves"] = [[m.id for m in moves] for moves in b.available_moves]
+        state["available_switches"] = [
+            [p.base_species for p in switches] for switches in b.available_switches
+        ]
+        state["can_tera"] = list(b.can_tera)
+        return state

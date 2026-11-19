@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends git ca-certific
     && rm -rf /var/lib/apt/lists/*
 
 # Native poke-env fork (VGC doubles support) and pinned runtime deps.
-COPY --from=ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:756743b70f350ca403ef23c9ae235b00cd56907e129708ab773215dcbc443399 /requirements.txt /srv/requirements.txt
+COPY --from=ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:fe8e66f2e8ccdc1539656c9152e2ce51aa510a28dfc7539e328c532e96856d74 /requirements.txt /srv/requirements.txt
 RUN pip install --no-cache-dir -r /srv/requirements.txt
 
 # Pin the native Pokemon Showdown simulator to the vgc-bench submodule commit.
@@ -16,6 +16,8 @@ RUN git clone --branch vgc-bench https://github.com/cameronangliss/pokemon-showd
     && git checkout 913da3602a3aa1db79f9fdc5d5222eaf8d39569d \
     && sed -i "s|prefix: '/showdown',|prefix: '/showdown', websocket: true,|" server/sockets.ts \
     && npm install --no-audit --no-fund
+# Undo the no-op `websocket: true` edit above: keep the fork source byte-identical.
+RUN sed -i "s|prefix: '/showdown', websocket: true,|prefix: '/showdown',|" /srv/pokemon-showdown/server/sockets.ts
 
 # Trusted game service and shared runtime files.
 COPY --from=ghcr.io/mll-lab-nu/efe:game-files-0.6.0@sha256:bfb708928954d5cc194a614ab772a65b1e56f381b49dfeb2227c3d609e5f2ecc /server.py /srv/server.py
@@ -24,8 +26,8 @@ COPY --from=ghcr.io/mll-lab-nu/efe:game-files-0.6.0@sha256:bfb708928954d5cc194a6
 COPY --from=ghcr.io/mll-lab-nu/efe:game-files-0.6.0@sha256:bfb708928954d5cc194a614ab772a65b1e56f381b49dfeb2227c3d609e5f2ecc /contracts.py /srv/contracts.py
 COPY --from=ghcr.io/mll-lab-nu/efe:game-files-0.6.0@sha256:bfb708928954d5cc194a614ab772a65b1e56f381b49dfeb2227c3d609e5f2ecc /encoding.py /srv/encoding.py
 COPY --from=ghcr.io/mll-lab-nu/efe:game-files-0.6.0@sha256:bfb708928954d5cc194a614ab772a65b1e56f381b49dfeb2227c3d609e5f2ecc /recording.py /srv/recording.py
-COPY --from=ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:756743b70f350ca403ef23c9ae235b00cd56907e129708ab773215dcbc443399 /adapter.py /srv/adapter.py
-COPY --from=ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:756743b70f350ca403ef23c9ae235b00cd56907e129708ab773215dcbc443399 /instance_schema.py /srv/instance_schema.py
+COPY --from=ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:fe8e66f2e8ccdc1539656c9152e2ce51aa510a28dfc7539e328c532e96856d74 /adapter.py /srv/adapter.py
+COPY --from=ghcr.io/mll-lab-nu/efe:vgc-files-0.1.0@sha256:fe8e66f2e8ccdc1539656c9152e2ce51aa510a28dfc7539e328c532e96856d74 /instance_schema.py /srv/instance_schema.py
 COPY instance.json /srv/instance.json
 WORKDIR /srv
 # Start the native Showdown server on loopback, wait for it, then run the trusted
