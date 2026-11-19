@@ -1,0 +1,10 @@
+{
+  "image": "ghcr.io/mll-lab-nu/efe:firewater-files-0.1.0@sha256:ab62600ad87d0847d601c5bce3be99243b6cd1d659234af944efded40395fa7a",
+  "source": "game_first_exam/benchmarks/firewater",
+  "files": {
+    "instance_schema.py": "0432b1c48b4f9ecd9839cfa85aa231e70c294b92ac2660ebf088fb11af5c7579",
+    "requirements.txt": "f7b63cd5e9d2d806613a620bb7340f27ce6735ba76c9d5a08f77d48e527d4733",
+    "adapter.py": "2834b4346b8c958ea21fb8e8768c9c9e1a9f7a20dbc6a13cfc06c0051d5aa0c5",
+    "metric_rules.py": "358a3350d3fc17a980f8d136789477ffbd01a0eab566188d19afd691d407fbd7"
+  }
+}

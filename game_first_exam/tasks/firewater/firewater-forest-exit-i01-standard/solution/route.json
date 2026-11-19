@@ -1,0 +1,17 @@
+[
+  {"section": "Cross the pools", "moves": [[18, "right/right"], [8, "right/jump_right"], [4, "right/right"], [6, "jump_right/right"], [3, "right/right"], [2, "jump_right/right"], [5, "jump_right/jump_right"], [1, "wait/jump_right"]]},
+  {"section": "Climb the right shelf", "moves": [[9, "wait/wait"], [3, "left/left"], [6, "jump_left/jump_left"]]},
+  {"section": "Jump over the green pool", "moves": [[3, "left/left"], [6, "jump_left/jump_left"], [22, "left/left"]]},
+  {"section": "Switch the lever", "moves": [[10, "left/left"]]},
+  {"section": "Board the yellow lift", "moves": [[1, "wait/wait"], [13, "jump_left/jump_left"], [3, "wait/wait"], [6, "jump_left/jump_left"], [13, "wait/wait"]]},
+  {"section": "Climb to the first plate", "moves": [[1, "wait/wait"], [7, "jump_right/jump_right"], [1, "right/right"]]},
+  {"section": "Watergirl boards the purple lift", "moves": [[5, "right/right"], [27, "wait/right"], [5, "wait/jump_right"]]},
+  {"section": "Raise Watergirl", "moves": [[1, "wait/wait"], [18, "right/wait"]]},
+  {"section": "Change pressure plates", "moves": [[1, "right/wait"], [6, "right/jump_left"], [1, "wait/jump_left"], [4, "wait/left"]]},
+  {"section": "Fireboy boards the lift", "moves": [[1, "wait/left"], [16, "wait/wait"], [7, "right/wait"], [3, "wait/wait"], [5, "jump_right/wait"]]},
+  {"section": "Raise Fireboy", "moves": [[1, "wait/wait"], [3, "wait/left"], [8, "wait/jump_left"], [1, "wait/left"], [6, "wait/wait"]]},
+  {"section": "Push the crate left", "moves": [[1, "wait/wait"], [5, "wait/left"], [1, "wait/wait"], [2, "wait/left"], [1, "wait/wait"], [5, "wait/left"], [1, "wait/wait"], [6, "wait/left"], [1, "wait/wait"], [7, "wait/left"], [10, "wait/right"], [11, "wait/left"], [7, "jump_left/left"], [7, "left/left"], [3, "jump_left/left"], [1, "wait/left"], [3, "jump_left/left"], [24, "left/left"]]},
+  {"section": "Climb the crate", "moves": [[1, "left/left"], [17, "jump_left/jump_left"], [3, "wait/wait"], [6, "jump_left/jump_left"]]},
+  {"section": "Jump to the top floor", "moves": [[9, "wait/wait"], [6, "right/right"], [12, "jump_right/jump_right"]]},
+  {"section": "Enter both matching exits", "moves": [[26, "right/right"], [1, "wait/right"], [3, "left/right"], [1, "wait/wait"], [3, "wait/left"], [20, "wait/wait"]]}
+]
