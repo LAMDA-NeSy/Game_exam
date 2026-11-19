@@ -72,6 +72,7 @@ TEXT_REPLACEMENTS = [  # (old, new), applied to task text files in order (a task
 # benchmark's game_first_exam/benchmarks/<folder>/; BENCHMARKS and BENCHMARK_DIRS below are views of this table, and
 # ci_checks/ci_scope.py --check holds its UNITS / FILES_IMAGE to it. A new benchmark adds one row here.
 BENCHMARK_TABLE = [
+    ("coinrun-", "CoinRun", "coinrun"),
     ("minihack-", "MiniHack", "minihack"),
     ("babaisai-", "Baba Is AI", "babaisai"),
     ("crafter-", "Crafter", "crafter"),

@@ -1,0 +1,11 @@
+{
+  "image": "ghcr.io/mll-lab-nu/efe:coinrun-files-0.1.1@sha256:42d222b4639cc284df962f2f8abb6dd987a8670c4ac3dbe5b60f6170930fecff",
+  "source": "game_first_exam/benchmarks/coinrun",
+  "files": {
+    "adapter.py": "709f1c551dd51f05801c5d6ca4c5545a3196792a82fe3f30cfc66f79db191cc6",
+    "instance_schema.py": "eb3ad994f193554d9352adef6d5b46dc00993eaf0b1ef3271a1d2db54cfff876",
+    "metric_rules.py": "b6863437982a87f524783a8f8840583939093dfdb8f1fb6dcb6aa1fb984ac481",
+    "requirements.txt": "bbb7c44c8c436a7db38da6d0539737e9921520f9906bf69836898059b55ee40e",
+    "SOURCE.json": "ea607b14aca17ad1248323726f12274842a1ed0c9f17199e078ce739c2f63cb7"
+  }
+}

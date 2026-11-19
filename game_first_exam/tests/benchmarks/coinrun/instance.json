@@ -1,0 +1,31 @@
+{
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "benchmark": "coinrun",
+  "env_id": "procgen-coinrun-v0",
+  "family": "coinrun-easy",
+  "seed": 0,
+  "max_steps": null,
+  "native_max_steps": 1000,
+  "initial_state_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "observation_profile": "native-rgb-64-v1",
+  "capabilities": {
+    "images": true,
+    "action_mode": "enum",
+    "timing": "action-stepped",
+    "native_truncation": false
+  },
+  "engine_versions": {
+    "procgen": "0.10.7",
+    "gym3": "0.3.3",
+    "numpy": "1.26.4"
+  },
+  "distribution_mode": "easy",
+  "metric_spec": {
+    "primary": "completion_score",
+    "reducer": "family_macro",
+    "reducer_version": "1.0.0",
+    "success_label": "native_level_complete"
+  }
+}

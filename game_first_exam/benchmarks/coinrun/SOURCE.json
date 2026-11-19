@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/openai/procgen",
+  "release": "0.10.7",
+  "distribution": "procgen-0.10.7-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+  "sha256": "4b594d14e42f0f2166e59a9e294477b906eb99c90c3343b570b7124cbc865f53",
+  "license": "MIT; bundled assets retain upstream ASSET_LICENSES.md",
+  "interface": "ProcgenGym3Env, single native episode, 64x64 RGB"
+}

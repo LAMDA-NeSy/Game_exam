@@ -1,0 +1,16 @@
+# Python 3.10, Linux x86_64. Native dynamics use the released Procgen wheel.
+cffi==1.17.1
+cloudpickle==3.1.2
+filelock==3.32.7
+glcontext==3.1.0
+glfw==1.12.0
+gym==0.26.2
+gym_notices==0.1.0
+procgen==0.10.7
+gym3==0.3.3
+moderngl==5.13.0
+numpy==1.26.4
+pillow==10.4.0
+imageio==2.19.5
+imageio-ffmpeg==0.3.0
+pycparser==3.11

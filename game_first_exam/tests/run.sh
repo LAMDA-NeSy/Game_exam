@@ -19,6 +19,10 @@ case "${1:-common}" in
     python3 game_first_exam/tests/test_minihack.py
     python3 game_first_exam/tests/test_game_modes_native.py
     ;;
+  coinrun)
+    python3 game_first_exam/tests/test_coinrun_native.py
+    python3 game_first_exam/tests/test_coinrun_contract.py
+    ;;
   minigrid|crafter|textworld|babaisai)
     export GAME_TEST_BENCHMARK="$1"
     python3 game_first_exam/tests/test_game_adapters.py
