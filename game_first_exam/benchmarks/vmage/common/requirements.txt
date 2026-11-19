@@ -1,0 +1,8 @@
+imageio==2.36.0
+imageio-ffmpeg==0.6.0
+numpy==2.2.4
+opencv-python==4.11.0.86
+pillow==10.4.0
+pygame==2.6.1
+scipy==1.15.1
+tqdm==4.67.1

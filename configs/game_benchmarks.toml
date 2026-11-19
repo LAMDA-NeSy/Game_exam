@@ -14,3 +14,33 @@ schema = "game_first_exam/benchmarks/babaisai/instance_schema.py"
 
 [benchmarks.minihack]
 schema = "game_first_exam/benchmarks/minihack/instance_schema.py"
+
+[benchmarks.vmage_race]
+schema = "game_first_exam/benchmarks/vmage/race/instance_schema.py"
+adapter = "game_first_exam/benchmarks/vmage/race/adapter.py"
+metric_rules = "game_first_exam/benchmarks/vmage/race/metric_rules.py"
+runtime_files = { "/srv/vmage_bridge.py" = "game_first_exam/benchmarks/vmage/common/vmage_bridge.py", "/srv/source_loader.py" = "game_first_exam/benchmarks/vmage/common/source_loader.py", "/srv/SOURCE.json" = "game_first_exam/benchmarks/vmage/common/SOURCE.json" }
+
+[benchmarks.vmage_flappybird]
+schema = "game_first_exam/benchmarks/vmage/flappybird/instance_schema.py"
+adapter = "game_first_exam/benchmarks/vmage/flappybird/adapter.py"
+metric_rules = "game_first_exam/benchmarks/vmage/flappybird/metric_rules.py"
+runtime_files = { "/srv/vmage_bridge.py" = "game_first_exam/benchmarks/vmage/common/vmage_bridge.py", "/srv/source_loader.py" = "game_first_exam/benchmarks/vmage/common/source_loader.py", "/srv/SOURCE.json" = "game_first_exam/benchmarks/vmage/common/SOURCE.json" }
+
+[benchmarks.vmage_pong]
+schema = "game_first_exam/benchmarks/vmage/pong/instance_schema.py"
+adapter = "game_first_exam/benchmarks/vmage/pong/adapter.py"
+metric_rules = "game_first_exam/benchmarks/vmage/pong/metric_rules.py"
+runtime_files = { "/srv/vmage_bridge.py" = "game_first_exam/benchmarks/vmage/common/vmage_bridge.py", "/srv/source_loader.py" = "game_first_exam/benchmarks/vmage/common/source_loader.py", "/srv/SOURCE.json" = "game_first_exam/benchmarks/vmage/common/SOURCE.json" }
+
+[benchmarks.vmage_supermario]
+schema = "game_first_exam/benchmarks/vmage/supermario/instance_schema.py"
+adapter = "game_first_exam/benchmarks/vmage/supermario/adapter.py"
+metric_rules = "game_first_exam/benchmarks/vmage/supermario/metric_rules.py"
+runtime_files = { "/srv/vmage_bridge.py" = "game_first_exam/benchmarks/vmage/common/vmage_bridge.py", "/srv/source_loader.py" = "game_first_exam/benchmarks/vmage/common/source_loader.py", "/srv/SOURCE.json" = "game_first_exam/benchmarks/vmage/common/SOURCE.json" }
+
+[benchmarks.vmage_tempestrun]
+schema = "game_first_exam/benchmarks/vmage/tempestrun/instance_schema.py"
+adapter = "game_first_exam/benchmarks/vmage/tempestrun/adapter.py"
+metric_rules = "game_first_exam/benchmarks/vmage/tempestrun/metric_rules.py"
+runtime_files = { "/srv/vmage_bridge.py" = "game_first_exam/benchmarks/vmage/common/vmage_bridge.py", "/srv/source_loader.py" = "game_first_exam/benchmarks/vmage/common/source_loader.py", "/srv/SOURCE.json" = "game_first_exam/benchmarks/vmage/common/SOURCE.json" }

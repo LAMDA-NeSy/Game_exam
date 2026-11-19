@@ -1,0 +1,65 @@
+{
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "benchmark": "vmage_tempestrun",
+  "env_id": "V-MAGE-TempestRun-L2-v2",
+  "family": "l02",
+  "seed": 0,
+  "max_steps": null,
+  "initial_state_sha256": "4de9656e6ae2565a28ed617ab60d40f83cc249beadebec981707b742e809d5f9",
+  "observation_profile": "vmage-rgb-h360-v1",
+  "capabilities": {
+    "images": true,
+    "action_mode": "enum",
+    "timing": "action-stepped",
+    "native_truncation": false
+  },
+  "metric_spec": {
+    "primary": "native_score",
+    "reducer": "family_macro",
+    "reducer_version": "1.0.0",
+    "success_label": "positive_score_auxiliary"
+  },
+  "archive_sha256": "1047daa50004003eb9848205e1c420679e51d54d9a38acd3155da4aa8680e919",
+  "dt": 0.033,
+  "engine_versions": {
+    "Pillow": "10.4.0",
+    "imageio": "2.36.0",
+    "numpy": "2.2.4",
+    "opencv-python": "4.11.0.86",
+    "pygame": "2.6.1",
+    "scipy": "1.15.1",
+    "tqdm": "4.67.1"
+  },
+  "fps": 30,
+  "frame_ledger": "pygame-base-capture-asymmetry-v1",
+  "frames_per_decision": 3,
+  "initialization": "native-init_run-step-None-dt0-v1",
+  "native_frame_limit": null,
+  "native_game": "tempestrun",
+  "native_level": 2,
+  "native_level_sha256": "5c89c899526d1baac1d55c0be14a338666abbf877ce9b78cf4dc162a55a68a95",
+  "native_settings_sha256": "b624c083d02f7c66d6100c143263ac08f0c18a9c2ae89a9c7fa978b98e1e6949",
+  "observation_size": [
+    480,
+    360
+  ],
+  "passive_action": "NONE",
+  "python_version": "3.10.12",
+  "sdl_version": "2.28.4",
+  "source_manifest_sha256": "c78f261627da52a3a64a8381c66ad678553e015482d6c815db645d6df4a6da4d",
+  "surface_size": [
+    1024,
+    768
+  ],
+  "upstream_commit": "95d5d4a445bb0b75cce765c93107d87f84613e4d",
+  "native_actions": [
+    "JUMP",
+    "LEFT",
+    "RIGHT",
+    "SLIDE",
+    "RISE",
+    "NONE"
+  ]
+}

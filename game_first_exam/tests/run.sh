@@ -8,10 +8,16 @@ case "${1:-common}" in
     python3 -m unittest discover -s game_first_exam/tests -p 'test_layout.py'
     python3 -m unittest discover -s game_first_exam/tests -p 'test_game_service.py'
     python3 -m unittest discover -s game_first_exam/tests -p 'test_game_configuration.py'
+    python3 -m unittest discover -s game_first_exam/tests -p 'test_game_registry.py'
+    python3 -m unittest discover -s game_first_exam/tests -p 'test_game_vmage_suites.py'
     python3 -m unittest discover -s game_first_exam/tests -p 'test_games_runner.py'
     python3 -m unittest discover -s game_first_exam/tests -p 'test_game_runtime.py'
     python3 -m unittest discover -s game_first_exam/tests -p 'test_game_connection.py'
     python3 -m unittest discover -s game_first_exam/tests -p 'test_game_modes.py'
+    ;;
+  vmage)
+    python3 game_first_exam/tests/test_vmage_native.py
+    python3 game_first_exam/tests/test_vmage_levels.py
     ;;
   minihack)
     export GAME_TEST_BENCHMARK=minihack
