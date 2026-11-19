@@ -1,0 +1,10 @@
+schema_version = "game-suite/2.1"
+version = "1.0.0"
+tier = "smoke"
+name = "games-firewater-minimal-v1.0.0"
+files_images = ["connection-files", "game-files", "firewater-files"]
+
+[[tasks]]
+name = "firewater-forest-exit-i01-standard"
+benchmark = "firewater"
+family = "forest-exit"

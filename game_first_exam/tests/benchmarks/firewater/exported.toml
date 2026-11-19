@@ -1,0 +1,7 @@
+[protocols]
+standard = ["game-standard/2.2"]
+
+[[tasks]]
+name = "firewater-forest-exit-i01-standard"
+source_task = "GameWorld-Forest-Temple-Level-1-Native-Exit"
+protocol = "game-standard/2.2"
