@@ -24,7 +24,7 @@ Game Exam 基于 [Embodied First Exam](https://github.com/mll-lab-nu/embodied-fi
 
 ## 已接入的游戏
 
-当前共有 **5 个 benchmark、42 个 standard 任务配置，另外有 1 个 privileged 和 1 个 realtime 配置，共 44 个任务目录**。同一原生任务的不同模式单独计数。
+当前共有 **5 个已发布冻结任务的 benchmark、42 个 standard 任务配置，另外有 1 个 privileged 和 1 个 realtime 配置，共 44 个任务目录**。同一原生任务的不同模式单独计数。此外，CoinRun 原生适配器与测试已接入，冻结任务和套件将在后续提交。
 
 | Benchmark | standard | 其他模式 | 主要内容 | 说明 |
 |---|---:|---|---|---|
@@ -33,6 +33,7 @@ Game Exam 基于 [Embodied First Exam](https://github.com/mll-lab-nu/embodied-fi
 | TextWorld | 9 | — | 文字探索、寻宝、烹饪 | 冻结 `.z8` 游戏，通过原生引擎执行 |
 | Baba Is AI | 2 | — | 移动文字、改变规则、解谜 | 基础关卡与复合关卡的最小 smoke 验证 |
 | MiniHack | 10 | 1 privileged | Room、River、导航、战斗、Quest、Boxoban | 原生 MiniHack/NLE 环境；Room 另有 privileged 版本 |
+| CoinRun | 0 | — | 视觉平台跳跃、障碍规避、金币收集 | 适配器与测试已接入；尚无冻结任务 |
 
 套件由 [configs/game_suites/](configs/game_suites/) 定义，可以重叠，数量不能直接相加：
 
@@ -51,6 +52,8 @@ Game Exam 基于 [Embodied First Exam](https://github.com/mll-lab-nu/embodied-fi
 `minihack-balrog` 包含 MazeWalk 9×9、MazeWalk 15×15、Corridor R3、CorridorBattle Dark、Quest Easy、Quest Medium、Boxoban Medium、Boxoban Hard。**使用相同原生环境名称不意味着与 BALROG 的 LLM 输入、prompt、agent、seed 和预算完全相同**，成绩不能直接当作 BALROG 排行榜成绩。
 
 每个游戏的原生版本、观测、冻结参数与已知差异，见对应 [benchmark README](game_first_exam/tasks/)；具体实例以任务的 `tests/instance.json`、`task.toml` 和 `instruction.md` 为准。
+
+CoinRun 的原生适配器、配置校验和原生等价性测试已接入；本次不发布冻结任务或套件。原生语义和终局图像约定见 [接入说明](game_first_exam/benchmarks/coinrun/README.md)。
 
 ## 安装与第一次运行
 

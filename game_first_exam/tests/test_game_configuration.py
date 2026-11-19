@@ -31,13 +31,17 @@ from test_games_runner import record, trial
 class ConfigTests(unittest.TestCase):
     def test_each_bundled_schema_works_without_repo_or_engine_packages(self):
         for benchmark, schema in schema_paths().items():
-            task = next(p for p in sorted((ROOT / 'game_first_exam/tasks' / benchmark).glob('*-standard')) if '-i00-' not in p.name)
+            tasks = [p for p in sorted((ROOT / 'game_first_exam/tasks' / benchmark).glob('*-standard'))
+                     if '-i00-' not in p.name]
+            instance_path = (tasks[0] / 'tests/instance.json' if tasks else
+                             ROOT / 'game_first_exam/tests/benchmarks' / benchmark / 'instance.json')
+            self.assertTrue(instance_path.is_file(), f'missing schema test instance for {benchmark}')
             with self.subTest(benchmark=benchmark), tempfile.TemporaryDirectory() as tmp:
                 out = Path(tmp)
                 for name in ('config_schema.py', 'reducers.py'):
                     shutil.copyfile(ROOT / 'game_first_exam/runtime' / name, out / name)
                 shutil.copyfile(schema, out / 'instance_schema.py')
-                shutil.copyfile(task / 'tests/instance.json', out / 'instance.json')
+                shutil.copyfile(instance_path, out / 'instance.json')
                 program = '''import json, sys
 sys.path.insert(0, '.')
 from config_schema import validate_instance
@@ -79,7 +83,7 @@ for bad in ({**x, 'benchmark': 'unregistered'}, {**x, 'schema_path': 'evil.py'},
             validate_instance(missing)
 
     def test_native_ci_and_runtime_dependency_locks_match(self):
-        for benchmark in ('minigrid', 'crafter', 'textworld', 'babaisai', 'minihack'):
+        for benchmark in ('minigrid', 'crafter', 'textworld', 'babaisai', 'minihack', 'coinrun'):
             filename = 'requirements-v2.txt' if benchmark == 'minigrid' else 'requirements.txt'
             runtime = ROOT / 'game_first_exam/benchmarks' / benchmark / filename
             lock = ROOT / 'game_first_exam/tests/envs/locks' / (benchmark + '.txt')
