@@ -19,8 +19,8 @@ The simulator build retrieves the pinned game from upstream. The game assets are
 
 | Browser gameplay | Native outcome | Paired moves | Harbor score |
 | --- | --- | ---: | ---: |
-| [Both characters reach their exits](demo/level-1-clear.mp4) | `level_completed` | 474 | 1 |
-| [Watergirl misses the first lava jump](demo/level-1-missed-jump.mp4) | `level_failed` | 38 | 0 |
+| [Both characters reach their exits](../../../docs/demos/firewater/level-1-clear.mp4) | `level_completed` | 474 | 1 |
+| [Watergirl misses the first lava jump](../../../docs/demos/firewater/level-1-missed-jump.mp4) | `level_failed` | 38 | 0 |
 
 Both Harbor runs returned valid results and zero environment errors. The success run collected all three red and four blue diamonds. The negative control delays Watergirl's first jump while Fireboy follows the reference opening. The clips were recorded separately in the browser. The Harbor recorder stopped before writing a playable MP4.
 
