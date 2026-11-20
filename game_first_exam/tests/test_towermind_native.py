@@ -1,4 +1,5 @@
 """Native equivalence and timing checks for the pinned TowerMind Linux player."""
+import json
 import socket
 from json import JSONDecodeError
 from pathlib import Path
@@ -20,6 +21,43 @@ from server import Game
 
 COMMANDS = [("0 0 6", NO_OP), ("-1.5 1.2 2", (-1.5, 1.2, 2))] * 6
 MAX_REFERENCE_DECISIONS = 4096
+
+
+def report_texture_transport(player, wrappers):
+    for args in ([], ["-force-glcore"], ["-force-vulkan"]):
+        label = args[0] if args else "default"
+        log_path = player.parent / f"diagnostic-{label}.log"
+        settings = EngineConfigurationChannel()
+        settings.set_configuration_parameters(target_frame_rate=-1, time_scale=20.0, capture_frame_rate=60)
+        try:
+            unity = UnityEnvironment(file_name=str(player), side_channels=[settings], timeout_wait=20,
+                                     additional_args=args + ["-logFile", str(log_path)], seed=42)
+            try:
+                bridge = load_gym_bridge()(unity, uint8_visual=True, allow_multiple_obs=True)
+                texture = bridge.reset()[1]
+                for channel, plane in enumerate(texture):
+                    bbox = np.argwhere(plane)
+                    span = (bbox.min(axis=0).tolist(), bbox.max(axis=0).tolist()) if len(bbox) else ()
+                    print(f"reference {label} channel {channel}: {len(bbox)} nonzero pixels, spans {span}")
+                header = np.flip(texture, axis=1).reshape(-1)[:8].tolist()
+                print(f"reference {label} decoded header byte codes: {header}")
+                for rotation in range(4):
+                    oriented = np.rot90(texture, rotation, axes=(1, 2))
+                    for mirrored, candidate in enumerate((oriented, oriented[:, :, ::-1])):
+                        try:
+                            result = wrappers.get_json_from_obs(candidate)
+                        except json.JSONDecodeError:
+                            continue
+                        if isinstance(result, dict) and "Level_Current_Health" in result:
+                            print(f"reference {label} decoded JSON, rotation={rotation * 90}, mirrored={bool(mirrored)}")
+            finally:
+                unity.close()
+        except Exception as error:
+            print(f"reference {label} transport probe failed: {type(error).__name__}")
+        if log_path.exists():
+            for line in log_path.read_text(encoding="utf-8", errors="replace").splitlines():
+                if line.startswith(("Renderer:", "Vendor:", "Version:", "GfxDevice:", "OpenGL", "Vulkan")):
+                    print(f"reference {label}: {line.strip()}")
 
 
 class TowerMindNative(unittest.TestCase):
@@ -44,6 +82,8 @@ class TowerMindNative(unittest.TestCase):
                     initial = env.reset()
                 except JSONDecodeError as error:
                     specs = [(spec.name, spec.shape) for spec in bridge.group_spec.observation_specs]
+                    unity.close()
+                    report_texture_transport(player, wrappers)
                     self.fail(
                         f"stock TowerMind LLM wrappers failed during reset before Game Exam: "
                         f"JSON offset {error.pos}, decoded length {len(error.doc)}, sensors {specs}"
@@ -61,7 +101,8 @@ class TowerMindNative(unittest.TestCase):
                         break
                 self.assertTrue(done, "expected a native ending within the reference decision cap")
             finally:
-                unity.close()
+                if unity._loaded:
+                    unity.close()
 
         adapter = Adapter(config)
         try:
