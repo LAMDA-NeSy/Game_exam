@@ -9,7 +9,7 @@ cleanup() {
 }
 docker network create --internal "$network" >/dev/null
 trap cleanup EXIT
-docker run -d --name "$sim" --network "$network" --network-alias sim \
+docker run -d --init --name "$sim" --network "$network" --network-alias sim \
   "${1:-game-tests:towermind}" >/dev/null
 if ! docker run --rm --network "$network" "${2:-game-tests:towermind-client}"; then
   docker inspect --format '{{.State.Status}} (exit {{.State.ExitCode}}), command {{json .Config.Cmd}}' "$sim"

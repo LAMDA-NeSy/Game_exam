@@ -64,14 +64,30 @@ def report_texture_transport(player, wrappers):
                 else:
                     print(f"reference {label} recorder: length {len(recorded)}, valid JSON")
                 expected = np.array([ord(char) % 256 for char in recorded] + [64], dtype=np.uint8)
-                actual = red[red != 0]
-                common = np.minimum(np.bincount(expected, minlength=256), np.bincount(actual, minlength=256)).sum()
                 header = expected[:12].tobytes()
-                print(f"reference {label} recorder byte overlap: {common}/{len(expected)}, actual nonzero {len(actual)}")
-                for name, plane in (("raw", red), ("vertical flip", red[::-1]),
-                                    ("horizontal flip", red[:, ::-1]), ("transpose", red.T)):
-                    stream = plane.ravel().tobytes()
-                    print(f"reference {label} {name}: native header index {stream.find(header)}")
+                values = np.arange(256) / 255.0
+                linear = np.where(values <= 0.04045, values / 12.92, ((values + 0.055) / 1.055) ** 2.4)
+                srgb = np.where(values <= 0.0031308, 12.92 * values, 1.055 * values ** (1 / 2.4) - 0.055)
+                for transfer, lut in (("identity", values), ("linear", linear), ("srgb", srgb)):
+                    decoded = np.round(lut * 255).astype(np.uint8)[red]
+                    actual = decoded[decoded != 0]
+                    common = np.minimum(np.bincount(expected, minlength=256), np.bincount(actual, minlength=256)).sum()
+                    print(f"reference {label} {transfer} byte overlap: {common}/{len(expected)}")
+                    for rotation in range(4):
+                        oriented = np.rot90(decoded, rotation)
+                        for mirrored, plane in enumerate((oriented, oriented[:, ::-1])):
+                            stream = plane.ravel().tobytes()
+                            circular = stream + stream
+                            start = circular.find(header)
+                            end = circular.find(b"@", start) if start >= 0 else -1
+                            if 0 <= start < len(stream) and 0 <= end - start < len(stream):
+                                try:
+                                    state = json.loads(circular[start:end])
+                                except (ValueError, UnicodeDecodeError):
+                                    continue
+                                if isinstance(state, dict) and "Level_Current_Health" in state:
+                                    print(f"reference {label} valid JSON with {transfer}, "
+                                          f"rotation={rotation * 90}, mirrored={bool(mirrored)}, offset={start}")
             finally:
                 unity.close()
         except Exception as error:
