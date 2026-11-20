@@ -1,0 +1,13 @@
+{
+  "image": "ghcr.io/mll-lab-nu/efe:towermind-files-0.1.0@sha256:1ae7467e975684e69252f8dc30b5f861ff7f8e98daffda9f827d4564a64cc8e8",
+  "source": "game_first_exam/benchmarks/towermind",
+  "files": {
+    "adapter.py": "9d2841610a00e0ce632021f51013f427950d178f77d2d76884ee2e9cb44db17c",
+    "instance_schema.py": "6103859ea8ce74a0bd6ee9c234e9eb58d912314bbb19b1b5aa89d9e5f96d065f",
+    "metric_rules.py": "8111b52f913a6fc7b893879ca9479f923aa813d301f5918a21fa0b10883671a3",
+    "native.py": "8f267cca75b08e90f56e354e20c4db9891030829add84c3e7ec6862a00c9c2ff",
+    "native_assets.py": "14116a2024bbfc2327fff6faa8b273e9fd4d794da399cb11616e962884a10a63",
+    "requirements.txt": "1dae4bbe8f73c36d8ef74c6b9fcd6eedc20a8a7ce239d8e247122ac01f54b43a",
+    "SOURCE.json": "f1cd82c5b88d0095c0d3087ed5a7c5f76f2a8160414b199793d24ea378dad989"
+  }
+}
