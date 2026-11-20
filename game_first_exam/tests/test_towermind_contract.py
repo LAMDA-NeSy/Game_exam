@@ -109,27 +109,36 @@ class TowerMindContract(unittest.TestCase):
                 env.reset()
             self.assertEqual(reset.call_count, 2)
 
-    def test_blank_startup_sensor_advances_one_native_no_op(self):
+    def test_invalid_startup_sensor_advances_one_native_no_op(self):
         from native import first_observation
 
-        env = Mock()
-        env.reset.side_effect = json.JSONDecodeError("Expecting value", "\x00" * 4, 0)
         frame = native_observation(20)
-        env.step.return_value = (frame, 0.0, False, {})
-        self.assertIs(first_observation(env), frame)
-        env.step.assert_called_once_with((0.0, 0.0, 6))
-        env.reset.assert_called_once_with()
+        for payload in ("\x00" * 4, "X" * 90):
+            with self.subTest(payload_length=len(payload)):
+                env = Mock()
+                env.reset.side_effect = json.JSONDecodeError("Expecting value", payload, 0)
+                env.step.return_value = (frame, 0.0, False, {})
+                self.assertIs(first_observation(env), frame)
+                env.step.assert_called_once_with((0.0, 0.0, 6))
+                env.reset.assert_called_once_with()
 
-    def test_startup_rejects_corrupt_data_and_never_skips_a_terminal_or_reward(self):
+    def test_startup_aborts_after_a_single_invalid_no_op(self):
         from native import first_observation
 
         env = Mock()
-        env.reset.side_effect = json.JSONDecodeError("Expecting value", "corrupt", 0)
-        with self.assertRaisesRegex(ValueError, "invalid nonempty JSON"):
+        env.reset.side_effect = json.JSONDecodeError("Expecting value", "X" * 90, 0)
+        env.step.side_effect = json.JSONDecodeError("Expecting value", "bad sensor", 0)
+        with self.assertRaisesRegex(ValueError, "reset: 90 characters.*no-op: 10 characters") as failure:
             first_observation(env)
-        env.step.assert_not_called()
+        self.assertNotIn("bad sensor", str(failure.exception))
+        env.step.assert_called_once_with((0.0, 0.0, 6))
+
+    def test_startup_never_skips_a_terminal_or_reward(self):
+        from native import first_observation
+
         for reward, done in ((-1.0, False), (0.0, True)):
             with self.subTest(reward=reward, done=done):
+                env = Mock()
                 env.reset.side_effect = json.JSONDecodeError("Expecting value", "", 0)
                 env.step.return_value = (native_observation(20), reward, done, {})
                 with self.assertRaisesRegex(ValueError, "startup decision ended"):

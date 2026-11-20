@@ -69,24 +69,25 @@ class LocalUnity(UnityEnvironment):
 def first_observation(env):
     try:
         return env.reset()
-    except JSONDecodeError as exc:
-        if exc.doc.strip("\x00 \t\r\n"):
+    except JSONDecodeError as reset_error:
+        # The player writes its JSON texture in FixedUpdate. A reset can yield a
+        # nonempty texture before that write. Action 6 is the native no-op.
+        try:
+            observation, reward, done, _ = env.step(NO_OP)
+        except JSONDecodeError as step_error:
             raise ValueError(
-                f"TowerMind reset returned invalid nonempty JSON ({len(exc.doc)} characters, offset {exc.pos})"
-            ) from exc
-
-    # The pinned player writes its JSON texture in FixedUpdate, after reset may
-    # already have returned. Action 6 is its native no-op. Advance at most one
-    # decision here, before any actions or grading are exposed to the client.
-    try:
-        observation, reward, done, _ = env.step(NO_OP)
-    except JSONDecodeError as exc:
-        raise ValueError(
-            f"TowerMind JSON is invalid after one no-op startup decision ({len(exc.doc)} characters, offset {exc.pos})"
-        ) from exc
+                "TowerMind JSON is invalid after one no-op startup decision "
+                f"(reset: {decode_error_summary(reset_error)}; no-op: {decode_error_summary(step_error)})"
+            ) from step_error
     if done or float(reward) != 0.0:
         raise ValueError("TowerMind startup decision ended the episode or changed its reward")
     return observation
+
+
+def decode_error_summary(error):
+    # Report byte-level markers to trusted logs without dumping the observation.
+    prefix = ",".join(str(ord(character)) for character in error.doc[:4]) or "none"
+    return f"{len(error.doc)} characters, offset {error.pos}, first character codes [{prefix}]"
 
 
 def open_native(player, wrappers_path, seed):
