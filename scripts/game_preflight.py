@@ -10,13 +10,13 @@ sys.path.insert(0, str(ROOT / 'game_first_exam/runtime'))
 import files_image
 import task_conventions as tc
 from config_schema import PROTOCOL, positive, validate_instance, validate_suite
-from game_schemas import load_schema, register_schemas, schema_paths
+from game_schemas import load_schema, metric_scope, register_schemas, schema_paths
 sys.path.insert(0, str(ROOT / 'game_first_exam/runtime/modes'))
 from mode_config import validate_mode
 
 
 def validate_task(row, task_path=None):
-    load_schema(row['benchmark'])
+    schema = load_schema(row['benchmark'])
     task = Path(task_path) if task_path is not None else tc.task_dir(row['name'])
     config = tomllib.loads((task / 'task.toml').read_text())
     instance = json.loads((task / 'tests/instance.json').read_text())
@@ -44,6 +44,16 @@ def validate_task(row, task_path=None):
         'tests/Dockerfile': {f'/tests/{name}.py': ROOT / f'game_first_exam/runtime/{name}.py'
             for name in ('grade', 'config_schema', 'reducers')},
     }
+    client = getattr(schema, 'STANDARD_CLIENT', None) if mode == 'standard' else None
+    if client:
+        agent_paths = paths['environment/Dockerfile']
+        agent_paths['/app/standard_game_client.py'] = agent_paths['/app/game_client.py']
+        agent_paths['/app/game_client.py'] = schema_paths()[row['benchmark']].with_name(client)
+    if client:
+        bench_root = schema_paths()[row['benchmark']].parent
+        paths['environment/Dockerfile']['/app/vizdoom_actions.py'] = bench_root / 'vizdoom_actions.py'
+        paths['environment/sim/Dockerfile']['/srv/vizdoom_actions.py'] = bench_root / 'vizdoom_actions.py'
+        paths['environment/sim/Dockerfile']['/srv/vizdoom_server.py'] = bench_root / 'vizdoom_server.py'
     paths['environment/sim/Dockerfile']['/srv/adapter.py'] = ROOT / f"game_first_exam/benchmarks/{row['benchmark']}/adapter.py"
     paths['tests/Dockerfile']['/tests/metric_rules.py'] = ROOT / f"game_first_exam/benchmarks/{row['benchmark']}/metric_rules.py"
     for file, prefix in [('environment/sim/Dockerfile', '/srv'), ('tests/Dockerfile', '/tests')]:
@@ -100,7 +110,7 @@ def preflight(suite):
     plans = {row['name']: validate_task(row) for row in suite['tasks']}
     metrics = {}
     for task, _, instance in plans.values():
-        previous = metrics.setdefault(instance['benchmark'], instance['metric_spec'])
+        previous = metrics.setdefault(metric_scope(instance), instance['metric_spec'])
         if previous != instance['metric_spec']:
             raise ValueError(f'{task.name}: incompatible metric definitions within benchmark')
     known_images = {p.parent.name: files_image.image(p.parent.name) for p in files_image.manifests()}

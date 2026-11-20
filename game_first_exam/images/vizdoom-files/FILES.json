@@ -1,0 +1,14 @@
+{
+  "image": "ghcr.io/mll-lab-nu/efe:vizdoom-files-1.2.1@sha256:d1b51e9104a736458752e9bd32fe760da8fe07bc865d7d0be9b8e98392dc96b3",
+  "source": "game_first_exam/benchmarks/vizdoom",
+  "files": {
+    "SOURCE.json": "285a2368880ebfd0d6bf0dcf994e3e6e0596d7b19c72044c4d6b9bf4ae44fc33",
+    "adapter.py": "e15fe458772c7a9c706bef2d9cf5664b086c9ad2d9223a1eb08b376d7210109f",
+    "instance_schema.py": "f1306690d713a0375b4bcf7d7e87fe46e8caf84edfeb3e4b42228c93544b0030",
+    "metric_rules.py": "d1af8420ecca256468152ae2ea5f2abd5b0623e0022a8f8984aa71b6d64c608e",
+    "requirements.txt": "baaf9c76dbdf5109c03fa2b409f7328b3da89e30b3d7ca5eea8bfe6e9d258a03",
+    "vizdoom_client.py": "1d798fa76081a779a38272dc2d06b9142f4c1b906a279dad708ddf83dae8301f",
+    "vizdoom_actions.py": "cfaaeae80acc53253c8bd0e07f9fb0db2f69c7cdbdaf465eaa2dc2f84615def5",
+    "vizdoom_server.py": "f135d7ab6277226e32e51c7e3f5e921a577a9869612a1b4a3d41769045cbc453"
+  }
+}

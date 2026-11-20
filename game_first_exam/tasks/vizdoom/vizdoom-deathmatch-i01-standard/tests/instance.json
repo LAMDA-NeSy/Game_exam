@@ -1,0 +1,60 @@
+{
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": true,
+    "action_mode": "text",
+    "timing": "action-stepped",
+    "native_truncation": true
+  },
+  "benchmark": "vizdoom",
+  "env_id": "ViZDoom/deathmatch",
+  "family": "deathmatch",
+  "seed": 2117382936,
+  "max_steps": null,
+  "observation_profile": "rgb-first-person-v1",
+  "metric_spec": {
+    "primary": "native_return",
+    "reducer": "family_macro",
+    "reducer_version": "1.0.0",
+    "success_label": "native_score_only"
+  },
+  "engine_versions": {
+    "vizdoom": "1.3.2",
+    "numpy": "2.5.5"
+  },
+  "engine_commit": "53d758a64f113ef3ef8f67bea5b4b717e51e1c0a",
+  "scenario_hashes": {
+    "freedoom2.wad": "a8772e088847032510d97ba2312406a6998f21cbab44d4ff10696faa9c0ecd4b",
+    "vizdoom.pk3": "24381138aede0ab03a4266f8fdd0225a1819658f004d37c9dc349e006b74f34e",
+    "scenarios/deathmatch.cfg": "ab2b1a71fecda7e156d43e015aec4e48a5141795c0c22777f654ea00ee75c407",
+    "scenarios/deathmatch.wad": "1d06c2113f2c1546062635ad599f49cd852287a08b7b07b26d30b8f4c362a42d"
+  },
+  "start_tic": 1,
+  "timeout_tics": 4200,
+  "tics_per_decision": 1,
+  "buttons": [
+    "ATTACK",
+    "SPEED",
+    "STRAFE",
+    "MOVE_RIGHT",
+    "MOVE_LEFT",
+    "MOVE_BACKWARD",
+    "MOVE_FORWARD",
+    "TURN_RIGHT",
+    "TURN_LEFT",
+    "SELECT_WEAPON1",
+    "SELECT_WEAPON2",
+    "SELECT_WEAPON3",
+    "SELECT_WEAPON4",
+    "SELECT_WEAPON5",
+    "SELECT_WEAPON6",
+    "SELECT_NEXT_WEAPON",
+    "SELECT_PREV_WEAPON",
+    "LOOK_UP_DOWN_DELTA",
+    "TURN_LEFT_RIGHT_DELTA",
+    "MOVE_LEFT_RIGHT_DELTA"
+  ],
+  "initial_state_sha256": "96123e2d7c07cda55d22fa91b69ddb1c04e496f848b0a7b78b4fc50148218fa4"
+}

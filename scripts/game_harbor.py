@@ -6,7 +6,7 @@ from pathlib import Path
 from game_preflight import validate_task
 from game_reports import write_harbor_report
 from game_runtime import RuntimeCapture, report_code_metadata, runner_metadata, validate_report_code
-from game_schemas import register_schemas
+from game_schemas import metric_scope, register_schemas
 
 
 class GameRecords:
@@ -41,7 +41,7 @@ class GameRecords:
             if len(modes) > 1:
                 raise ValueError("game reports require one execution mode; select --standard, --privileged or --realtime")
             instance = json.loads((task / "tests/instance.json").read_text())
-            previous = metrics.setdefault(instance["benchmark"], instance["metric_spec"])
+            previous = metrics.setdefault(metric_scope(instance), instance["metric_spec"])
             if previous != instance["metric_spec"]:
                 raise ValueError("incompatible metric definitions within benchmark")
             validate_task(
