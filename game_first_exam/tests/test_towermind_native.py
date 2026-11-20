@@ -1,89 +1,110 @@
 """Native equivalence and timing checks for the pinned TowerMind Linux player."""
 import socket
+from json import JSONDecodeError
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import time
 import unittest
 
 import numpy as np
+from mlagents_envs.environment import UnityEnvironment
+from mlagents_envs.side_channel.engine_configuration_channel import EngineConfigurationChannel
 
 from towermind_fixture import instance
 from adapter import Adapter, NATIVE_ASSETS
-from native import NO_OP, RPC_PORT, open_native
+from native import NO_OP, RPC_PORT, load_gym_bridge, load_source
 from native_assets import prepare_game
 from metric_rules import validate_metrics
 from server import Game
 
 
 COMMANDS = [("0 0 6", NO_OP), ("-1.5 1.2 2", (-1.5, 1.2, 2))] * 6
+MAX_REFERENCE_DECISIONS = 4096
 
 
 class TowerMindNative(unittest.TestCase):
-    def test_native_trajectory_and_idle_intervals(self):
+    def test_01_upstream_reference_matches_the_adapter_through_termination(self):
         config = instance()
         with TemporaryDirectory() as workspace:
-            player, _ = prepare_game(NATIVE_ASSETS, Path(workspace), config)
-            env, initial = open_native(player, NATIVE_ASSETS / "wrappers.py", config["seed"])
+            player = prepare_game(NATIVE_ASSETS, Path(workspace), config)
+            # Run the official LLM example's Gym sequence without a model.
+            # This reference uses plain UnityEnvironment and both stock wrappers.
+            wrappers = load_source("_towermind_reference_wrappers", NATIVE_ASSETS / "wrappers.py")
+            settings = EngineConfigurationChannel()
+            settings.set_configuration_parameters(target_frame_rate=-1, time_scale=20.0, capture_frame_rate=60)
+            unity = UnityEnvironment(file_name=str(player), side_channels=[settings],
+                                     timeout_wait=60, log_folder=str(player.parent))
             try:
-                self.assertEqual(set(initial), {"image"})
-                with self.assertRaisesRegex(RuntimeError, "one episode"):
-                    env.reset()
-                with socket.create_connection(("127.0.0.1", RPC_PORT), timeout=2):
-                    pass
+                bridge = load_gym_bridge()(unity, uint8_visual=True, allow_multiple_obs=True)
+                observations = wrappers.TowerMindMultiModalObsWrapper(
+                    bridge, use_image=True, use_text=True, use_state=False
+                )
+                env = wrappers.TowerMindActionMappingWrapper(observations)
+                try:
+                    initial = env.reset()
+                except JSONDecodeError as error:
+                    specs = [(spec.name, spec.shape) for spec in bridge.group_spec.observation_specs]
+                    self.fail(
+                        f"stock TowerMind LLM wrappers failed during reset before Game Exam: "
+                        f"JSON offset {error.pos}, decoded length {len(error.doc)}, sensors {specs}"
+                    )
+                self.assertEqual(set(initial), {"image", "text"})
                 expected = []
-                for _, action in COMMANDS:
+                for index in range(MAX_REFERENCE_DECISIONS):
+                    command, action = COMMANDS[index] if index < len(COMMANDS) else ("0 0 6", NO_OP)
                     observation, reward, done, info = env.step(action)
                     interrupted = info["step"].interrupted[0] if done else False
-                    self.assertEqual(set(observation), {"image"})
-                    expected.append((float(reward), bool(done), bool(interrupted)))
-                    self.assertFalse(done)
+                    status = observation["text"]
+                    expected.append((command, float(reward), bool(done), bool(interrupted),
+                                     status["Level_Current_Health"], status["Agent_Last_Action_Info"]))
+                    if done:
+                        break
+                self.assertTrue(done, "expected a native ending within the reference decision cap")
             finally:
-                env.close()
+                unity.close()
 
         adapter = Adapter(config)
         try:
+            with socket.create_connection(("127.0.0.1", RPC_PORT), timeout=2):
+                pass
             initial_frame = initial["image"]
             if initial_frame.shape == (3, 512, 512):
                 initial_frame = initial_frame.transpose(1, 2, 0)
             self.assertEqual(adapter.frame().shape, initial_frame.shape)
             self.assertEqual(adapter.frame().dtype, np.uint8)
             self.assertGreater(np.ptp(adapter.frame()), 0, "expected a rendered player camera")
-            for index, ((command, _), item) in enumerate(zip(COMMANDS, expected)):
-                before = adapter.fingerprint()
-                adapter.spec()
-                adapter.observe()
-                adapter.frame()
-                if index in (1, 5):
+            reference_return = 0.0
+            counted = invalid = 0
+            for index, (command, reward, done, interrupted, health, outcome) in enumerate(expected):
+                if index in (0, 1, 5):
+                    before = adapter.fingerprint()
+                    adapter.spec()
+                    adapter.observe()
+                    adapter.frame()
                     time.sleep(1)
                     adapter.observe()
-                self.assertEqual(adapter.fingerprint(), before)
+                    self.assertEqual(adapter.fingerprint(), before)
                 transition = adapter.step(command)
                 self.assertEqual(
-                    (transition.reward, transition.terminated or transition.truncated, transition.truncated),
-                    item,
+                    (transition.reward, transition.terminated, transition.truncated),
+                    (reward, done and not interrupted, interrupted),
+                    f"decision {index + 1}",
                 )
-        finally:
-            adapter.close()
-
-    def test_native_terminal_uses_first_episode(self):
-        config = instance()
-        adapter = Adapter(config)
-        try:
-            for _ in range(4096):
-                transition = adapter.step("0 0 6")
-                if transition.terminated or transition.truncated:
-                    break
-            self.assertTrue(transition.terminated, "expected a native ending in development level 0")
+                reference_return += reward
+                if outcome["Action_Index"] != 6:
+                    counted += 1
+                    invalid += int(outcome["Error_Code"] > 0)
             metrics = adapter.metrics()
-            self.assertEqual(metrics["native_action_feedback_events"], 0)
-            self.assertEqual(metrics["native_return"], metrics["base_health"] - metrics["initial_base_health"])
-            self.assertEqual(adapter.success(), metrics["base_health"] > 0)
+            self.assertEqual(metrics["native_return"], reference_return)
+            self.assertEqual(metrics["base_health"], health)
+            self.assertEqual(metrics["native_counted_actions"], counted)
+            self.assertEqual(metrics["native_invalid_actions"], invalid)
             with self.assertRaisesRegex(ValueError, "episode closed"):
                 adapter.step("0 0 6")
         finally:
             adapter.close()
 
-    def test_public_service_stops_without_awarding_completion(self):
+    def test_public_service_keeps_native_result_on_a_budget_stop(self):
         config = instance()
         config["max_steps"] = 1
         adapter = Adapter(config)

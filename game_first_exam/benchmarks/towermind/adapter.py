@@ -11,7 +11,7 @@ import numpy as np
 from config_schema import validate_instance
 from contracts import Transition
 from encoding import png, state_hash
-from instance_schema import CAPABILITIES, DECISION_PERIOD, REWARD_TOLERANCE, REWARD_UNITS_PER_BREACH
+from instance_schema import CAPABILITIES
 from native_assets import prepare_game
 
 
@@ -45,12 +45,11 @@ class Adapter:
         self._env = None
         self._decisions = 0
         self._return = 0.0
-        self._action_feedback_events = 0
+        self._counted_actions = self._invalid_actions = 0
         self._terminated = self._truncated = False
         source = NATIVE_ASSETS if assets is None or not (assets / "linux.zip").is_file() else assets
         try:
-            player, self._initial_health = prepare_game(source, Path(self._workspace.name), instance)
-            self._health = self._initial_health
+            player = prepare_game(source, Path(self._workspace.name), instance)
             self._env, observation = open_native(player, source / "wrappers.py", instance["seed"])
             self._cache(observation)
         except Exception:
@@ -58,6 +57,9 @@ class Adapter:
             raise
 
     def _cache(self, observation):
+        health = observation["text"]["Level_Current_Health"]
+        if type(health) is not int or health < 0:
+            raise ValueError("invalid native TowerMind base health")
         image = observation["image"]
         if image.shape == (3, 512, 512):
             image = np.moveaxis(image, 0, -1)
@@ -67,6 +69,7 @@ class Adapter:
         self._image.flags.writeable = False
         self._frame_sha256 = sha256(self._image).hexdigest()
         self._public_png = png(self._image)
+        self._native_text = observation["text"]
 
     def spec(self):
         return {
@@ -85,21 +88,17 @@ class Adapter:
             raise ValueError("episode closed")
         observation, reward, done, info = self._env.step(parse_action(action))
         reward = float(reward)
-        if not math.isfinite(reward) or reward > 0:
+        if not math.isfinite(reward):
             raise ValueError("invalid native TowerMind reward")
-        # The pinned sparse mode charges 1 per breach and 0.005 per action
-        # outcome. Each physics tick can process at most one tracked action.
-        units = round(-reward * REWARD_UNITS_PER_BREACH)
-        breaches, feedback = divmod(units, REWARD_UNITS_PER_BREACH)
-        if (
-            breaches > self._health
-            or feedback > DECISION_PERIOD
-            or not math.isclose(-reward, units / REWARD_UNITS_PER_BREACH, rel_tol=0, abs_tol=REWARD_TOLERANCE)
-        ):
-            raise ValueError("unexpected native TowerMind reward increment")
+        outcome = observation["text"]["Agent_Last_Action_Info"]
+        action_type, error_code = outcome["Action_Index"], outcome["Error_Code"]
+        if type(action_type) is not int or not 0 <= action_type <= 11 or type(error_code) is not int:
+            raise ValueError("invalid native TowerMind action feedback")
         self._cache(observation)
-        self._health -= breaches
-        self._action_feedback_events += feedback
+        # Match the upstream LLM example's counters for reported actions.
+        if action_type != 6:
+            self._counted_actions += 1
+            self._invalid_actions += int(error_code > 0)
         interrupted = bool(info["step"].interrupted[0]) if done else False
         self._terminated = bool(done and not interrupted)
         self._truncated = interrupted
@@ -108,17 +107,16 @@ class Adapter:
         return Transition(reward, self._terminated, self._truncated)
 
     def success(self):
-        # The native level ends when the base is destroyed or all attackers are resolved.
-        return self._terminated and self._health > 0
+        # Compatibility flag for the shared service's native outcome record.
+        return self._terminated and self._native_text["Level_Current_Health"] > 0
 
     def metrics(self):
         return {
-            "native_success": int(self.success()),
             "native_return": self._return,
-            "initial_base_health": self._initial_health,
-            "base_health": self._health,
+            "base_health": self._native_text["Level_Current_Health"],
             "native_decisions": self._decisions,
-            "native_action_feedback_events": self._action_feedback_events,
+            "native_counted_actions": self._counted_actions,
+            "native_invalid_actions": self._invalid_actions,
         }
 
     def fingerprint(self):
@@ -127,6 +125,7 @@ class Adapter:
             "archive": self.instance["engine_archive_sha256"],
             "level": self.instance["level_id"], "seed": self.instance["seed"],
             "frame_sha256": self._frame_sha256, "decisions": self._decisions, "return": self._return,
+            "text": self._native_text,
             "terminated": self._terminated, "truncated": self._truncated,
         })
 

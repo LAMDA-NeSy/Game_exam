@@ -25,7 +25,7 @@ def instance():
         "engine_archive_sha256": instance_schema.ARCHIVE_SHA256,
         "observation_profile": "player-rgb-v1",
         "metric_spec": {
-            "primary": "native_success", "success_label": "native_level_completed",
+            "primary": "native_return", "success_label": "native_level_completed",
             "reducer": "family_macro", "reducer_version": "1.0.0",
         },
     }

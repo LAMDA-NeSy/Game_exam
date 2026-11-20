@@ -2,6 +2,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from importlib.metadata import distribution
 from importlib.util import module_from_spec, spec_from_file_location
+from json import JSONDecodeError
 
 import grpc
 from mlagents_envs.environment import UnityEnvironment
@@ -65,25 +66,32 @@ class LocalUnity(UnityEnvironment):
         return super().reset()
 
 
-def player_camera(gym, wrappers):
-    # The Gym bridge lists visual sensors in specification order, followed by
-    # the vector observation. Select the player camera even if Unity still
-    # registers its separate text texture in pixel-only mode.
+def multimodal_observations(gym, wrappers):
+    # The stock wrapper expects the camera followed by the text texture.
+    # The Gym bridge returns visual sensors in the order announced by Unity.
     visual = [spec for spec in gym.group_spec.observation_specs if len(spec.shape) == 3]
     cameras = [
         index for index, spec in enumerate(visual)
         if spec.name == "CameraSensor" and spec.shape in ((512, 512, 3), (3, 512, 512))
     ]
-    if len(cameras) != 1:
-        specs = [(spec.name, spec.shape) for spec in visual]
-        raise ValueError(f"expected exactly one native 512x512 RGB CameraSensor, got {specs}")
+    text_sensors = [index for index, spec in enumerate(visual) if spec.name == "RenderTextureSensor"]
+    specs = [(spec.name, spec.shape) for spec in visual]
+    if len(cameras) != 1 or len(text_sensors) != 1:
+        raise ValueError(f"expected one native RGB camera and one text texture, got {specs}")
     camera, = cameras
+    text, = text_sensors
 
-    class PlayerCamera(wrappers.TowerMindMultiModalObsWrapper):
+    class NativeObservations(wrappers.TowerMindMultiModalObsWrapper):
         def _convert_obs(self, observation):
-            return super()._convert_obs([observation[camera]])
+            try:
+                return super()._convert_obs([observation[camera], observation[text]])
+            except JSONDecodeError as error:
+                raise ValueError(
+                    f"TowerMind text texture is not valid JSON at offset {error.pos}, "
+                    f"decoded length {len(error.doc)}, native sensors {specs}"
+                ) from None
 
-    return PlayerCamera(gym, use_image=True, use_text=False, use_state=False)
+    return NativeObservations(gym, use_image=True, use_text=True, use_state=False)
 
 
 def open_native(player, wrappers_path, seed):
@@ -98,7 +106,7 @@ def open_native(player, wrappers_path, seed):
     )
     try:
         gym = gym_wrapper(unity, uint8_visual=True, allow_multiple_obs=True)
-        env = wrappers.TowerMindActionMappingWrapper(player_camera(gym, wrappers))
+        env = wrappers.TowerMindActionMappingWrapper(multimodal_observations(gym, wrappers))
         # UnityToGymWrapper resets during its constructor to inspect agent slots.
         # TowerMind's example then resets the wrapped environment to obtain the
         # playable observation.
