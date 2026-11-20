@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/Max-We/Tetris-Gymnasium",
+  "commit": "b09ac36b55a532f030a3b71f90e2c94fb14f26b5",
+  "release": "0.2.1",
+  "distribution": "tetris_gymnasium-0.2.1-py3-none-any.whl",
+  "sha256": "e7a154c58cdc14abd02b3f97dbf2e3806c362d12bbfc6e18c078b7bad55c0dc6",
+  "license": "MIT",
+  "interface": "Gymnasium reset/step with the upstream RgbObservation wrapper"
+}
