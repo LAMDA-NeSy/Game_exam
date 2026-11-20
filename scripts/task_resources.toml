@@ -21,3 +21,17 @@ match = "^minihack-.*-standard$"
 main = { cpus = 1, memory_gb = 1, pids = 256, disk_gb = 2 }
 sim = { cpus = 1, memory_gb = 1, pids = 128 }
 measured = "Initial CPU-only integration caps; measure during validation"
+
+# V-MAGE native games retain independent original scores and run on CPU.
+[[cap]]
+match = "^vmage-(race|flappybird|pong|supermario|tempestrun)-.*-standard$"
+main = { cpus = 1, memory_gb = 1, pids = 256, disk_gb = 2 }
+sim = { cpus = 1, memory_gb = 1, pids = 128 }
+measured = "Initial CPU-only integration caps; full-budget resource measurement pending"
+
+# Tempest can accumulate many image-bearing deduplicated responses during a long live episode.
+[[cap]]
+match = "^vmage-tempestrun-.*-standard$"
+main = { cpus = 1, memory_gb = 1, pids = 256, disk_gb = 2 }
+sim = { cpus = 1, memory_gb = 2, pids = 128 }
+measured = "Provisional response-cache allowance; full-budget resource measurement pending"

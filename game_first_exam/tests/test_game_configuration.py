@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import json
 from pathlib import Path
 from unittest.mock import patch
 
@@ -21,6 +22,7 @@ from contracts import Transition
 from encoding import state_hash
 from game_preflight import preflight
 from game_schemas import schema_paths
+import task_conventions as tc
 from grade import grade
 from run_games import aggregate
 from server import EnvironmentFault, Game, InvalidAction
@@ -31,7 +33,8 @@ from test_games_runner import record, trial
 class ConfigTests(unittest.TestCase):
     def test_each_bundled_schema_works_without_repo_or_engine_packages(self):
         for benchmark, schema in schema_paths().items():
-            task = next(p for p in sorted((ROOT / 'game_first_exam/tasks' / benchmark).glob('*-standard')) if '-i00-' not in p.name)
+            task = next(p for p in tc.iter_tasks() if tc.mode_of(p) == 'standard' and '-i00-' not in p.name
+                        and json.loads((p / 'tests/instance.json').read_text())['benchmark'] == benchmark)
             with self.subTest(benchmark=benchmark), tempfile.TemporaryDirectory() as tmp:
                 out = Path(tmp)
                 for name in ('config_schema.py', 'reducers.py'):

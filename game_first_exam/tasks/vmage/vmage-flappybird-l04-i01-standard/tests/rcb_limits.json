@@ -1,0 +1,26 @@
+{
+ "agent_timeout_sec": 600,
+ "caps": {
+  "main": {
+   "cpus": 1.0,
+   "disk_gb": 2.0,
+   "memory_gb": 1.0,
+   "pids": 256
+  },
+  "sim": {
+   "cpus": 1.0,
+   "memory_gb": 1.0,
+   "pids": 128
+  }
+ },
+ "disk_gb": 2.0,
+ "disk_tick_sec": 60,
+ "format": "rcb-limits/2",
+ "gpu": false,
+ "mode": "standard",
+ "scope_services": [
+  "main"
+ ],
+ "task": "vmage-flappybird-l04-i01-standard",
+ "tick_sec": 5
+}

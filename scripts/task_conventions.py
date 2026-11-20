@@ -77,6 +77,7 @@ BENCHMARK_TABLE = [
     ("crafter-", "Crafter", "crafter"),
     ("textworld-", "TextWorld", "textworld"),
     ("minigrid-", "MiniGrid", "minigrid"),
+    ("vmage-", "V-MAGE", "vmage"),
 ]
 BENCHMARKS = [(p, label) for p, label, _ in BENCHMARK_TABLE]   # (directory prefix, label): the first matching prefix wins
 # Modes (PROTOCOL §3): a benchmark ships any subset of the modes. A standard or realtime
@@ -218,6 +219,16 @@ CUTOFF_NOTE_TASK["minihack-room-i01-standard"] = (
     "`/run/rcb-limits/usage.json` to plan around the agent deadline. The client's `time_left_s` counts from the "
     "first `observe()` or accepted action, whichever comes first. `spec()` does not start that clock."
 )
+for _prefix, _label, _folder in BENCHMARK_TABLE:
+    if _folder == "vmage":
+        CUTOFF_NOTE_OWN[(_label, "standard")] = (
+            "The wall-clock budget starts with your session and includes service startup, model thinking, waiting "
+            "and tool execution. The game advances only when an accepted action is executed; waiting does not "
+            "advance game physics or pause the wall-clock budget. At the cutoff the live episode is sealed and "
+            "graded at its current native score. Use `deadline_utc` and `time_left_s` in "
+            "`/run/rcb-limits/usage.json` for the agent deadline. The client's `time_left_s` counts from the first "
+            "`observe()` or accepted action; `spec()` does not start that clock."
+        )
 CUTOFF_NOTE_START = "This is wall-clock time from the start of your session;"   # how an earlier note is recognised
 WALL_CLOCK_ENV = "RCB_WALL_CLOCK_S"              # the standard modes' sim service: what its /spec budget and time_left_s report
 CUTOFF_CAP = 14400                               # PROTOCOL §2, no benchmark excepted (ci_checks/check-cutoffs.py)

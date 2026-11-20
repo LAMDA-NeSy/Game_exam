@@ -27,21 +27,34 @@ from game_runtime import report_code_metadata
 from prepare_games import load_suite, prepare, select_tasks
 import efe
 import run_games
+import task_conventions as tc
 
 
 class GameSelection(unittest.TestCase):
     def test_game_only_default_and_all_selection_never_launches(self):
+        all_standard = sum(tc.mode_of(task) == 'standard' for task in tc.iter_tasks())
         for flags, expected in ((["--list", "--standard"], 30),
-                                (["--all", "--standard", "--list"], 42)):
+                                (["--all", "--standard", "--list"], all_standard)):
             with self.subTest(flags=flags), contextlib.redirect_stdout(io.StringIO()) as output, \
                     patch("efe.harbor") as launch, patch("efe.prepull") as pull:
                 self.assertEqual(efe.run(flags), 0)
             names = output.getvalue().splitlines()
             self.assertEqual(len(names), expected)
-            self.assertTrue(all(name.startswith(("minigrid-", "crafter-", "textworld-", "babaisai-", "minihack-"))
+            self.assertTrue(all(name.startswith(tuple(prefix for prefix, _ in tc.BENCHMARKS))
                                 for name in names))
             launch.assert_not_called()
             pull.assert_not_called()
+
+    def test_vmage_smoke_lists_five_independent_standard_games_without_launching(self):
+        with contextlib.redirect_stdout(io.StringIO()) as output, \
+                patch("efe.harbor") as launch, patch("efe.prepull") as pull:
+            self.assertEqual(efe.run(["--game-suite", "vmage-smoke", "--standard", "--list"]), 0)
+        self.assertEqual(set(output.getvalue().splitlines()), {
+            f'vmage-{game}-l01-i01-standard'
+            for game in ('race', 'flappybird', 'pong', 'supermario', 'tempestrun')
+        })
+        launch.assert_not_called()
+        pull.assert_not_called()
 
     def test_checkout_discovery_works_without_upstream_task_tree(self):
         self.assertTrue(efe.is_tree(ROOT))

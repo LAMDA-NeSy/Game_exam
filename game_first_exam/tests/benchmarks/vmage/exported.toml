@@ -1,0 +1,172 @@
+[protocols]
+standard = ["game-standard/2.2"]
+
+[[tasks]]
+name = "vmage-flappybird-l01-i01-standard"
+source_task = "V-MAGE-FlappyBird-L1-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-flappybird-l02-i01-standard"
+source_task = "V-MAGE-FlappyBird-L2-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-flappybird-l03-i01-standard"
+source_task = "V-MAGE-FlappyBird-L3-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-flappybird-l04-i01-standard"
+source_task = "V-MAGE-FlappyBird-L4-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-flappybird-l05-i01-standard"
+source_task = "V-MAGE-FlappyBird-L5-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-flappybird-l06-i01-standard"
+source_task = "V-MAGE-FlappyBird-L6-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-flappybird-l07-i01-standard"
+source_task = "V-MAGE-FlappyBird-L7-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-pong-l01-i01-standard"
+source_task = "V-MAGE-Pong-L1-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-pong-l02-i01-standard"
+source_task = "V-MAGE-Pong-L2-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-pong-l03-i01-standard"
+source_task = "V-MAGE-Pong-L3-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-race-l01-i01-standard"
+source_task = "V-MAGE-Race-L1-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-race-l02-i01-standard"
+source_task = "V-MAGE-Race-L2-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-race-l03-i01-standard"
+source_task = "V-MAGE-Race-L3-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-race-l04-i01-standard"
+source_task = "V-MAGE-Race-L4-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-race-l05-i01-standard"
+source_task = "V-MAGE-Race-L5-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-race-l06-i01-standard"
+source_task = "V-MAGE-Race-L6-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-race-l07-i01-standard"
+source_task = "V-MAGE-Race-L7-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-race-l08-i01-standard"
+source_task = "V-MAGE-Race-L8-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-race-l09-i01-standard"
+source_task = "V-MAGE-Race-L9-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-supermario-l00-i01-standard"
+source_task = "V-MAGE-SuperMario-L0-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-supermario-l01-i01-standard"
+source_task = "V-MAGE-SuperMario-L1-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-supermario-l02-i01-standard"
+source_task = "V-MAGE-SuperMario-L2-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-supermario-l03-i01-standard"
+source_task = "V-MAGE-SuperMario-L3-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-supermario-l04-i01-standard"
+source_task = "V-MAGE-SuperMario-L4-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-supermario-l05-i01-standard"
+source_task = "V-MAGE-SuperMario-L5-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-supermario-l06-i01-standard"
+source_task = "V-MAGE-SuperMario-L6-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-supermario-l07-i01-standard"
+source_task = "V-MAGE-SuperMario-L7-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-supermario-l08-i01-standard"
+source_task = "V-MAGE-SuperMario-L8-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-supermario-l09-i01-standard"
+source_task = "V-MAGE-SuperMario-L9-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-tempestrun-l01-i01-standard"
+source_task = "V-MAGE-TempestRun-L1-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-tempestrun-l02-i01-standard"
+source_task = "V-MAGE-TempestRun-L2-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-tempestrun-l03-i01-standard"
+source_task = "V-MAGE-TempestRun-L3-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-tempestrun-l04-i01-standard"
+source_task = "V-MAGE-TempestRun-L4-v2"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vmage-tempestrun-l05-i01-standard"
+source_task = "V-MAGE-TempestRun-L5-v2"
+protocol = "game-standard/2.2"
