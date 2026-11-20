@@ -1,0 +1,11 @@
+{
+  "image": "ghcr.io/mll-lab-nu/efe:tetris-files-0.1.0@sha256:77fd0a3da6746150941ed2072e84555df5ed1c31de7f69afabf36b07218b97ab",
+  "source": "game_first_exam/benchmarks/tetris",
+  "files": {
+    "adapter.py": "69f08c46195cd9e4db7b79ef141043b16956ee55439dc911c241d9ab80537320",
+    "instance_schema.py": "a46eacce97d460192e39b180ce8d99e5314dd12966f5aa9dca4f2117cc2c3045",
+    "metric_rules.py": "293c46e15b53ef8eb37ac7b7ea5585f25f6041ac08a46c08ee62544dae29e666",
+    "requirements.txt": "f7382c7e150ec033919edc7e3f0774f384cc156b764bbda6917a8a768623bb6c",
+    "SOURCE.json": "2d1d227563329fae4018a96d586398c6c98704e2e8674b8a3458f4a82919bcff"
+  }
+}
