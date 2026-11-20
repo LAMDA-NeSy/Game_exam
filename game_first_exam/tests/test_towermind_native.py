@@ -24,7 +24,15 @@ MAX_REFERENCE_DECISIONS = 4096
 
 
 def report_texture_transport(player, wrappers):
-    for args in ([], ["-force-glcore"], ["-force-vulkan"]):
+    # The native recorder writes the same payload before it goes through the
+    # texture transport. Enable it only in this disposable diagnostic copy.
+    config_path = player.parent / "td_Data/StreamingAssets/Config/EnvConfig.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    records = player.parent / "diagnostic-records"
+    records.mkdir()
+    config.update(IsRecordingEnabled=1, RecordingPath=str(records))
+    config_path.write_text(json.dumps(config), encoding="utf-8")
+    for args in ([], ["-force-gfx-direct"]):
         label = args[0] if args else "default"
         log_path = player.parent / f"diagnostic-{label}.log"
         settings = EngineConfigurationChannel()
@@ -35,21 +43,35 @@ def report_texture_transport(player, wrappers):
             try:
                 bridge = load_gym_bridge()(unity, uint8_visual=True, allow_multiple_obs=True)
                 texture = bridge.reset()[1]
-                for channel, plane in enumerate(texture):
-                    bbox = np.argwhere(plane)
-                    span = (bbox.min(axis=0).tolist(), bbox.max(axis=0).tolist()) if len(bbox) else ()
-                    print(f"reference {label} channel {channel}: {len(bbox)} nonzero pixels, spans {span}")
-                header = np.flip(texture, axis=1).reshape(-1)[:8].tolist()
-                print(f"reference {label} decoded header byte codes: {header}")
-                for rotation in range(4):
-                    oriented = np.rot90(texture, rotation, axes=(1, 2))
-                    for mirrored, candidate in enumerate((oriented, oriented[:, :, ::-1])):
-                        try:
-                            result = wrappers.get_json_from_obs(candidate)
-                        except json.JSONDecodeError:
-                            continue
-                        if isinstance(result, dict) and "Level_Current_Health" in result:
-                            print(f"reference {label} decoded JSON, rotation={rotation * 90}, mirrored={bool(mirrored)}")
+                red = texture[0]
+                rows = np.count_nonzero(red, axis=1)
+                print(f"reference {label} nonzero texture pixels in first/last 20 rows: {rows[:20]}, {rows[-20:]}")
+                try:
+                    wrappers.get_json_from_obs(texture)
+                except json.JSONDecodeError as error:
+                    print(f"reference {label} stock decoder: length {len(error.doc)}, offset {error.pos}")
+                else:
+                    print(f"reference {label} stock decoder: valid JSON")
+                paths = sorted(records.glob("*/game_internal_states/*"), key=lambda p: p.stat().st_mtime_ns)
+                if not paths:
+                    print(f"reference {label} native diagnostic record absent")
+                    continue
+                recorded = paths[-1].read_text(encoding="utf-8-sig")
+                try:
+                    json.loads(recorded)
+                except json.JSONDecodeError as error:
+                    print(f"reference {label} recorder: length {len(recorded)}, invalid JSON at {error.pos}")
+                else:
+                    print(f"reference {label} recorder: length {len(recorded)}, valid JSON")
+                expected = np.array([ord(char) % 256 for char in recorded] + [64], dtype=np.uint8)
+                actual = red[red != 0]
+                common = np.minimum(np.bincount(expected, minlength=256), np.bincount(actual, minlength=256)).sum()
+                header = expected[:12].tobytes()
+                print(f"reference {label} recorder byte overlap: {common}/{len(expected)}, actual nonzero {len(actual)}")
+                for name, plane in (("raw", red), ("vertical flip", red[::-1]),
+                                    ("horizontal flip", red[:, ::-1]), ("transpose", red.T)):
+                    stream = plane.ravel().tobytes()
+                    print(f"reference {label} {name}: native header index {stream.find(header)}")
             finally:
                 unity.close()
         except Exception as error:
