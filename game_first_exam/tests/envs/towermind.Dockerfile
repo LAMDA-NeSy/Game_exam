@@ -12,7 +12,7 @@ FROM base AS sim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates libasound2 libgl1 libgl1-mesa-dri libglx-mesa0 libglib2.0-0 \
     libx11-6 libxcursor1 libxext6 libxfixes3 libxi6 libxinerama1 libxrandr2 \
-    libxrender1 xauth xvfb \
+    libxrender1 libvulkan1 mesa-vulkan-drivers xauth xvfb \
     && rm -rf /var/lib/apt/lists/*
 ENV LIBGL_ALWAYS_SOFTWARE=1 HOME=/tmp
 WORKDIR /repo
@@ -25,4 +25,4 @@ COPY game_first_exam/runtime/ /repo/game_first_exam/runtime/
 COPY game_first_exam/tests/towermind_fixture.py game_first_exam/tests/test_towermind_contract.py \
     game_first_exam/tests/test_towermind_native.py /repo/game_first_exam/tests/
 USER 65534:65534
-CMD ["xvfb-run", "-a", "python", "game_first_exam/tests/towermind_fixture.py"]
+CMD ["xvfb-run", "-a", "-s", "-screen 0 1400x900x24", "python", "game_first_exam/tests/towermind_fixture.py"]

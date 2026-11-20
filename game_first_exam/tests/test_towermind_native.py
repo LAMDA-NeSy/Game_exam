@@ -9,13 +9,13 @@ import numpy as np
 
 from towermind_fixture import instance
 from adapter import Adapter, NATIVE_ASSETS
-from native import RPC_PORT, open_native
+from native import NO_OP, RPC_PORT, open_native
 from native_assets import prepare_game
 from metric_rules import validate_metrics
 from server import Game
 
 
-COMMANDS = [("0 0 0", (0.0, 0.0, 0)), ("-1.5 1.2 2", (-1.5, 1.2, 2))] * 6
+COMMANDS = [("0 0 6", NO_OP), ("-1.5 1.2 2", (-1.5, 1.2, 2))] * 6
 
 
 def native_snapshot(observation, reward, done, interrupted):
@@ -73,7 +73,7 @@ class TowerMindNative(unittest.TestCase):
         adapter = Adapter(config)
         try:
             for _ in range(4096):
-                transition = adapter.step("0 0 0")
+                transition = adapter.step("0 0 6")
                 if transition.terminated or transition.truncated:
                     break
             self.assertTrue(transition.terminated, "expected a native ending in development level 0")
@@ -81,7 +81,7 @@ class TowerMindNative(unittest.TestCase):
             self.assertEqual(metrics["native_return"], metrics["base_health"] - metrics["initial_base_health"])
             self.assertEqual(adapter.success(), metrics["base_health"] > 0)
             with self.assertRaisesRegex(ValueError, "episode closed"):
-                adapter.step("0 0 0")
+                adapter.step("0 0 6")
         finally:
             adapter.close()
 

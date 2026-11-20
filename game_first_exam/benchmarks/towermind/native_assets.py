@@ -52,7 +52,8 @@ def prepare_game(assets, workspace, instance):
     level, = (row for row in levels if row["ID"] == instance["level_id"])
     settings.update(
         GeneralizationLevel=0, LevelsConfigFileName=levels_path.name,
-        RandomSeed=instance["seed"], IsAutoPlayLevels=1, IsRepeatFailingLevels=0,
+        # The pinned player cycles levels when IsAutoPlayLevels equals 1.
+        RandomSeed=instance["seed"], IsAutoPlayLevels=0, IsRepeatFailingLevels=0,
         IsHumanPlayerPlaying=0, IsDrlReward=0, IsDebug=0, IsRecordingEnabled=0,
         IsOnlyPixelObs=0, NeedsNaturalLanguageObservation=0,
         NeedsRealtimeLanguageObservation=0,

@@ -7,7 +7,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import numpy as np
 from PIL import Image
@@ -108,6 +108,32 @@ class TowerMindContract(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "one episode"):
                 env.reset()
             self.assertEqual(reset.call_count, 2)
+
+    def test_blank_startup_sensor_advances_one_native_no_op(self):
+        from native import first_observation
+
+        env = Mock()
+        env.reset.side_effect = json.JSONDecodeError("Expecting value", "\x00" * 4, 0)
+        frame = native_observation(20)
+        env.step.return_value = (frame, 0.0, False, {})
+        self.assertIs(first_observation(env), frame)
+        env.step.assert_called_once_with((0.0, 0.0, 6))
+        env.reset.assert_called_once_with()
+
+    def test_startup_rejects_corrupt_data_and_never_skips_a_terminal_or_reward(self):
+        from native import first_observation
+
+        env = Mock()
+        env.reset.side_effect = json.JSONDecodeError("Expecting value", "corrupt", 0)
+        with self.assertRaisesRegex(ValueError, "invalid nonempty JSON"):
+            first_observation(env)
+        env.step.assert_not_called()
+        for reward, done in ((-1.0, False), (0.0, True)):
+            with self.subTest(reward=reward, done=done):
+                env.reset.side_effect = json.JSONDecodeError("Expecting value", "", 0)
+                env.step.return_value = (native_observation(20), reward, done, {})
+                with self.assertRaisesRegex(ValueError, "startup decision ended"):
+                    first_observation(env)
 
     def test_schema_rejects_drift(self):
         config = instance()

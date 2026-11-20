@@ -2,6 +2,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from importlib.metadata import distribution
 from importlib.util import module_from_spec, spec_from_file_location
+from json import JSONDecodeError
 
 import grpc
 from mlagents_envs.environment import UnityEnvironment
@@ -14,6 +15,7 @@ from mlagents_envs.side_channel.engine_configuration_channel import EngineConfig
 
 
 RPC_PORT = 5005
+NO_OP = (0.0, 0.0, 6)
 
 
 def load_source(name, path):
@@ -64,6 +66,29 @@ class LocalUnity(UnityEnvironment):
         return super().reset()
 
 
+def first_observation(env):
+    try:
+        return env.reset()
+    except JSONDecodeError as exc:
+        if exc.doc.strip("\x00 \t\r\n"):
+            raise ValueError(
+                f"TowerMind reset returned invalid nonempty JSON ({len(exc.doc)} characters, offset {exc.pos})"
+            ) from exc
+
+    # The pinned player writes its JSON texture in FixedUpdate, after reset may
+    # already have returned. Action 6 is its native no-op. Advance at most one
+    # decision here, before any actions or grading are exposed to the client.
+    try:
+        observation, reward, done, _ = env.step(NO_OP)
+    except JSONDecodeError as exc:
+        raise ValueError(
+            f"TowerMind JSON is invalid after one no-op startup decision ({len(exc.doc)} characters, offset {exc.pos})"
+        ) from exc
+    if done or float(reward) != 0.0:
+        raise ValueError("TowerMind startup decision ended the episode or changed its reward")
+    return observation
+
+
 def open_native(player, wrappers_path, seed):
     """Run the upstream startup sequence before exposing the first decision."""
     gym_wrapper = load_gym_bridge()
@@ -72,8 +97,7 @@ def open_native(player, wrappers_path, seed):
     channel.set_configuration_parameters(target_frame_rate=-1, time_scale=20.0, capture_frame_rate=60)
     unity = LocalUnity(
         file_name=str(player), seed=seed, base_port=RPC_PORT, timeout_wait=60,
-        side_channels=[channel], additional_args=["-batchmode", "-force-glcore"],
-        log_folder=str(player.parent),
+        side_channels=[channel], log_folder=str(player.parent),
     )
     try:
         gym = gym_wrapper(unity, uint8_visual=True, allow_multiple_obs=True)
@@ -84,7 +108,7 @@ def open_native(player, wrappers_path, seed):
         # UnityToGymWrapper resets during its constructor to inspect agent slots.
         # TowerMind's example then resets the wrapped environment to obtain the
         # playable observation. The constructor snapshot can have an empty JSON sensor.
-        initial = env.reset()
+        initial = first_observation(env)
         unity._initializing = False
         decision, terminal = unity.get_steps(gym.name)
         if len(decision) != 1 or len(terminal):
