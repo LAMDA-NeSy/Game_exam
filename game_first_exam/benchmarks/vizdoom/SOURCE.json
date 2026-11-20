@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/Farama-Foundation/ViZDoom",
+  "version": "1.3.2",
+  "commit": "53d758a64f113ef3ef8f67bea5b4b717e51e1c0a",
+  "linux_x86_64_cp312_wheel_sha256": "d3f8fa01d9df31bccb9d9ccad2e03d139c1a2713ddd9152acc601f020bf2be75",
+  "asset_source": "Unmodified official wheel, using its freedoom2.wad as the IWAD",
+  "vizdoom_license": "https://github.com/Farama-Foundation/ViZDoom/tree/1.3.2#license",
+  "freedoom_license": "https://github.com/freedoom/freedoom/blob/master/COPYING.adoc"
+}

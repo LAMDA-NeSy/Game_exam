@@ -1,0 +1,57 @@
+[protocols]
+standard = ["game-standard/2.2"]
+
+[[tasks]]
+name = "vizdoom-basic-i01-standard"
+source_task = "ViZDoom/basic"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vizdoom-my-way-home-i01-standard"
+source_task = "ViZDoom/my_way_home"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vizdoom-basic-notifications-i01-standard"
+source_task = "ViZDoom/basic_notifications"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vizdoom-predict-position-i01-standard"
+source_task = "ViZDoom/predict_position"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vizdoom-deadly-corridor-i01-standard"
+source_task = "ViZDoom/deadly_corridor"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vizdoom-defend-center-i01-standard"
+source_task = "ViZDoom/defend_the_center"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vizdoom-defend-line-i01-standard"
+source_task = "ViZDoom/defend_the_line"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vizdoom-take-cover-i01-standard"
+source_task = "ViZDoom/take_cover"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vizdoom-health-gathering-i01-standard"
+source_task = "ViZDoom/health_gathering"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vizdoom-health-gathering-supreme-i01-standard"
+source_task = "ViZDoom/health_gathering_supreme"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "vizdoom-deathmatch-i01-standard"
+source_task = "ViZDoom/deathmatch"
+protocol = "game-standard/2.2"

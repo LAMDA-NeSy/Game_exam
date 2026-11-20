@@ -18,6 +18,7 @@ from game_runtime import (
     RUNNER_VERSION,
     validate_report_code,
 )
+from game_schemas import is_scenario_score
 from reducers import resolve
 from write_task_results import classify, load_json
 
@@ -63,7 +64,9 @@ def aggregate(trials, records):
         raise ValueError(f"trials outside frozen suite: {sorted(unexpected)}")
     groups = {}
     for name, record in records.items():
-        validate_metric_spec(record["metric_spec"])
+        spec = record["metric_spec"]
+        validate_metric_spec(spec)
+        scored = is_scenario_score(record)
         group = groups.setdefault(
             record["benchmark"],
             {
@@ -74,18 +77,28 @@ def aggregate(trials, records):
                 "environment_errors": 0,
                 "infrastructure_errors": 0,
                 "evidence_errors": 0,
-                "metric_spec": record["metric_spec"],
+                "metric_spec": None,
                 "successes": 0,
-                "success_label": record["metric_spec"]["success_label"],
-                "primary_metric": record["metric_spec"]["primary"],
+                "success_label": None,
+                "primary_metric": None,
                 "families": {},
                 "rows": [],
+                "scored_expected": 0,
+                "completion_expected": 0,
             },
         )
-        if group["metric_spec"] != record["metric_spec"]:
-            raise ValueError("incompatible metric definitions within benchmark")
+        if scored:
+            group["scored_expected"] += 1
+        else:
+            if group["metric_spec"] is None:
+                group.update(metric_spec=spec, primary_metric=spec["primary"], success_label=spec["success_label"])
+            if group["metric_spec"] != spec:
+                raise ValueError("incompatible metric definitions within benchmark")
+            group["completion_expected"] += 1
         group["expected"] += 1
-        family = group["families"].setdefault(record["family"], {"expected": 0, "rows": []})
+        family = group["families"].setdefault(record["family"], {"expected": 0, "rows": [], "spec": spec, "scored": scored})
+        if family["spec"] != spec:
+            raise ValueError("incompatible metric definitions within task family")
         family["expected"] += 1
         matches = [row for row in trials if row["task"] == name]
         if not matches:
@@ -95,8 +108,8 @@ def aggregate(trials, records):
             raise ValueError(f"multiple attempts for {name}; void infrastructure attempts explicitly first")
         row = matches[0]
         row.update({k: record[k] for k in ("benchmark", "family", "seed", "digest")})
-        row["primary_metric"] = group["primary_metric"]
-        row["primary_score"] = row["native_metrics"].get(group["primary_metric"])
+        row["primary_metric"] = spec["primary"]
+        row["primary_score"] = row["native_metrics"].get(spec["primary"])
         if not row["valid"]:
             group["infra_errors"] += 1
             category = row.get("error_category") or "infrastructure"
@@ -109,30 +122,48 @@ def aggregate(trials, records):
         if type(row["primary_score"]) not in (int, float) or not math.isfinite(row["primary_score"]):
             raise ValueError(f"missing or nonfinite primary score in valid trial: {name}")
         group["valid"] += 1
-        group["successes"] += int(row["success"] == 1)
+        if scored:
+            row.update(success=None, status="scored", outcome_class="scored")
+        else:
+            group["successes"] += int(row["success"] == 1)
         group["rows"].append(row)
         family["rows"].append(row)
     for group in groups.values():
         rows = group.pop("rows")
         group["complete"] = group["valid"] == group["expected"]
-        group["mean_primary_score"] = mean(row["primary_score"] for row in rows) if rows else None
-        group["success_rate"] = group["successes"] / group["valid"] if rows else None
+        scored_expected = group.pop("scored_expected")
+        expected = group.pop("completion_expected")
+        objectives = [row for row in rows if row.get("status") != "scored"]
+        objective_valid = len(objectives)
+        objective_complete = objective_valid == expected
+        group["mean_primary_score"] = mean(row["primary_score"] for row in objectives) if objectives else None
+        group["success_rate"] = group["successes"] / objective_valid if objectives else None
         group["mean_steps"] = mean(row["steps"] for row in rows) if rows else None
         observed = []
         for family in group["families"].values():
             selected = family.pop("rows")
+            spec = family.pop("spec")
+            scored = family.pop("scored")
             family["valid"] = len(selected)
-            family["successes"] = sum(row["success"] == 1 for row in selected)
+            family["successes"] = None if scored else sum(row["success"] == 1 for row in selected)
             family["mean_primary_score"] = mean(row["primary_score"] for row in selected) if selected else None
-            if selected:
+            if scored_expected:
+                family["primary_metric"] = spec["primary"]
+            if selected and not scored:
                 observed.append(family["mean_primary_score"])
-        group["macro_primary_score"] = mean(observed) if group["complete"] else None
+        group["macro_primary_score"] = mean(observed) if objective_complete and observed else None
         group["observed_macro_primary_score"] = mean(observed) if observed else None
+        if scored_expected:
+            group["completion_expected"] = expected
+            group["completion_valid"] = objective_valid
+            group["scored_expected"] = scored_expected
+            group["scored_valid"] = group["valid"] - objective_valid
         spec = group["metric_spec"]
-        extra = resolve(spec["reducer"], spec["reducer_version"])(rows, group["complete"])
-        if extra.keys() & group.keys():
-            raise ValueError("reducer cannot overwrite common completeness/accounting fields")
-        group.update(extra)
+        if spec is not None:
+            extra = resolve(spec["reducer"], spec["reducer_version"])(objectives, objective_complete)
+            if extra.keys() & group.keys():
+                raise ValueError("reducer cannot overwrite common completeness/accounting fields")
+            group.update(extra)
     valid = sum(group["valid"] for group in groups.values())
     return {
         "benchmarks": groups,
@@ -197,7 +228,9 @@ def write_report(job, snapshot, output=None, configuration_link="suite-snapshot.
         lines.append(
             f"| {benchmark} | {group['valid']}/{group['expected']} | {group['primary_metric']} | "
             f"{fmt(group['mean_primary_score'])} | {fmt(group['macro_primary_score'])} | "
-            f"{group['success_label']} | {group['successes']}/{group['valid']} |"
+            f"{group['success_label'] or '—'} | "
+            + (f"{group['successes']}/{group.get('completion_valid', group['valid'])} |"
+               if group.get('completion_expected', group['expected']) else "— |")
         )
         if "crafter_score" in group:
             notes += [
@@ -206,6 +239,24 @@ def write_report(job, snapshot, output=None, configuration_link="suite-snapshot.
                 "",
             ]
     lines += notes
+    if any("scored_expected" in group for group in summary["benchmarks"].values()):
+        lines += [
+            "",
+            "## Per-scenario results",
+            "",
+            "| Task | Status | Objective completed | Native return | Native tics | Native statistics |",
+            "| --- | --- | --- | ---: | ---: | --- |",
+        ]
+        for row in trials:
+            if "scored_expected" not in summary["benchmarks"][row["benchmark"]]:
+                continue
+            metrics = row["native_metrics"]
+            keys = ("killcount", "health", "armor", "ammo2", "itemcount", "selected_weapon", "selected_weapon_ammo")
+            stats = ", ".join(f"{key}: {metrics[key]}" for key in keys if key in metrics) or "—"
+            objective = ("yes" if row["success"] else "no") if row["valid"] and row["success"] is not None else "—"
+            lines.append(f"| {row['task']} | {row['status']} | {objective} | {fmt(row['return'])} | "
+                         f"{metrics.get('native_tics', '—')} | {stats} |")
+        lines += ["", "The success denominator covers objective tasks only. Native returns are reported by scenario."]
     lines += [
         "",
         "No cross-benchmark score is computed. A Crafter milestone failure is still a valid achievement score.",

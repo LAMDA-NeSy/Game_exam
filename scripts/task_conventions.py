@@ -73,6 +73,7 @@ TEXT_REPLACEMENTS = [  # (old, new), applied to task text files in order (a task
 # ci_checks/ci_scope.py --check holds its UNITS / FILES_IMAGE to it. A new benchmark adds one row here.
 BENCHMARK_TABLE = [
     ("minihack-", "MiniHack", "minihack"),
+    ("vizdoom-", "ViZDoom", "vizdoom"),
     ("babaisai-", "Baba Is AI", "babaisai"),
     ("crafter-", "Crafter", "crafter"),
     ("textworld-", "TextWorld", "textworld"),
@@ -205,6 +206,12 @@ CUTOFF_NOTE["realtime"] = CUTOFF_NOTE["standard"]
 assert set(CUTOFF_NOTE) == set(MODE_REGISTRY), "every mode of MODE_REGISTRY needs its CUTOFF_NOTE (PROTOCOL §5)"
 # A benchmark whose service counts the limit its own way has a note of its own (PROTOCOL §5).
 CUTOFF_NOTE_OWN = {}   # (benchmark label, mode) -> its note
+CUTOFF_NOTE_OWN[("ViZDoom", "standard")] = (
+    "The wall-clock budget starts with your session and includes service startup, planning and tool execution. "
+    "At the cutoff the episode is graded as it stands. Use the `deadline_utc` and `time_left_s` fields in "
+    "`/run/rcb-limits/usage.json` to track the session deadline. The client's `time_left_s` counts from the "
+    "first `observe()` or accepted action, whichever comes first. `spec()` and `status()` do not start that clock."
+)
 CUTOFF_NOTE_TASK = {}
 CUTOFF_NOTE_TASK["crafter-survival-i01-realtime"] = (
     "The wall-clock budget starts with your session and includes startup, planning and tool execution. "
@@ -812,12 +819,21 @@ def external_paragraph(text: str) -> str | None:
 
 
 def render_external(task: "Path | str" = "") -> str:
-    """instruction.md's `## External material` (PROTOCOL §5): the same words in every allowlist task (EXTERNAL_TEXT); a
-    task with open egress (`[agent] network_mode = "public"`, network_of) keeps its own paragraph (EXTERNAL_TEXT_OPEN
-    when it has none)."""
+    """Render the external-material policy from the task network mode and benchmark.
+
+    Open-network tasks keep their own paragraph. ViZDoom documents the live-episode
+    boundary and uses the allowlist of the run. Other allowlist tasks use the shared policy.
+    """
     text = EXTERNAL_TEXT
     if isinstance(task, Path) and network_of(task) == "open":
         text = external_paragraph(read_text(task / "instruction.md") or "") or EXTERNAL_TEXT_OPEN
+    elif isinstance(task, Path) and bench_of(task) == "ViZDoom":
+        text = (
+            "You may read the public client and use general-purpose libraries. Network access follows the "
+            "run's allowlist, including for package installation. Solve the task using the live episode. "
+            "Do not access scenario assets or maps, hidden engine state, other game instances, or solutions, "
+            "rollouts or trained policies specific to this task."
+        )
     # the words above are the baseline every task carries; a task may add STRICTER requirements of
     # its own on top (never looser), as `[metadata.honour] stricter = "..."` in its task.toml, rendered after them
     stricter = ((metadata_of(task).get("honour") or {}).get("stricter", "")) if isinstance(task, Path) else ""

@@ -49,3 +49,17 @@ def schema_metadata(name):
     path = schema_paths()[name]
     return {'contract_version': schema.SCHEMA_VERSION, 'source': str(path.relative_to(ROOT)),
             'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
+
+
+def is_scenario_score(record):
+    """Native scores declared by the benchmark are comparable within the scenario."""
+    metric = record["metric_spec"]["primary"]
+    if metric != "native_return":
+        return False
+    schema = load_schema(record["benchmark"])
+    return metric in getattr(schema, "PER_SCENARIO_METRICS", ())
+
+
+def metric_scope(record):
+    family = record["family"] if is_scenario_score(record) else None
+    return record["benchmark"], family

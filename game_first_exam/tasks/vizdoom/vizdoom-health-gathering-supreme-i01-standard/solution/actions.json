@@ -1,0 +1,22 @@
+[
+  [
+    "TURN_LEFT",
+    25
+  ],
+  [
+    "MOVE_FORWARD",
+    70
+  ],
+  [
+    "TURN_LEFT",
+    5
+  ],
+  [
+    "MOVE_FORWARD",
+    62
+  ],
+  [
+    "noop",
+    2100
+  ]
+]

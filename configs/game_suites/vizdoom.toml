@@ -1,0 +1,60 @@
+schema_version = "game-suite/2.1"
+version = "1.1.0"
+tier = "evaluation"
+name = "games-vizdoom-v1.1.0"
+files_images = ["connection-files", "game-files", "vizdoom-files"]
+
+[[tasks]]
+name = "vizdoom-basic-i01-standard"
+benchmark = "vizdoom"
+family = "basic"
+
+[[tasks]]
+name = "vizdoom-my-way-home-i01-standard"
+benchmark = "vizdoom"
+family = "my-way-home"
+
+[[tasks]]
+name = "vizdoom-basic-notifications-i01-standard"
+benchmark = "vizdoom"
+family = "basic-notifications"
+
+[[tasks]]
+name = "vizdoom-predict-position-i01-standard"
+benchmark = "vizdoom"
+family = "predict-position"
+
+[[tasks]]
+name = "vizdoom-deadly-corridor-i01-standard"
+benchmark = "vizdoom"
+family = "deadly-corridor"
+
+[[tasks]]
+name = "vizdoom-defend-center-i01-standard"
+benchmark = "vizdoom"
+family = "defend-center"
+
+[[tasks]]
+name = "vizdoom-defend-line-i01-standard"
+benchmark = "vizdoom"
+family = "defend-line"
+
+[[tasks]]
+name = "vizdoom-take-cover-i01-standard"
+benchmark = "vizdoom"
+family = "take-cover"
+
+[[tasks]]
+name = "vizdoom-health-gathering-i01-standard"
+benchmark = "vizdoom"
+family = "health-gathering"
+
+[[tasks]]
+name = "vizdoom-health-gathering-supreme-i01-standard"
+benchmark = "vizdoom"
+family = "health-gathering-supreme"
+
+[[tasks]]
+name = "vizdoom-deathmatch-i01-standard"
+benchmark = "vizdoom"
+family = "deathmatch"

@@ -1,0 +1,43 @@
+{
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": true,
+    "action_mode": "text",
+    "timing": "action-stepped",
+    "native_truncation": true
+  },
+  "benchmark": "vizdoom",
+  "env_id": "ViZDoom/health_gathering",
+  "family": "health-gathering",
+  "seed": 2117382936,
+  "max_steps": null,
+  "observation_profile": "rgb-first-person-v1",
+  "metric_spec": {
+    "primary": "native_return",
+    "reducer": "family_macro",
+    "reducer_version": "1.0.0",
+    "success_label": "native_score_only"
+  },
+  "engine_versions": {
+    "vizdoom": "1.3.2",
+    "numpy": "2.5.5"
+  },
+  "engine_commit": "53d758a64f113ef3ef8f67bea5b4b717e51e1c0a",
+  "scenario_hashes": {
+    "freedoom2.wad": "a8772e088847032510d97ba2312406a6998f21cbab44d4ff10696faa9c0ecd4b",
+    "vizdoom.pk3": "24381138aede0ab03a4266f8fdd0225a1819658f004d37c9dc349e006b74f34e",
+    "scenarios/health_gathering.cfg": "582a547f47e7a721a8728d30690d018d7588644074c7a204cd9e401f63090e2e",
+    "scenarios/health_gathering.wad": "c77c8ba3254ae19eaff8d00418870a7718ef8a5822e5872ab68b76205cb2bacf"
+  },
+  "start_tic": 1,
+  "timeout_tics": 2100,
+  "tics_per_decision": 1,
+  "buttons": [
+    "TURN_LEFT",
+    "TURN_RIGHT",
+    "MOVE_FORWARD"
+  ],
+  "initial_state_sha256": "c9b9fc92b5184cd6622850116b19f488779032d693a76b30845bf055a1dc5620"
+}

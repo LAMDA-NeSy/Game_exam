@@ -1,0 +1,24 @@
+[
+  [
+    "ATTACK",
+    35,
+    {
+      "TURN_LEFT_RIGHT_DELTA": 1.5
+    }
+  ],
+  [
+    "MOVE_FORWARD",
+    60
+  ],
+  [
+    "ATTACK",
+    35,
+    {
+      "TURN_LEFT_RIGHT_DELTA": -1.5
+    }
+  ],
+  [
+    "ATTACK",
+    4200
+  ]
+]

@@ -22,7 +22,7 @@ from typer.testing import CliRunner
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 from game_harbor import GameRecords
-from game_reports import write_harbor_report
+from game_reports import aggregate, write_harbor_report
 from game_runtime import report_code_metadata
 from prepare_games import load_suite, prepare, select_tasks
 import efe
@@ -32,16 +32,37 @@ import run_games
 class GameSelection(unittest.TestCase):
     def test_game_only_default_and_all_selection_never_launches(self):
         for flags, expected in ((["--list", "--standard"], 30),
-                                (["--all", "--standard", "--list"], 42)):
+                                (["--all", "--standard", "--list"], 53)):
             with self.subTest(flags=flags), contextlib.redirect_stdout(io.StringIO()) as output, \
                     patch("efe.harbor") as launch, patch("efe.prepull") as pull:
                 self.assertEqual(efe.run(flags), 0)
             names = output.getvalue().splitlines()
             self.assertEqual(len(names), expected)
-            self.assertTrue(all(name.startswith(("minigrid-", "crafter-", "textworld-", "babaisai-", "minihack-"))
+            self.assertTrue(all(name.startswith(("minigrid-", "crafter-", "textworld-", "babaisai-", "minihack-", "vizdoom-"))
                                 for name in names))
             launch.assert_not_called()
             pull.assert_not_called()
+
+    def test_vizdoom_mixed_objective_and_native_score_reporting(self):
+        _, plans = load_suite("vizdoom")
+        self.assertEqual(len(plans), 11)
+        records = {}
+        trials = []
+        for name, (_, _, instance) in plans.items():
+            records[name] = {key: instance[key] for key in ("benchmark", "family", "seed", "metric_spec")}
+            records[name]["digest"] = "sha256:fixture"
+            primary = instance["metric_spec"]["primary"]
+            value = 1 if primary == "objective_success" else 1000
+            trials.append({"task": name, "valid": True, "success": int(primary == "objective_success"),
+                           "status": "success" if primary == "objective_success" else "fail",
+                           "native_metrics": {primary: value}, "steps": 1})
+        output = aggregate(trials, records)["benchmarks"]["vizdoom"]
+        self.assertEqual((output["valid"], output["completion_valid"], output["scored_valid"]), (11, 5, 6))
+        self.assertEqual(output["success_rate"], 1)
+        self.assertEqual(output["macro_primary_score"], 1)
+        self.assertEqual(output["families"]["deathmatch"]["mean_primary_score"], 1000)
+        self.assertEqual(sum(row["status"] == "scored" and row["success"] is None for row in trials), 6)
+        self.assertEqual(aggregate([], records)["benchmarks"]["vizdoom"]["missing"], 11)
 
     def test_checkout_discovery_works_without_upstream_task_tree(self):
         self.assertTrue(efe.is_tree(ROOT))

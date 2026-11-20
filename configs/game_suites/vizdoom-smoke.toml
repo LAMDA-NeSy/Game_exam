@@ -1,0 +1,15 @@
+schema_version = "game-suite/2.1"
+version = "1.3.0"
+tier = "smoke"
+name = "games-vizdoom-smoke-v1.3.0"
+files_images = ["connection-files", "game-files", "vizdoom-files"]
+
+[[tasks]]
+name = "vizdoom-basic-i01-standard"
+benchmark = "vizdoom"
+family = "basic"
+
+[[tasks]]
+name = "vizdoom-my-way-home-i01-standard"
+benchmark = "vizdoom"
+family = "my-way-home"
