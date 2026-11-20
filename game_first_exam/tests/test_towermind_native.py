@@ -18,10 +18,6 @@ from server import Game
 COMMANDS = [("0 0 6", NO_OP), ("-1.5 1.2 2", (-1.5, 1.2, 2))] * 6
 
 
-def native_snapshot(observation, reward, done, interrupted):
-    return observation["text"], float(reward), bool(done), bool(interrupted)
-
-
 class TowerMindNative(unittest.TestCase):
     def test_native_trajectory_and_idle_intervals(self):
         config = instance()
@@ -29,6 +25,7 @@ class TowerMindNative(unittest.TestCase):
             player, _ = prepare_game(NATIVE_ASSETS, Path(workspace), config)
             env, initial = open_native(player, NATIVE_ASSETS / "wrappers.py", config["seed"])
             try:
+                self.assertEqual(set(initial), {"image"})
                 with self.assertRaisesRegex(RuntimeError, "one episode"):
                     env.reset()
                 with socket.create_connection(("127.0.0.1", RPC_PORT), timeout=2):
@@ -37,19 +34,20 @@ class TowerMindNative(unittest.TestCase):
                 for _, action in COMMANDS:
                     observation, reward, done, info = env.step(action)
                     interrupted = info["step"].interrupted[0] if done else False
-                    expected.append(native_snapshot(observation, reward, done, interrupted))
+                    self.assertEqual(set(observation), {"image"})
+                    expected.append((float(reward), bool(done), bool(interrupted)))
                     self.assertFalse(done)
             finally:
                 env.close()
 
         adapter = Adapter(config)
         try:
-            self.assertEqual(adapter._state, initial["text"])
             initial_frame = initial["image"]
             if initial_frame.shape == (3, 512, 512):
                 initial_frame = initial_frame.transpose(1, 2, 0)
             self.assertEqual(adapter.frame().shape, initial_frame.shape)
             self.assertEqual(adapter.frame().dtype, np.uint8)
+            self.assertGreater(np.ptp(adapter.frame()), 0, "expected a rendered player camera")
             for index, ((command, _), item) in enumerate(zip(COMMANDS, expected)):
                 before = adapter.fingerprint()
                 adapter.spec()
@@ -61,8 +59,7 @@ class TowerMindNative(unittest.TestCase):
                 self.assertEqual(adapter.fingerprint(), before)
                 transition = adapter.step(command)
                 self.assertEqual(
-                    (adapter._state, transition.reward, transition.terminated or transition.truncated,
-                     transition.truncated),
+                    (transition.reward, transition.terminated or transition.truncated, transition.truncated),
                     item,
                 )
         finally:
@@ -78,6 +75,7 @@ class TowerMindNative(unittest.TestCase):
                     break
             self.assertTrue(transition.terminated, "expected a native ending in development level 0")
             metrics = adapter.metrics()
+            self.assertEqual(metrics["native_action_feedback_events"], 0)
             self.assertEqual(metrics["native_return"], metrics["base_health"] - metrics["initial_base_health"])
             self.assertEqual(adapter.success(), metrics["base_health"] > 0)
             with self.assertRaisesRegex(ValueError, "episode closed"):

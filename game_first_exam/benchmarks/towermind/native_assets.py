@@ -34,6 +34,8 @@ def download_assets(directory):
 
 
 def prepare_game(assets, workspace, instance):
+    from instance_schema import DECISION_PERIOD
+
     archive = assets / "linux.zip"
     verify_asset(archive)
     verify_asset(assets / "wrappers.py")
@@ -45,7 +47,7 @@ def prepare_game(assets, workspace, instance):
     configs = directory / "td_Data/StreamingAssets/Config"
     settings_path = configs / "EnvConfig.json"
     settings = json.loads(settings_path.read_text(encoding="utf-8"))
-    if settings["DecisionPeriod"] != 16:
+    if settings["DecisionPeriod"] != DECISION_PERIOD:
         raise ValueError("unexpected native decision period")
     levels_path = configs / "BenchmarkLevelsConfig.json"
     levels = json.loads(levels_path.read_text(encoding="utf-8"))["Levels"]
@@ -55,7 +57,7 @@ def prepare_game(assets, workspace, instance):
         # The pinned player cycles levels when IsAutoPlayLevels equals 1.
         RandomSeed=instance["seed"], IsAutoPlayLevels=0, IsRepeatFailingLevels=0,
         IsHumanPlayerPlaying=0, IsDrlReward=0, IsDebug=0, IsRecordingEnabled=0,
-        IsOnlyPixelObs=0, NeedsNaturalLanguageObservation=0,
+        IsOnlyPixelObs=1, NeedsNaturalLanguageObservation=0,
         NeedsRealtimeLanguageObservation=0,
     )
     settings_path.write_text(json.dumps(settings), encoding="utf-8")

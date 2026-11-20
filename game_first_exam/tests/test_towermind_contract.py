@@ -2,12 +2,11 @@
 import base64
 from contextlib import contextmanager
 from io import BytesIO
-import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import numpy as np
 from PIL import Image
@@ -18,13 +17,13 @@ from config_schema import validate_instance
 from grade import grade
 from metric_rules import validate_metrics
 from native_assets import ARCHIVE_SHA256
-from server import Game, InvalidAction
+from server import EnvironmentFault, Game, InvalidAction
 
 
-def native_observation(health, shade=91):
+def native_observation(shade=91):
     return {
         "image": np.full((512, 512, 3), shade, dtype=np.uint8),
-        "text": {"Level_Current_Health": health, "private": "hidden-wave-sentinel"},
+        "text": {"Level_Current_Health": 99, "private": "hidden-wave-sentinel"},
     }
 
 
@@ -36,8 +35,9 @@ class StubNative:
 
     def step(self, action):
         self.actions.append(action)
-        health = 0 if self.outcome == "destroyed" else 20
-        return native_observation(health, 92), health - 20, True, {
+        breaches = 20 if self.outcome == "destroyed" else int(self.outcome == "feedback")
+        feedback = {"feedback": 0.01, "unexpected_reward": 0.0005}.get(self.outcome, 0)
+        return native_observation(92), np.float32(-breaches - feedback), True, {
             "step": SimpleNamespace(interrupted=[self.outcome == "interrupted"])
         }
 
@@ -53,7 +53,7 @@ def session(outcome):
         with (
             patch.object(adapter, "version", side_effect=config["engine_versions"].__getitem__),
             patch.object(adapter, "prepare_game", return_value=(Path("unused"), 20)),
-            patch.object(adapter, "open_native", return_value=(native, native_observation(20))),
+            patch.object(adapter, "open_native", return_value=(native, native_observation())),
         ):
             game_adapter = adapter.Adapter(config)
         config["initial_state_sha256"] = game_adapter.fingerprint()
@@ -72,11 +72,12 @@ class TowerMindContract(unittest.TestCase):
 
             self.assertEqual(load_gym_bridge().__name__, "UnityToGymWrapper")
 
-    def test_initial_decision_comes_from_explicit_reset_after_handshake(self):
+    def test_explicit_reset_selects_only_the_player_camera(self):
         import native
 
         unity = native.LocalUnity.__new__(native.LocalUnity)
-        payloads = iter(("", '{"Level_Current_Health": 20}'))
+        player_frame = native_observation()["image"]
+        payloads = iter((None, ["private texture", player_frame, "private vector"]))
         unity.get_steps = lambda _: ([object()], [])
 
         def receive_reset(player):
@@ -84,17 +85,33 @@ class TowerMindContract(unittest.TestCase):
 
         class GymBridge:
             name = "tower-defender"
+            group_spec = SimpleNamespace(observation_specs=[
+                SimpleNamespace(name="VectorSensor", shape=(32,)),
+                SimpleNamespace(name="RenderTextureSensor", shape=(128, 128, 3)),
+                SimpleNamespace(name="CameraSensor", shape=player_frame.shape),
+            ])
 
             def __init__(self, player, **_):
                 self.player = player
-                player.reset()  # Slot discovery sees an empty text sensor.
+                player.reset()
 
             def reset(self):
                 self.player.reset()
-                return {"text": json.loads(self.player.payload)}
+                return self.player.payload
+
+        class Modalities:
+            def __init__(self, gym, **flags):
+                self.gym = gym
+                self.flags = flags
+
+            def _convert_obs(self, observation):
+                return {"image": observation[0]}
+
+            def reset(self):
+                return self._convert_obs(self.gym.reset())
 
         wrappers = SimpleNamespace(
-            TowerMindMultiModalObsWrapper=lambda gym, **_: gym,
+            TowerMindMultiModalObsWrapper=Modalities,
             TowerMindActionMappingWrapper=lambda env: env,
         )
         with (
@@ -104,45 +121,22 @@ class TowerMindContract(unittest.TestCase):
             patch.object(native.UnityEnvironment, "reset", autospec=True, side_effect=receive_reset) as reset,
         ):
             env, initial = native.open_native(Path("td.x86_64"), Path("wrappers.py"), 42)
-            self.assertEqual(initial["text"]["Level_Current_Health"], 20)
+            self.assertEqual(env.flags, {"use_image": True, "use_text": False, "use_state": False})
+            self.assertEqual(set(initial), {"image"})
+            self.assertIs(initial["image"], player_frame)
             with self.assertRaisesRegex(RuntimeError, "one episode"):
                 env.reset()
             self.assertEqual(reset.call_count, 2)
 
-    def test_invalid_startup_sensor_advances_one_native_no_op(self):
-        from native import first_observation
+    def test_missing_or_ambiguous_camera_fails_closed(self):
+        from native import player_camera
 
-        frame = native_observation(20)
-        for payload in ("\x00" * 4, "X" * 90):
-            with self.subTest(payload_length=len(payload)):
-                env = Mock()
-                env.reset.side_effect = json.JSONDecodeError("Expecting value", payload, 0)
-                env.step.return_value = (frame, 0.0, False, {})
-                self.assertIs(first_observation(env), frame)
-                env.step.assert_called_once_with((0.0, 0.0, 6))
-                env.reset.assert_called_once_with()
-
-    def test_startup_aborts_after_a_single_invalid_no_op(self):
-        from native import first_observation
-
-        env = Mock()
-        env.reset.side_effect = json.JSONDecodeError("Expecting value", "X" * 90, 0)
-        env.step.side_effect = json.JSONDecodeError("Expecting value", "bad sensor", 0)
-        with self.assertRaisesRegex(ValueError, "reset: 90 characters.*no-op: 10 characters") as failure:
-            first_observation(env)
-        self.assertNotIn("bad sensor", str(failure.exception))
-        env.step.assert_called_once_with((0.0, 0.0, 6))
-
-    def test_startup_never_skips_a_terminal_or_reward(self):
-        from native import first_observation
-
-        for reward, done in ((-1.0, False), (0.0, True)):
-            with self.subTest(reward=reward, done=done):
-                env = Mock()
-                env.reset.side_effect = json.JSONDecodeError("Expecting value", "", 0)
-                env.step.return_value = (native_observation(20), reward, done, {})
-                with self.assertRaisesRegex(ValueError, "startup decision ended"):
-                    first_observation(env)
+        other = SimpleNamespace(name="RenderTextureSensor", shape=(512, 512, 3))
+        camera = SimpleNamespace(name="CameraSensor", shape=(512, 512, 3))
+        for specs in ([other], [camera, camera]):
+            gym = SimpleNamespace(group_spec=SimpleNamespace(observation_specs=specs))
+            with self.subTest(specs=specs), self.assertRaisesRegex(ValueError, "exactly one"):
+                player_camera(gym, None)
 
     def test_schema_rejects_drift(self):
         config = instance()
@@ -192,6 +186,24 @@ class TowerMindContract(unittest.TestCase):
                     self.assertEqual(native.actions, [(-3.0, 3.0, 11)])
                 result = grade(game.final, config, validate_metrics)
                 self.assertEqual((result["reason"], result["primary_score"]), (reason, success))
+
+    def test_native_reward_separates_breaches_and_action_feedback(self):
+        with session("feedback") as (game, config, _):
+            game.submit({"action": "0 0 2", "expected_step": 0, "request_id": "mixed"})
+            self.assertEqual(game.final["return"], float(np.float32(-1.01)))
+            self.assertEqual(game.final["metrics"]["base_health"], 19)
+            self.assertEqual(game.final["metrics"]["native_action_feedback_events"], 2)
+            self.assertEqual(grade(game.final, config, validate_metrics)["primary_score"], 1)
+            game.final["metrics"]["native_action_feedback_events"] = 0
+            with self.assertRaisesRegex(ValueError, "sparse return"):
+                validate_metrics(game.final, config)
+
+    def test_unexpected_native_reward_invalidates_attempt(self):
+        with session("unexpected_reward") as (game, _, _):
+            with self.assertRaises(EnvironmentFault):
+                game.submit({"action": "0 0 6", "expected_step": 0, "request_id": "reward-drift"})
+            self.assertEqual(game.final["reason"], "environment_error")
+            self.assertFalse(game.final["result_valid"])
 
 
 if __name__ == "__main__":

@@ -2,7 +2,6 @@
 from concurrent.futures import ThreadPoolExecutor
 from importlib.metadata import distribution
 from importlib.util import module_from_spec, spec_from_file_location
-from json import JSONDecodeError
 
 import grpc
 from mlagents_envs.environment import UnityEnvironment
@@ -66,28 +65,25 @@ class LocalUnity(UnityEnvironment):
         return super().reset()
 
 
-def first_observation(env):
-    try:
-        return env.reset()
-    except JSONDecodeError as reset_error:
-        # The player writes its JSON texture in FixedUpdate. A reset can yield a
-        # nonempty texture before that write. Action 6 is the native no-op.
-        try:
-            observation, reward, done, _ = env.step(NO_OP)
-        except JSONDecodeError as step_error:
-            raise ValueError(
-                "TowerMind JSON is invalid after one no-op startup decision "
-                f"(reset: {decode_error_summary(reset_error)}; no-op: {decode_error_summary(step_error)})"
-            ) from step_error
-    if done or float(reward) != 0.0:
-        raise ValueError("TowerMind startup decision ended the episode or changed its reward")
-    return observation
+def player_camera(gym, wrappers):
+    # The Gym bridge lists visual sensors in specification order, followed by
+    # the vector observation. Select the player camera even if Unity still
+    # registers its separate text texture in pixel-only mode.
+    visual = [spec for spec in gym.group_spec.observation_specs if len(spec.shape) == 3]
+    cameras = [
+        index for index, spec in enumerate(visual)
+        if spec.name == "CameraSensor" and spec.shape in ((512, 512, 3), (3, 512, 512))
+    ]
+    if len(cameras) != 1:
+        specs = [(spec.name, spec.shape) for spec in visual]
+        raise ValueError(f"expected exactly one native 512x512 RGB CameraSensor, got {specs}")
+    camera, = cameras
 
+    class PlayerCamera(wrappers.TowerMindMultiModalObsWrapper):
+        def _convert_obs(self, observation):
+            return super()._convert_obs([observation[camera]])
 
-def decode_error_summary(error):
-    # Report byte-level markers to trusted logs without dumping the observation.
-    prefix = ",".join(str(ord(character)) for character in error.doc[:4]) or "none"
-    return f"{len(error.doc)} characters, offset {error.pos}, first character codes [{prefix}]"
+    return PlayerCamera(gym, use_image=True, use_text=False, use_state=False)
 
 
 def open_native(player, wrappers_path, seed):
@@ -102,14 +98,11 @@ def open_native(player, wrappers_path, seed):
     )
     try:
         gym = gym_wrapper(unity, uint8_visual=True, allow_multiple_obs=True)
-        modalities = wrappers.TowerMindMultiModalObsWrapper(
-            gym, use_image=True, use_text=True, use_state=False
-        )
-        env = wrappers.TowerMindActionMappingWrapper(modalities)
+        env = wrappers.TowerMindActionMappingWrapper(player_camera(gym, wrappers))
         # UnityToGymWrapper resets during its constructor to inspect agent slots.
         # TowerMind's example then resets the wrapped environment to obtain the
-        # playable observation. The constructor snapshot can have an empty JSON sensor.
-        initial = first_observation(env)
+        # playable observation.
+        initial = env.reset()
         unity._initializing = False
         decision, terminal = unity.get_steps(gym.name)
         if len(decision) != 1 or len(terminal):

@@ -11,6 +11,10 @@ PROFILES = {"player-rgb-v1"}
 REDUCERS = {("family_macro", "1.0.0")}
 CAPABILITIES = Capabilities(images=True, action_mode="text", native_truncation=True).to_dict()
 ARCHIVE_SHA256 = "153f363150f5e33f4827599498e2d7bda504045a4ae258e013bb504ea4273e19"
+DECISION_PERIOD = 16
+REWARD_UNITS_PER_BREACH = 200
+# Allow float32 accumulation within one native decision interval.
+REWARD_TOLERANCE = 2e-5
 ENGINE_VERSIONS = {
     "mlagents-envs": "1.1.0",
     "gym": "0.26.2",
