@@ -53,7 +53,6 @@ class LoopbackCommunicator(RpcCommunicator):
 
 class LocalUnity(UnityEnvironment):
     _initializing = True
-    _initial_reset_done = False
 
     @staticmethod
     def _get_communicator(worker_id, base_port, timeout_wait):
@@ -62,14 +61,11 @@ class LocalUnity(UnityEnvironment):
     def reset(self):
         if not self._initializing:
             raise RuntimeError("TowerMind simulator supports one episode")
-        # Gym may first step to discover behavior specs, which itself calls reset.
-        if not self._initial_reset_done:
-            super().reset()
-            self._initial_reset_done = True
+        return super().reset()
 
 
 def open_native(player, wrappers_path, seed):
-    """Use the Gym constructor's native reset as the initial decision."""
+    """Run the upstream startup sequence before exposing the first decision."""
     gym_wrapper = load_gym_bridge()
     wrappers = load_source("_towermind_upstream_wrappers", wrappers_path)
     channel = EngineConfigurationChannel()
@@ -81,16 +77,19 @@ def open_native(player, wrappers_path, seed):
     )
     try:
         gym = gym_wrapper(unity, uint8_visual=True, allow_multiple_obs=True)
+        modalities = wrappers.TowerMindMultiModalObsWrapper(
+            gym, use_image=True, use_text=True, use_state=False
+        )
+        env = wrappers.TowerMindActionMappingWrapper(modalities)
+        # UnityToGymWrapper resets during its constructor to inspect agent slots.
+        # TowerMind's example then resets the wrapped environment to obtain the
+        # playable observation. The constructor snapshot can have an empty JSON sensor.
+        initial = env.reset()
         unity._initializing = False
         decision, terminal = unity.get_steps(gym.name)
         if len(decision) != 1 or len(terminal):
             raise ValueError("unexpected TowerMind initial decision")
-        raw_observation, _, _, _ = gym._single_step(decision)
-        modalities = wrappers.TowerMindMultiModalObsWrapper(
-            gym, use_image=True, use_text=True, use_state=False
-        )
-        initial = modalities._convert_obs(raw_observation)
-        return wrappers.TowerMindActionMappingWrapper(modalities), initial
+        return env, initial
     except Exception:
         unity.close()
         raise

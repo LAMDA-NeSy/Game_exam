@@ -2,6 +2,7 @@
 import base64
 from contextlib import contextmanager
 from io import BytesIO
+import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
@@ -70,6 +71,43 @@ class TowerMindContract(unittest.TestCase):
             from native import load_gym_bridge
 
             self.assertEqual(load_gym_bridge().__name__, "UnityToGymWrapper")
+
+    def test_initial_decision_comes_from_explicit_reset_after_handshake(self):
+        import native
+
+        unity = native.LocalUnity.__new__(native.LocalUnity)
+        payloads = iter(("", '{"Level_Current_Health": 20}'))
+        unity.get_steps = lambda _: ([object()], [])
+
+        def receive_reset(player):
+            player.payload = next(payloads)
+
+        class GymBridge:
+            name = "tower-defender"
+
+            def __init__(self, player, **_):
+                self.player = player
+                player.reset()  # Slot discovery sees an empty text sensor.
+
+            def reset(self):
+                self.player.reset()
+                return {"text": json.loads(self.player.payload)}
+
+        wrappers = SimpleNamespace(
+            TowerMindMultiModalObsWrapper=lambda gym, **_: gym,
+            TowerMindActionMappingWrapper=lambda env: env,
+        )
+        with (
+            patch.object(native, "LocalUnity", return_value=unity),
+            patch.object(native, "load_gym_bridge", return_value=GymBridge),
+            patch.object(native, "load_source", return_value=wrappers),
+            patch.object(native.UnityEnvironment, "reset", autospec=True, side_effect=receive_reset) as reset,
+        ):
+            env, initial = native.open_native(Path("td.x86_64"), Path("wrappers.py"), 42)
+            self.assertEqual(initial["text"]["Level_Current_Health"], 20)
+            with self.assertRaisesRegex(RuntimeError, "one episode"):
+                env.reset()
+            self.assertEqual(reset.call_count, 2)
 
     def test_schema_rejects_drift(self):
         config = instance()
