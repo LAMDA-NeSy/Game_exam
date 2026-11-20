@@ -32,13 +32,13 @@ import run_games
 class GameSelection(unittest.TestCase):
     def test_game_only_default_and_all_selection_never_launches(self):
         for flags, expected in ((["--list", "--standard"], 30),
-                                (["--all", "--standard", "--list"], 42)):
+                                (["--all", "--standard", "--list"], 43)):
             with self.subTest(flags=flags), contextlib.redirect_stdout(io.StringIO()) as output, \
                     patch("efe.harbor") as launch, patch("efe.prepull") as pull:
                 self.assertEqual(efe.run(flags), 0)
             names = output.getvalue().splitlines()
             self.assertEqual(len(names), expected)
-            self.assertTrue(all(name.startswith(("minigrid-", "crafter-", "textworld-", "babaisai-", "minihack-"))
+            self.assertTrue(all(name.startswith(("minigrid-", "crafter-", "textworld-", "babaisai-", "minihack-", "rocketleague-"))
                                 for name in names))
             launch.assert_not_called()
             pull.assert_not_called()

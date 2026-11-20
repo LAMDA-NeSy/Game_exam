@@ -1,0 +1,10 @@
+{
+  "source": "game_first_exam/benchmarks/rocketleague",
+  "files": {
+    "adapter.py": "e7cbea18f41b22cb04a21d2f9dec5dfb09a6871162e5f843fd9c76106584dde6",
+    "instance_schema.py": "71b9f199ea60d7f63cecb7cd19120adbe717eaaf3a683332062392cce9621f74",
+    "metric_rules.py": "c51413a27a70ad20505cb3e200e61ae0566c0a4e67d6889266d018fb290fdfb0",
+    "requirements.txt": "f7b63cd5e9d2d806613a620bb7340f27ce6735ba76c9d5a08f77d48e527d4733"
+  },
+  "image": "ghcr.io/mll-lab-nu/efe:rocketleague-files-0.1.0@sha256:d3ae7d1cd943106acd92ecfebea6aa43660877adab9b0c2243dfb90eaa4235c2"
+}
