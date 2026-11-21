@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        benchmark: [common, minigrid, crafter, textworld, babaisai, minihack]
+        benchmark: [common, minigrid, crafter, textworld, babaisai, minihack, chess]
     steps:
       - uses: actions/checkout@v4
         with: {persist-credentials: false}

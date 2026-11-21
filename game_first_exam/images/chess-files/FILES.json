@@ -1,0 +1,14 @@
+{
+  "image": "ghcr.io/mll-lab-nu/efe:chess-files-0.1.2@sha256:75f183dd662d4388d072ea4f5d266fecace649176074d226f14e13caee106add",
+  "source": "game_first_exam/benchmarks/chess",
+  "files": {
+    "SOURCE.json": "fcf83f0723e7f43fab0894cbf867bb097fcb2f72568826e854fe678767b6c8aa",
+    "adapter.py": "d31ddfdcfe910fe46ab5712303690b162701d191557e98cfbadd77829a856589",
+    "build-requirements.txt": "83f111e093bad00e18d8ee645a55359e4a3b9ea26a1b2d8b91776712a0db30fb",
+    "chess-requirements.txt": "7d46bd5d8cec63418af9a29320b9f922a7972b54c3419c8434182ae27a2e94ac",
+    "instance_schema.py": "e7dbbfc5323f21916149905afbe6fad03ebefc2c1c431e9332926b08bdca8671",
+    "metric_rules.py": "aa9217750518596d085ed57500c0fca4d8f55140359ffb908541790b60821ea9",
+    "opponent.py": "a0db0920375a1892ef13b6f8b1dd30f73ec8a137ca667d91e1b62ee7a6b94db4",
+    "requirements.txt": "b1a71e2d4448d9bc8a84ea70861eb4607e9ecb9ce073d05903401c0e8bc3769f"
+  }
+}

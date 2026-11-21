@@ -1,0 +1,38 @@
+{
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "benchmark": "chess",
+  "env_id": "classic/chess-v6",
+  "family": "standard-start",
+  "seed": 2117382936,
+  "max_steps": 128,
+  "observation_profile": "chess-public-board-native-v1",
+  "engine_versions": {
+    "pettingzoo": "1.27.0",
+    "chess": "1.11.2",
+    "gymnasium": "1.0.0",
+    "numpy": "1.26.4",
+    "pygame-ce": "2.5.6"
+  },
+  "engine_commit": "7221e4b15873a8b16555fda038a77a6ae595e88d",
+  "engine_wheel_sha256": "075a6ab7c32d32d9a674f1af395010198bf09c172341aa38fa5415461601ac61",
+  "controlled_agent": "player_0",
+  "initialization_policy": "native-start-v1",
+  "opponent_policy": "hash-legal-v1",
+  "opponent_seed": 2117382936,
+  "tool_policy": "public-tools-no-task-solutions-v1",
+  "metric_spec": {
+    "primary": "match_points",
+    "reducer": "family_macro",
+    "reducer_version": "1.0.0",
+    "success_label": "native_white_win"
+  },
+  "capabilities": {
+    "images": false,
+    "action_mode": "enum",
+    "timing": "action-stepped",
+    "native_truncation": true
+  },
+  "initial_state_sha256": "b4075f20eb23191657bfaa63c55b729f301bcd4f5db5fd8995214b659589bfe6"
+}

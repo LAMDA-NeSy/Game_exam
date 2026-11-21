@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/Farama-Foundation/PettingZoo",
+  "commit": "7221e4b15873a8b16555fda038a77a6ae595e88d",
+  "environment": "classic/chess-v6",
+  "pettingzoo_wheel_sha256": "075a6ab7c32d32d9a674f1af395010198bf09c172341aa38fa5415461601ac61",
+  "chess_sdist_sha256": "a8b43e5678fdb3000695bdaa573117ad683761e5ca38e591c4826eba6d25bb39",
+  "chess_py_sha256": "2b5c6f684951bb1b476213db88fcbebf63ed7acf0c565e288454f3174752726a",
+  "chess_utils_py_sha256": "e9a7418ab85bbbb2f5ed5cd766b5afcc7ff07a6ca110842f48465f4ec9717cc1"
+}
