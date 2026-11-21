@@ -1,4 +1,5 @@
 """Development instance for tests only. No task or suite registration."""
+import json
 from pathlib import Path
 import sys
 
@@ -9,26 +10,14 @@ BENCHMARK = ROOT / "game_first_exam/benchmarks/towermind"
 sys.path[:0] = [str(RUNTIME), str(BENCHMARK)]
 
 import instance_schema
-from config_schema import PROTOCOL, INSTANCE_SCHEMA, register_instance_schema
+from config_schema import register_instance_schema
 
 
 register_instance_schema(instance_schema)
 
 
 def instance():
-    return {
-        "schema_version": INSTANCE_SCHEMA, "protocol": PROTOCOL, "adapter_version": "1.0.0",
-        "capabilities": dict(instance_schema.CAPABILITIES),
-        "benchmark": "towermind", "env_id": "TowerMind-Level-0", "family": "development",
-        "level_id": 0, "seed": 42, "max_steps": None, "initial_state_sha256": "0" * 64,
-        "engine_versions": dict(instance_schema.ENGINE_VERSIONS),
-        "engine_archive_sha256": instance_schema.ARCHIVE_SHA256,
-        "observation_profile": "player-rgb-v1",
-        "metric_spec": {
-            "primary": "native_return", "success_label": "native_level_completed",
-            "reducer": "family_macro", "reducer_version": "1.0.0",
-        },
-    }
+    return json.loads((Path(__file__).parent / "fixtures/towermind-instance.json").read_text())
 
 
 def serve():

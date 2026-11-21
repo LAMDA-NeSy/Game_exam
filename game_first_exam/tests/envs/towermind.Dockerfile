@@ -22,6 +22,7 @@ RUN pip install --no-cache-dir --no-deps setuptools==84.2.1 wheel==0.45.1 \
     && pip check \
     && python game_first_exam/benchmarks/towermind/native_assets.py /opt/towermind
 COPY game_first_exam/runtime/ /repo/game_first_exam/runtime/
+COPY game_first_exam/tests/fixtures/towermind-instance.json /repo/game_first_exam/tests/fixtures/
 COPY game_first_exam/tests/towermind_fixture.py game_first_exam/tests/test_towermind_contract.py \
     game_first_exam/tests/test_towermind_native.py /repo/game_first_exam/tests/
 USER 65534:65534

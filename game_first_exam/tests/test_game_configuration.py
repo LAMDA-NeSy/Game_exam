@@ -24,20 +24,24 @@ from game_schemas import schema_paths
 from grade import grade
 from run_games import aggregate
 from server import EnvironmentFault, Game, InvalidAction
+from task_conventions import iter_tasks, mode_of
 from test_game_service import Backend, instance
 from test_games_runner import record, trial
 
 
 class ConfigTests(unittest.TestCase):
     def test_each_bundled_schema_works_without_repo_or_engine_packages(self):
+        tasks = [task for task in iter_tasks() if mode_of(task) == 'standard' and '-i00-' not in task.name]
         for benchmark, schema in schema_paths().items():
-            task = next(p for p in sorted((ROOT / 'game_first_exam/tasks' / benchmark).glob('*-standard')) if '-i00-' not in p.name)
+            # A registered benchmark can have an integration fixture before its first reviewed exam.
+            sample = next((task / 'tests/instance.json' for task in tasks if task.parent.name == benchmark),
+                          ROOT / 'game_first_exam/tests/fixtures' / f'{benchmark}-instance.json')
             with self.subTest(benchmark=benchmark), tempfile.TemporaryDirectory() as tmp:
                 out = Path(tmp)
                 for name in ('config_schema.py', 'reducers.py'):
                     shutil.copyfile(ROOT / 'game_first_exam/runtime' / name, out / name)
                 shutil.copyfile(schema, out / 'instance_schema.py')
-                shutil.copyfile(task / 'tests/instance.json', out / 'instance.json')
+                shutil.copyfile(sample, out / 'instance.json')
                 program = '''import json, sys
 sys.path.insert(0, '.')
 from config_schema import validate_instance
