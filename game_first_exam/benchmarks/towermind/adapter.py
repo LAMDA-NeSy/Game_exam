@@ -28,10 +28,10 @@ def parse_action(action):
     return float(x), float(y), int(action_type)
 
 
-def open_native(player, wrappers_path, seed):
+def open_native(player, wrappers_path):
     from native import open_native as launch
 
-    return launch(player, wrappers_path, seed)
+    return launch(player, wrappers_path)
 
 
 class Adapter:
@@ -50,7 +50,7 @@ class Adapter:
         source = NATIVE_ASSETS if assets is None or not (assets / "linux.zip").is_file() else assets
         try:
             player = prepare_game(source, Path(self._workspace.name), instance)
-            self._env, observation = open_native(player, source / "wrappers.py", instance["seed"])
+            self._env, observation = open_native(player, source / "wrappers.py")
             self._cache(observation)
         except Exception:
             self.close()

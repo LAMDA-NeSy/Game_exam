@@ -121,12 +121,13 @@ class TowerMindContract(unittest.TestCase):
             TowerMindActionMappingWrapper=lambda env: env,
         )
         with (
-            patch.object(native, "LocalUnity", return_value=unity),
+            patch.object(native, "LocalUnity", return_value=unity) as launch,
             patch.object(native, "load_gym_bridge", return_value=GymBridge),
             patch.object(native, "load_source", return_value=wrappers),
             patch.object(native.UnityEnvironment, "reset", autospec=True, side_effect=receive_reset) as reset,
         ):
-            env, initial = native.open_native(Path("td.x86_64"), Path("wrappers.py"), 42)
+            env, initial = native.open_native(Path("td.x86_64"), Path("wrappers.py"))
+            self.assertNotIn("seed", launch.call_args.kwargs)
             self.assertEqual(env.flags, {"use_image": True, "use_text": True, "use_state": False})
             self.assertEqual(set(initial), {"image", "text"})
             self.assertIs(initial["image"], player_frame)

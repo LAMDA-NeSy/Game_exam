@@ -94,14 +94,14 @@ def multimodal_observations(gym, wrappers):
     return NativeObservations(gym, use_image=True, use_text=True, use_state=False)
 
 
-def open_native(player, wrappers_path, seed):
+def open_native(player, wrappers_path):
     """Run the upstream startup sequence before exposing the first decision."""
     gym_wrapper = load_gym_bridge()
     wrappers = load_source("_towermind_upstream_wrappers", wrappers_path)
     channel = EngineConfigurationChannel()
     channel.set_configuration_parameters(target_frame_rate=-1, time_scale=20.0, capture_frame_rate=60)
     unity = LocalUnity(
-        file_name=str(player), seed=seed, base_port=RPC_PORT, timeout_wait=60,
+        file_name=str(player), base_port=RPC_PORT, timeout_wait=60,
         side_channels=[channel], log_folder=str(player.parent),
     )
     try:

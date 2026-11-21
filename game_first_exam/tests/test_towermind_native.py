@@ -1,6 +1,9 @@
 """Native equivalence and timing checks for the pinned TowerMind Linux player."""
 import json
+import os
 import socket
+import sys
+from unittest.mock import patch
 from json import JSONDecodeError
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -96,6 +99,43 @@ def report_texture_transport(player, wrappers):
             for line in log_path.read_text(encoding="utf-8", errors="replace").splitlines():
                 if line.startswith(("Renderer:", "Vendor:", "Version:", "GfxDevice:", "OpenGL", "Vulkan")):
                     print(f"reference {label}: {line.strip()}")
+
+
+def probe_renderers():
+    wrappers = load_source("_towermind_render_probe", NATIVE_ASSETS / "wrappers.py")
+    for label, overrides in (
+        ("anisotropy-off", {}),
+        ("stock", {"MESA_EXTENSION_OVERRIDE": ""}),
+        ("alternate-sampler", {"MESA_EXTENSION_OVERRIDE": "", "GALLIVM_PERF": "no_aos_sampling"}),
+        ("point-sampling", {"LP_PERF": "no_linear"}),
+        ("softpipe", {"GALLIUM_DRIVER": "softpipe"}),
+        ("zink", {"GALLIUM_DRIVER": "zink", "MESA_LOADER_DRIVER_OVERRIDE": "zink"}),
+    ):
+        print(f"Starting renderer probe {label}", flush=True)
+        with TemporaryDirectory() as directory, patch.dict(os.environ, overrides):
+            player = prepare_game(NATIVE_ASSETS, Path(directory), instance())
+            channel = EngineConfigurationChannel()
+            channel.set_configuration_parameters(target_frame_rate=-1, time_scale=20.0, capture_frame_rate=60)
+            unity = None
+            try:
+                unity = UnityEnvironment(file_name=str(player), timeout_wait=25, side_channels=[channel],
+                                         log_folder=str(player.parent))
+                bridge = load_gym_bridge()(unity, uint8_visual=True, allow_multiple_obs=True)
+                obs = wrappers.TowerMindMultiModalObsWrapper(bridge, use_image=True, use_text=True, use_state=False)
+                env = wrappers.TowerMindActionMappingWrapper(obs)
+                observation = env.reset()
+                assert "Level_Current_Health" in observation["text"]
+                for _, action in COMMANDS[:6]:
+                    observation, _, done, _ = env.step(action)
+                    assert not done and "Agent_Last_Action_Info" in observation["text"]
+                print(f"Renderer probe {label}: passed six native decisions", flush=True)
+            except JSONDecodeError as error:
+                print(f"Renderer probe {label}: invalid JSON at {error.pos}, length {len(error.doc)}", flush=True)
+            except Exception as error:
+                print(f"Renderer probe {label}: {type(error).__name__}", flush=True)
+            finally:
+                if unity is not None and unity._loaded:
+                    unity.close()
 
 
 class TowerMindNative(unittest.TestCase):
@@ -203,4 +243,7 @@ class TowerMindNative(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    if sys.argv[1:] == ["--probe-renderers"]:
+        probe_renderers()
+    else:
+        unittest.main()

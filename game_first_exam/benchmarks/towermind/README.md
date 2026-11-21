@@ -1,6 +1,6 @@
 # TowerMind adapter
 
-This development integration uses the upstream Unity Linux x86-64 player and both official TowerMind wrappers. `SOURCE.json` pins the archive and wrapper source by commit and SHA256. The simulator extracts a private copy and applies the level and seed selected for the run, following the upstream LLM example. All other settings come from the pinned archive.
+This development integration uses the upstream Unity Linux x86-64 player and both official TowerMind wrappers. `SOURCE.json` pins the archive and wrapper source by commit and SHA256. The simulator extracts a private copy and applies the level and seed selected for the run, following the upstream LLM example. The level seed is passed through the game configuration. The separate ML-Agents initialization seed uses the official Python example's default. All other game settings come from the pinned archive.
 
 Initialization resets through the TowerMind wrappers after the Gym bridge discovers its agent slots. The bridge uses the reported sensor names to route the player camera and JSON texture to the official observation wrapper. The first reset observation starts the public episode. The adapter records the first native terminal or interrupted transition and closes the episode.
 
