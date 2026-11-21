@@ -51,7 +51,16 @@ def prepare_game(assets, workspace, instance):
     (configs / "FixedLevelsConfig.json").write_text(
         json.dumps({"CurrentLevel": instance["level_id"]}), encoding="utf-8"
     )
-    return player
+    # Mesa llvmpipe can filter adjacent byte values in TowerMind's JSON texture.
+    # Scope the renderer setting to the Unity child; leave the original player intact.
+    launcher = directory / "launch.x86_64"
+    launcher.write_bytes(
+        b'#!/bin/sh\n'
+        b'export MESA_EXTENSION_OVERRIDE="-GL_EXT_texture_filter_anisotropic -GL_ARB_texture_filter_anisotropic"\n'
+        b'exec "${0%/*}/td.x86_64" "$@"\n'
+    )
+    launcher.chmod(0o700)
+    return launcher
 
 
 if __name__ == "__main__":

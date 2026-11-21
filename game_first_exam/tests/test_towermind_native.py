@@ -1,14 +1,12 @@
 """Native equivalence and timing checks for the pinned TowerMind Linux player."""
-import json
 import os
 import socket
-import sys
-from unittest.mock import patch
 from json import JSONDecodeError
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import time
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 from mlagents_envs.environment import UnityEnvironment
@@ -26,130 +24,22 @@ COMMANDS = [("0 0 6", NO_OP), ("-1.5 1.2 2", (-1.5, 1.2, 2))] * 6
 MAX_REFERENCE_DECISIONS = 4096
 
 
-def report_texture_transport(player, wrappers):
-    # The native recorder writes the same payload before it goes through the
-    # texture transport. Enable it only in this disposable diagnostic copy.
-    config_path = player.parent / "td_Data/StreamingAssets/Config/EnvConfig.json"
-    config = json.loads(config_path.read_text(encoding="utf-8"))
-    records = player.parent / "diagnostic-records"
-    records.mkdir()
-    config.update(IsRecordingEnabled=1, RecordingPath=str(records))
-    config_path.write_text(json.dumps(config), encoding="utf-8")
-    for args in ([], ["-force-gfx-direct"]):
-        label = args[0] if args else "default"
-        log_path = player.parent / f"diagnostic-{label}.log"
-        settings = EngineConfigurationChannel()
-        settings.set_configuration_parameters(target_frame_rate=-1, time_scale=20.0, capture_frame_rate=60)
-        try:
-            unity = UnityEnvironment(file_name=str(player), side_channels=[settings], timeout_wait=20,
-                                     additional_args=args + ["-logFile", str(log_path)], seed=42)
-            try:
-                bridge = load_gym_bridge()(unity, uint8_visual=True, allow_multiple_obs=True)
-                texture = bridge.reset()[1]
-                red = texture[0]
-                rows = np.count_nonzero(red, axis=1)
-                print(f"reference {label} nonzero texture pixels in first/last 20 rows: {rows[:20]}, {rows[-20:]}")
-                try:
-                    wrappers.get_json_from_obs(texture)
-                except json.JSONDecodeError as error:
-                    print(f"reference {label} stock decoder: length {len(error.doc)}, offset {error.pos}")
-                else:
-                    print(f"reference {label} stock decoder: valid JSON")
-                paths = sorted(records.glob("*/game_internal_states/*"), key=lambda p: p.stat().st_mtime_ns)
-                if not paths:
-                    print(f"reference {label} native diagnostic record absent")
-                    continue
-                recorded = paths[-1].read_text(encoding="utf-8-sig")
-                try:
-                    json.loads(recorded)
-                except json.JSONDecodeError as error:
-                    print(f"reference {label} recorder: length {len(recorded)}, invalid JSON at {error.pos}")
-                else:
-                    print(f"reference {label} recorder: length {len(recorded)}, valid JSON")
-                expected = np.array([ord(char) % 256 for char in recorded] + [64], dtype=np.uint8)
-                header = expected[:12].tobytes()
-                values = np.arange(256) / 255.0
-                linear = np.where(values <= 0.04045, values / 12.92, ((values + 0.055) / 1.055) ** 2.4)
-                srgb = np.where(values <= 0.0031308, 12.92 * values, 1.055 * values ** (1 / 2.4) - 0.055)
-                for transfer, lut in (("identity", values), ("linear", linear), ("srgb", srgb)):
-                    decoded = np.round(lut * 255).astype(np.uint8)[red]
-                    actual = decoded[decoded != 0]
-                    common = np.minimum(np.bincount(expected, minlength=256), np.bincount(actual, minlength=256)).sum()
-                    print(f"reference {label} {transfer} byte overlap: {common}/{len(expected)}")
-                    for rotation in range(4):
-                        oriented = np.rot90(decoded, rotation)
-                        for mirrored, plane in enumerate((oriented, oriented[:, ::-1])):
-                            stream = plane.ravel().tobytes()
-                            circular = stream + stream
-                            start = circular.find(header)
-                            end = circular.find(b"@", start) if start >= 0 else -1
-                            if 0 <= start < len(stream) and 0 <= end - start < len(stream):
-                                try:
-                                    state = json.loads(circular[start:end])
-                                except (ValueError, UnicodeDecodeError):
-                                    continue
-                                if isinstance(state, dict) and "Level_Current_Health" in state:
-                                    print(f"reference {label} valid JSON with {transfer}, "
-                                          f"rotation={rotation * 90}, mirrored={bool(mirrored)}, offset={start}")
-            finally:
-                unity.close()
-        except Exception as error:
-            print(f"reference {label} transport probe failed: {type(error).__name__}")
-        if log_path.exists():
-            for line in log_path.read_text(encoding="utf-8", errors="replace").splitlines():
-                if line.startswith(("Renderer:", "Vendor:", "Version:", "GfxDevice:", "OpenGL", "Vulkan")):
-                    print(f"reference {label}: {line.strip()}")
-
-
-def probe_renderers():
-    wrappers = load_source("_towermind_render_probe", NATIVE_ASSETS / "wrappers.py")
-    for label, overrides in (
-        ("anisotropy-off", {}),
-        ("stock", {"MESA_EXTENSION_OVERRIDE": ""}),
-        ("alternate-sampler", {"MESA_EXTENSION_OVERRIDE": "", "GALLIVM_PERF": "no_aos_sampling"}),
-        ("point-sampling", {"LP_PERF": "no_linear"}),
-        ("softpipe", {"GALLIUM_DRIVER": "softpipe"}),
-        ("zink", {"GALLIUM_DRIVER": "zink", "MESA_LOADER_DRIVER_OVERRIDE": "zink"}),
-    ):
-        print(f"Starting renderer probe {label}", flush=True)
-        with TemporaryDirectory() as directory, patch.dict(os.environ, overrides):
-            player = prepare_game(NATIVE_ASSETS, Path(directory), instance())
-            channel = EngineConfigurationChannel()
-            channel.set_configuration_parameters(target_frame_rate=-1, time_scale=20.0, capture_frame_rate=60)
-            unity = None
-            try:
-                unity = UnityEnvironment(file_name=str(player), timeout_wait=25, side_channels=[channel],
-                                         log_folder=str(player.parent))
-                bridge = load_gym_bridge()(unity, uint8_visual=True, allow_multiple_obs=True)
-                obs = wrappers.TowerMindMultiModalObsWrapper(bridge, use_image=True, use_text=True, use_state=False)
-                env = wrappers.TowerMindActionMappingWrapper(obs)
-                observation = env.reset()
-                assert "Level_Current_Health" in observation["text"]
-                for _, action in COMMANDS[:6]:
-                    observation, _, done, _ = env.step(action)
-                    assert not done and "Agent_Last_Action_Info" in observation["text"]
-                print(f"Renderer probe {label}: passed six native decisions", flush=True)
-            except JSONDecodeError as error:
-                print(f"Renderer probe {label}: invalid JSON at {error.pos}, length {len(error.doc)}", flush=True)
-            except Exception as error:
-                print(f"Renderer probe {label}: {type(error).__name__}", flush=True)
-            finally:
-                if unity is not None and unity._loaded:
-                    unity.close()
-
-
 class TowerMindNative(unittest.TestCase):
     def test_01_upstream_reference_matches_the_adapter_through_termination(self):
         config = instance()
         with TemporaryDirectory() as workspace:
-            player = prepare_game(NATIVE_ASSETS, Path(workspace), config)
+            prepare_game(NATIVE_ASSETS, Path(workspace), config)
+            player = Path(workspace) / "linux/td.x86_64"
             # Run the official LLM example's Gym sequence without a model.
             # This reference uses plain UnityEnvironment and both stock wrappers.
             wrappers = load_source("_towermind_reference_wrappers", NATIVE_ASSETS / "wrappers.py")
             settings = EngineConfigurationChannel()
             settings.set_configuration_parameters(target_frame_rate=-1, time_scale=20.0, capture_frame_rate=60)
-            unity = UnityEnvironment(file_name=str(player), side_channels=[settings],
-                                     timeout_wait=60, log_folder=str(player.parent))
+            # The reference starts the stock executable directly under the same Mesa profile.
+            mesa = "-GL_EXT_texture_filter_anisotropic -GL_ARB_texture_filter_anisotropic"
+            with patch.dict(os.environ, {"MESA_EXTENSION_OVERRIDE": mesa}):
+                unity = UnityEnvironment(file_name=str(player), side_channels=[settings],
+                                         timeout_wait=60, log_folder=str(player.parent))
             try:
                 bridge = load_gym_bridge()(unity, uint8_visual=True, allow_multiple_obs=True)
                 observations = wrappers.TowerMindMultiModalObsWrapper(
@@ -160,8 +50,6 @@ class TowerMindNative(unittest.TestCase):
                     initial = env.reset()
                 except JSONDecodeError as error:
                     specs = [(spec.name, spec.shape) for spec in bridge.group_spec.observation_specs]
-                    unity.close()
-                    report_texture_transport(player, wrappers)
                     self.fail(
                         f"stock TowerMind LLM wrappers failed during reset before Game Exam: "
                         f"JSON offset {error.pos}, decoded length {len(error.doc)}, sensors {specs}"
@@ -209,6 +97,7 @@ class TowerMindNative(unittest.TestCase):
                     (reward, done and not interrupted, interrupted),
                     f"decision {index + 1}",
                 )
+                self.assertEqual(adapter.metrics()["base_health"], health, f"base health at decision {index + 1}")
                 reference_return += reward
                 if outcome["Action_Index"] != 6:
                     counted += 1
@@ -218,6 +107,7 @@ class TowerMindNative(unittest.TestCase):
             self.assertEqual(metrics["base_health"], health)
             self.assertEqual(metrics["native_counted_actions"], counted)
             self.assertEqual(metrics["native_invalid_actions"], invalid)
+            print(f"Stock and adapted TowerMind matched through {len(expected)} decisions, return {reference_return}.")
             with self.assertRaisesRegex(ValueError, "episode closed"):
                 adapter.step("0 0 6")
         finally:
@@ -243,7 +133,4 @@ class TowerMindNative(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    if sys.argv[1:] == ["--probe-renderers"]:
-        probe_renderers()
-    else:
-        unittest.main()
+    unittest.main()

@@ -20,8 +20,11 @@ def main():
             raise AssertionError("the simulator's loopback RPC port is reachable from the client")
     except (ConnectionRefusedError, TimeoutError):
         pass
-    for private_path in ("/opt/towermind", "/repo", "/srv", "/data"):
+    for private_path in ("/opt/towermind", "/repo", "/data"):
         assert not Path(private_path).exists(), f"unexpected sim path in client: {private_path}"
+    # Debian supplies an empty /srv in the base image. No simulator files belong there.
+    service_dir = Path("/srv")
+    assert not service_dir.exists() or not any(service_dir.iterdir()), "simulator files in client /srv"
     obs = client.step("0 0 0", expected_step=0)
     assert obs["step"] == 1
     assert set(obs["observation"]) == {"image_png_base64"}

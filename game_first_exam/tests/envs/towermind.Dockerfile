@@ -15,7 +15,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxrender1 libvulkan1 mesa-vulkan-drivers xauth xvfb \
     && rm -rf /var/lib/apt/lists/*
 ENV LIBGL_ALWAYS_SOFTWARE=1 HOME=/tmp
-ENV MESA_EXTENSION_OVERRIDE="-GL_EXT_texture_filter_anisotropic -GL_ARB_texture_filter_anisotropic"
 WORKDIR /repo
 COPY game_first_exam/benchmarks/towermind/ /repo/game_first_exam/benchmarks/towermind/
 RUN pip install --no-cache-dir --no-deps setuptools==84.2.1 wheel==0.45.1 \
