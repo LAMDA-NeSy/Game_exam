@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import re
 from shutil import copy2
+import socket
 import subprocess
 import sys
 from textwrap import dedent
@@ -47,7 +48,7 @@ finally:
     return json.dumps(config, indent=2) + "\n"
 
 
-def stage_task(task, instance):
+def stage_task(task, instance, endpoint):
     write(task / "instruction.md", """
         # TowerMind isolation smoke test
 
@@ -108,18 +109,28 @@ def stage_task(task, instance):
         CMD ["xvfb-run", "-a", "-s", "-screen 0 1400x900x24", "python", "/srv/server.py"]
     """)
     write(task / "environment/sim/instance.json", instance)
+    for directory in ("solution", "tests"):
+        write(task / directory / "canary.py", f"ADDRESS = {endpoint!r}\n")
     write(task / "solution/solve.sh", """
         #!/bin/bash
         set -euo pipefail
-        PYTHONPATH=/app python - <<'PY'
+        PYTHONPATH=/app:/solution python - <<'PY'
         from pathlib import Path
+        import socket
 
+        from canary import ADDRESS
         from towermind_probe import main
+
+        with socket.create_connection(ADDRESS, timeout=3):
+            print("Harbor agent reached the test listener on the runner.")
 
         for path in ("/tests", "/data/final.json", "/var/run/docker.sock",
                      "/logs/verifier/reward.json", "/logs/verifier/reward.txt"):
             assert not Path(path).exists(), f"agent can see private path: {path}"
 
+        mountpoints = {line.split()[4] for line in Path("/proc/self/mountinfo").read_text().splitlines()}
+        if "/logs/verifier" in mountpoints:
+            print("Harbor exposes a verifier log mount to the agent; treat its contents as untrusted.")
         main()
         Path("/app/agent-marker").write_text("agent-only filesystem change")
         print("Harbor agent container isolation passed.")
@@ -134,6 +145,8 @@ def stage_task(task, instance):
     write(task / "tests/test.sh", """
         #!/bin/bash
         set -euo pipefail
+        # Harbor 0.23.0 mounts this output directory into the agent too.
+        find /logs/verifier -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
         python /tests/check_isolation.py
         python /tests/grade.py
     """)
@@ -142,7 +155,15 @@ def stage_task(task, instance):
         from pathlib import Path
         import socket
 
-        assert {name for _, name in socket.if_nameindex()} == {"lo"}, "verifier has a network interface"
+        from canary import ADDRESS
+
+        try:
+            connection = socket.create_connection(ADDRESS, timeout=3)
+        except OSError:
+            pass
+        else:
+            connection.close()
+            raise AssertionError("offline verifier reached the test listener on the runner")
         assert not Path("/app/agent-marker").exists(), "verifier inherited the agent filesystem"
         evidence = json.loads(Path("/data/final.json").read_text())
         assert evidence["benchmark"] == "towermind" and evidence["result_valid"] is True
@@ -160,12 +181,17 @@ def stage_task(task, instance):
 def main(workdir):
     task = workdir / "towermind-isolation"
     jobs = workdir / "jobs"
-    stage_task(task, freeze_instance())
+    instance = freeze_instance()
     job = jobs / "towermind-isolation"
-    run = subprocess.run([
-        "harbor", "run", "-p", str(task), "-c", str(ROOT / "configs/harbor/oracle.json"),
-        "--jobs-dir", str(jobs), "--job-name", job.name, "-y",
-    ])
+    bridge = json.loads(subprocess.check_output(["docker", "network", "inspect", "bridge"], text=True))
+    gateway = bridge[0]["IPAM"]["Config"][0]["Gateway"]
+    # Keep a known-reachable TCP listener alive for both the agent and verifier checks.
+    with socket.create_server((gateway, 0)) as listener:
+        stage_task(task, instance, listener.getsockname())
+        run = subprocess.run([
+            "harbor", "run", "-p", str(task), "-c", str(ROOT / "configs/harbor/oracle.json"),
+            "--jobs-dir", str(jobs), "--job-name", job.name, "-y",
+        ])
     for pattern in ("*/agent/oracle.txt", "*/verifier/isolation.txt", "*/verifier/test-stdout.txt",
                     "*/verifier/test-stderr.txt", "*/trial.log"):
         for log in job.glob(pattern):
