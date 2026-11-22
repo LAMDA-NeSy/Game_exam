@@ -137,12 +137,19 @@ def stage_task(task, instance, endpoint):
         mountpoints = {line.split()[4] for line in Path("/proc/self/mountinfo").read_text().splitlines()}
         if "/logs/verifier" in mountpoints:
             print("Harbor exposes a verifier log mount to the agent; treat its contents as untrusted.")
+            Path("/logs/verifier/agent-marker").write_text("untrusted agent output")
         main()
         Path("/app/agent-marker").write_text("agent-only filesystem change")
         print("Harbor agent container isolation passed.")
         PY
     """)
     write(task / "tests/instance.json", instance)
+    # Harbor builds the separate verifier from tests/, including its own Compose file.
+    write(task / "tests/docker-compose.yaml", """
+        services:
+          main:
+            network_mode: none
+    """)
     write(task / "tests/Dockerfile", """
         FROM docker.io/library/python:3.12.10-slim-bookworm@sha256:fd95fa221297a88e1cf49c55ec1828edd7c5a428187e67b5d1805692d11588db
         COPY . /tests/
@@ -163,6 +170,7 @@ def stage_task(task, instance, endpoint):
 
         from canary import ADDRESS
 
+        assert {name for _, name in socket.if_nameindex()} == {"lo"}, "verifier has a non-loopback interface"
         try:
             connection = socket.create_connection(ADDRESS, timeout=3)
         except OSError:
@@ -171,6 +179,7 @@ def stage_task(task, instance, endpoint):
             connection.close()
             raise AssertionError("offline verifier reached the test listener on the runner")
         assert not Path("/app/agent-marker").exists(), "verifier inherited the agent filesystem"
+        assert not Path("/logs/verifier/agent-marker").exists(), "agent output survived verifier cleanup"
         evidence = json.loads(Path("/data/final.json").read_text())
         assert evidence["benchmark"] == "towermind" and evidence["result_valid"] is True
         assert evidence["steps"] == 1 and evidence["reason"] == "agent_finished"
@@ -196,7 +205,7 @@ def main(workdir):
         stage_task(task, instance, listener.getsockname())
         run = subprocess.run([
             "harbor", "run", "-p", str(task), "-c", str(ROOT / "configs/harbor/oracle.json"),
-            "--jobs-dir", str(jobs), "--job-name", job.name, "--ek", "keep_containers=true", "-y",
+            "--jobs-dir", str(jobs), "--job-name", job.name, "-y",
         ])
     for pattern in ("*/agent/oracle.txt", "*/verifier/isolation.txt", "*/verifier/*-error.log", "*/trial.log"):
         for log in job.glob(pattern):
@@ -204,16 +213,11 @@ def main(workdir):
                 print(f"{log.name}: {content}", flush=True)
     markers = list(job.glob("*/verifier/isolation.txt"))
     if run.returncode or len(markers) != 1 or not markers[0].with_name("reward.json").is_file():
-        containers = subprocess.check_output([
-            "docker", "ps", "-aq", "--filter", "label=com.docker.compose.service=sim",
-            "--filter", f"label=com.docker.compose.project.working_dir={task / 'environment'}",
-        ], text=True).split()
-        for container in containers:
-            subprocess.run(["docker", "inspect", "--format", "{{.Path}} {{json .Args}} {{json .State}}", container])
-            subprocess.run(["docker", "logs", "--tail", "50", container])
         run.check_returncode()
         raise RuntimeError("the isolated verifier did not generate a grade")
     marker = markers[0]
+    trial = json.loads((marker.parent.parent / "result.json").read_text(encoding="utf-8"))
+    assert trial.get("exception_info") is None and trial["verifier_result"]["rewards"] is not None
     result = json.loads(marker.with_name("metrics.json").read_text(encoding="utf-8"))
     assert result["result_valid"] is True
     assert result["reason"] == "agent_finished" and result["steps"] == 1
