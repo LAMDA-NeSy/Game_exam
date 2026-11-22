@@ -92,6 +92,13 @@ def stage_task(task, instance, endpoint):
             build:
               context: sim
               dockerfile: Dockerfile
+            init: true
+            command: ["xvfb-run", "-a", "-s", "-screen 0 1400x900x24", "python", "/srv/server.py"]
+            healthcheck:
+              test: ["CMD", "python", "-c", "from urllib.request import urlopen; urlopen('http://127.0.0.1:8000/spec', timeout=1).close()"]
+              interval: 2s
+              timeout: 2s
+              retries: 40
     """)
     write(task / "environment/Dockerfile", f"""
         FROM {CLIENT_IMAGE}
@@ -106,7 +113,6 @@ def stage_task(task, instance, endpoint):
         COPY instance.json /srv/instance.json
         USER 65534:65534
         WORKDIR /srv
-        CMD ["xvfb-run", "-a", "-s", "-screen 0 1400x900x24", "python", "/srv/server.py"]
     """)
     write(task / "environment/sim/instance.json", instance)
     for directory in ("solution", "tests"):
@@ -147,8 +153,8 @@ def stage_task(task, instance, endpoint):
         set -euo pipefail
         # Harbor 0.23.0 mounts this output directory into the agent too.
         find /logs/verifier -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
-        python /tests/check_isolation.py
-        python /tests/grade.py
+        python /tests/check_isolation.py 2>/logs/verifier/isolation-error.log
+        python /tests/grade.py 2>/logs/verifier/grade-error.log
     """)
     write(task / "tests/check_isolation.py", """
         import json
@@ -190,14 +196,24 @@ def main(workdir):
         stage_task(task, instance, listener.getsockname())
         run = subprocess.run([
             "harbor", "run", "-p", str(task), "-c", str(ROOT / "configs/harbor/oracle.json"),
-            "--jobs-dir", str(jobs), "--job-name", job.name, "-y",
+            "--jobs-dir", str(jobs), "--job-name", job.name, "--ek", "keep_containers=true", "-y",
         ])
-    for pattern in ("*/agent/oracle.txt", "*/verifier/isolation.txt", "*/verifier/test-stdout.txt",
-                    "*/verifier/test-stderr.txt", "*/trial.log"):
+    for pattern in ("*/agent/oracle.txt", "*/verifier/isolation.txt", "*/verifier/*-error.log", "*/trial.log"):
         for log in job.glob(pattern):
-            print(f"{log.name}: {log.read_text(encoding='utf-8', errors='replace')[-3000:]}", flush=True)
-    run.check_returncode()
-    marker, = job.glob("*/verifier/isolation.txt")
+            if content := log.read_text(encoding="utf-8", errors="replace")[-3500:]:
+                print(f"{log.name}: {content}", flush=True)
+    markers = list(job.glob("*/verifier/isolation.txt"))
+    if run.returncode or len(markers) != 1 or not markers[0].with_name("reward.json").is_file():
+        containers = subprocess.check_output([
+            "docker", "ps", "-aq", "--filter", "label=com.docker.compose.service=sim",
+            "--filter", f"label=com.docker.compose.project.working_dir={task / 'environment'}",
+        ], text=True).split()
+        for container in containers:
+            subprocess.run(["docker", "inspect", "--format", "{{.Path}} {{json .Args}} {{json .State}}", container])
+            subprocess.run(["docker", "logs", "--tail", "50", container])
+        run.check_returncode()
+        raise RuntimeError("the isolated verifier did not generate a grade")
+    marker = markers[0]
     result = json.loads(marker.with_name("metrics.json").read_text(encoding="utf-8"))
     assert result["result_valid"] is True
     assert result["reason"] == "agent_finished" and result["steps"] == 1
