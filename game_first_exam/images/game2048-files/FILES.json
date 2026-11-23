@@ -1,0 +1,10 @@
+{
+  "image": "ghcr.io/mll-lab-nu/efe:game2048-files-0.1.0@sha256:593f0e1acddbaa5ded9063240faae3f503a7fbd47796e881353d49313e3bcd5b",
+  "source": "game_first_exam/benchmarks/game2048",
+  "files": {
+    "adapter.py": "0847f01610056431292e0fde192c4fe27ba7a12246bd02e205743a596372918c",
+    "metric_rules.py": "16cf8351b56e9e6c81d0205224ecd0ba5d190a3f7039177eb410b4aff7a7a5b6",
+    "requirements.txt": "e9a56545e89778489fd2d5ee1922bb85cec310b2b7620178db6f31871988340f",
+    "instance_schema.py": "24f1dd3940edb74c4ea23527bf53004a7285f114446b7c402cba29f7cc0877d7"
+  }
+}

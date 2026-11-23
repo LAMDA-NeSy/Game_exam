@@ -1,0 +1,10 @@
+{
+  "project": "gymnasium-2048",
+  "repository": "https://github.com/Quentin18/gymnasium-2048",
+  "tag": "v0.1.2",
+  "commit": "b686d2a82a347066ffa8a82f6f4f57ac44deb5dc",
+  "license": "MIT",
+  "pypi": "https://pypi.org/project/gymnasium-2048/0.1.2/",
+  "wheel": "gymnasium_2048-0.1.2-py3-none-any.whl",
+  "wheel_sha256": "d906d6757a06553c80709e4a4aa06d47ee6ad053e9506f6ce5c6c63d3e3d8688"
+}
