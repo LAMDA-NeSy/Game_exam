@@ -1,0 +1,7 @@
+[protocols]
+standard = ["game-standard/2.2"]
+
+[[tasks]]
+name = "slimevolley-pixel-vs-baseline-i01-standard"
+source_task = "SlimeVolleyNoFrameskip-v0"
+protocol = "game-standard/2.2"

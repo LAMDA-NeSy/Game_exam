@@ -75,6 +75,7 @@ BENCHMARK_TABLE = [
     ("minihack-", "MiniHack", "minihack"),
     ("babaisai-", "Baba Is AI", "babaisai"),
     ("crafter-", "Crafter", "crafter"),
+    ("slimevolley-", "SlimeVolleyGym", "slimevolley"),
     ("textworld-", "TextWorld", "textworld"),
     ("minigrid-", "MiniGrid", "minigrid"),
 ]
@@ -212,6 +213,12 @@ CUTOFF_NOTE_TASK["crafter-survival-i01-realtime"] = (
     "accepted action plan; its `time_left_s` counts from the first request, including `spec()`, so preparation after that "
     "request counts toward the service budget. Use `/run/rcb-limits/usage.json` for the outer session deadline. "
     "After the clock starts, waiting and model thinking do not pause the game.")
+CUTOFF_NOTE_TASK["slimevolley-pixel-vs-baseline-i01-standard"] = (
+    "The wall-clock budget starts with your session and includes service startup, waiting and tool execution. "
+    "At the cutoff, the episode is graded as it stands. Use `deadline_utc` and `time_left_s` in "
+    "`/run/rcb-limits/usage.json` for the session deadline. The client's `time_left_s` starts on the first "
+    "`observe()` or accepted action. `spec()` and `status()` do not start that clock."
+)
 CUTOFF_NOTE_TASK["minihack-room-i01-standard"] = (
     "The wall-clock budget starts with your session and includes service startup, waiting and tool execution. "
     "At the cutoff, the episode is graded as it stands. Use `deadline_utc` and `time_left_s` in "

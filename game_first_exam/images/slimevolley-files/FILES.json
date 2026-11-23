@@ -1,0 +1,10 @@
+{
+  "source": "game_first_exam/benchmarks/slimevolley",
+  "files": {
+    "adapter.py": "68e44fe79f3ad5c95b6d4360ee1b7b83cf71f0ad1d8fffb79701abfab594c96b",
+    "instance_schema.py": "d7d64922091affdac8358788e5d1a75360239e084eff6e7bcda9b8a715f3c6f3",
+    "metric_rules.py": "71176460c3ed478eace168ca137d99b7573dd07d83d0d36f6a86417fcb27e8ee",
+    "requirements.txt": "582e1ca4246fd52c08d0adad3df2e34e978e7243ffdc89d9188769049f3c2438"
+  },
+  "image": "ghcr.io/mll-lab-nu/efe:slimevolley-files-1.0.0@sha256:bb15a9bd6fefc604d6961778781bb04e19abcfa6913e289ff743af7ccaab54d5"
+}
