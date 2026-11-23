@@ -1,0 +1,21 @@
+{
+  "image": "ghcr.io/mll-lab-nu/efe:vmage-files-0.2.2@sha256:a87602cb77629f80d55dcfe849bfc1d32527c92ae486a641aafa6ba5755d7b17",
+  "source": "game_first_exam/benchmarks/vmage",
+  "files": {
+    "common/SOURCE.json": "8e1222100f13554a88177337f444460c80d93dac8f3f086c7a605f1e51bee5d9",
+    "common/metric_rules.py": "89816067bcd2652d96e88dbccd9d19bd18bbbd77fe878bf7a2548b45f517f698",
+    "common/requirements.txt": "0fd9964e298d98ea42f99f0e195cae36e2527132280b0bdf1a16a83aa589bb88",
+    "common/source_loader.py": "9bc07af22bf56009fccc879e637b168806139b30f8e710a97d3ea7d7bcd0d820",
+    "common/vmage_bridge.py": "6d3f40dfd6a93e3e022877563da8a76881c79951716047e55ce041694cda7168",
+    "flappybird/adapter.py": "bd928d465a1fcb028efc8778c647f2aba3a22b44518c8836d86e401e3b56174b",
+    "flappybird/instance_schema.py": "d9e196977ebc1f8af156461bb2d8ca2d17ce5e14a6de785da2222bc657f3c685",
+    "pong/adapter.py": "759de8185c0c0e228c67a5e2190bc5a9ea5c827935d73ac4cb74375c459b2e2f",
+    "pong/instance_schema.py": "2e8d65c3e8c037f6e1657a272665665f1ebda4ef2f53eaa793c35f208f5ec13c",
+    "race/adapter.py": "addf57f843bc3c7410c88dc4b4c84b8fe0029fe174c6d6ff7332a9b388c80089",
+    "race/instance_schema.py": "e55ec578573fdb613be1d3f1de24649a894118c4f6585f26531889d163d27f10",
+    "supermario/adapter.py": "dcd61223d574019e7644e5f8de519b46d41ccb04a9791d3a3e9e72b80117b2bc",
+    "supermario/instance_schema.py": "b23185bd570defcde155e2b34a4e2f4882cb7315a15fe6b1a874301361a1a327",
+    "tempestrun/adapter.py": "c6a95d08973e0dfc3c7b867aff3b9161d574700e43766f9b3ff0622aa29a2b8f",
+    "tempestrun/instance_schema.py": "7b315843a07618c81bf32eb3d70cddf4cb5c4d27d145f785dfbc3fdc59312b00"
+  }
+}

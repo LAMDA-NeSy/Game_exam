@@ -10,13 +10,14 @@ sys.path.insert(0, str(ROOT / 'game_first_exam/runtime'))
 import files_image
 import task_conventions as tc
 from config_schema import PROTOCOL, positive, validate_instance, validate_suite
-from game_schemas import load_schema, register_schemas, schema_paths
+from game_schemas import benchmark_registration, load_schema, register_schemas
 sys.path.insert(0, str(ROOT / 'game_first_exam/runtime/modes'))
 from mode_config import validate_mode
 
 
 def validate_task(row, task_path=None):
     load_schema(row['benchmark'])
+    sources = benchmark_registration(row['benchmark'])
     task = Path(task_path) if task_path is not None else tc.task_dir(row['name'])
     config = tomllib.loads((task / 'task.toml').read_text())
     instance = json.loads((task / 'tests/instance.json').read_text())
@@ -44,10 +45,10 @@ def validate_task(row, task_path=None):
         'tests/Dockerfile': {f'/tests/{name}.py': ROOT / f'game_first_exam/runtime/{name}.py'
             for name in ('grade', 'config_schema', 'reducers')},
     }
-    paths['environment/sim/Dockerfile']['/srv/adapter.py'] = ROOT / f"game_first_exam/benchmarks/{row['benchmark']}/adapter.py"
-    paths['tests/Dockerfile']['/tests/metric_rules.py'] = ROOT / f"game_first_exam/benchmarks/{row['benchmark']}/metric_rules.py"
+    paths['environment/sim/Dockerfile']['/srv/adapter.py'] = sources['adapter']
+    paths['tests/Dockerfile']['/tests/metric_rules.py'] = sources['metric_rules']
     for file, prefix in [('environment/sim/Dockerfile', '/srv'), ('tests/Dockerfile', '/tests')]:
-        paths[file][prefix + '/instance_schema.py'] = schema_paths()[row['benchmark']]
+        paths[file][prefix + '/instance_schema.py'] = sources['schema']
     if mode != 'standard':
         mode_config = validate_mode(json.loads((task / 'tests/mode.json').read_text()))
         if mode_config['mode'] != mode:
@@ -64,14 +65,20 @@ def validate_task(row, task_path=None):
             paths.pop('environment/sim/Dockerfile')
             paths['environment/Dockerfile'] = {
                 '/app/privileged.py': modes_root / 'privileged.py',
-                '/srv/adapter.py': ROOT / f"game_first_exam/benchmarks/{row['benchmark']}/adapter.py",
-                '/srv/instance_schema.py': schema_paths()[row['benchmark']],
+                '/srv/adapter.py': sources['adapter'],
+                '/srv/instance_schema.py': sources['schema'],
             }
-            paths['tests/Dockerfile']['/srv/adapter.py'] = ROOT / f"game_first_exam/benchmarks/{row['benchmark']}/adapter.py"
+            paths['tests/Dockerfile']['/srv/adapter.py'] = sources['adapter']
         else:
             paths['environment/Dockerfile']['/app/realtime_client.py'] = modes_root / 'realtime_client.py'
             paths['environment/sim/Dockerfile']['/srv/realtime_server.py'] = modes_root / 'realtime_server.py'
             paths['environment/sim/Dockerfile']['/srv/mode_config.py'] = modes_root / 'mode_config.py'
+    for expected in paths.values():
+        if '/srv/adapter.py' in expected:
+            for target, source in sources['runtime_files'].items():
+                if target in expected:
+                    raise ValueError(f'{task.name}: runtime binding conflicts with public service: {target}')
+                expected[target] = source
     for file, expected in paths.items():
         copied, errors = files_image.copied_from(task / file)
         if errors or any(copied.get(target) != source for target, source in expected.items()):

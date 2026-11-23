@@ -1,0 +1,170 @@
+schema_version = "game-suite/2.1"
+version = "0.2.4"
+tier = "development"
+name = "games-vmage-v0.2.4"
+files_images = ["connection-files", "game-files", "vmage-files"]
+
+[[tasks]]
+name = "vmage-flappybird-l01-i01-standard"
+benchmark = "vmage_flappybird"
+family = "l01"
+
+[[tasks]]
+name = "vmage-flappybird-l02-i01-standard"
+benchmark = "vmage_flappybird"
+family = "l02"
+
+[[tasks]]
+name = "vmage-flappybird-l03-i01-standard"
+benchmark = "vmage_flappybird"
+family = "l03"
+
+[[tasks]]
+name = "vmage-flappybird-l04-i01-standard"
+benchmark = "vmage_flappybird"
+family = "l04"
+
+[[tasks]]
+name = "vmage-flappybird-l05-i01-standard"
+benchmark = "vmage_flappybird"
+family = "l05"
+
+[[tasks]]
+name = "vmage-flappybird-l06-i01-standard"
+benchmark = "vmage_flappybird"
+family = "l06"
+
+[[tasks]]
+name = "vmage-flappybird-l07-i01-standard"
+benchmark = "vmage_flappybird"
+family = "l07"
+
+[[tasks]]
+name = "vmage-supermario-l01-i01-standard"
+benchmark = "vmage_supermario"
+family = "l01"
+
+[[tasks]]
+name = "vmage-supermario-l02-i01-standard"
+benchmark = "vmage_supermario"
+family = "l02"
+
+[[tasks]]
+name = "vmage-supermario-l03-i01-standard"
+benchmark = "vmage_supermario"
+family = "l03"
+
+[[tasks]]
+name = "vmage-supermario-l04-i01-standard"
+benchmark = "vmage_supermario"
+family = "l04"
+
+[[tasks]]
+name = "vmage-supermario-l05-i01-standard"
+benchmark = "vmage_supermario"
+family = "l05"
+
+[[tasks]]
+name = "vmage-supermario-l06-i01-standard"
+benchmark = "vmage_supermario"
+family = "l06"
+
+[[tasks]]
+name = "vmage-supermario-l07-i01-standard"
+benchmark = "vmage_supermario"
+family = "l07"
+
+[[tasks]]
+name = "vmage-supermario-l08-i01-standard"
+benchmark = "vmage_supermario"
+family = "l08"
+
+[[tasks]]
+name = "vmage-supermario-l09-i01-standard"
+benchmark = "vmage_supermario"
+family = "l09"
+
+[[tasks]]
+name = "vmage-supermario-l00-i01-standard"
+benchmark = "vmage_supermario"
+family = "l00"
+
+[[tasks]]
+name = "vmage-pong-l01-i01-standard"
+benchmark = "vmage_pong"
+family = "l01"
+
+[[tasks]]
+name = "vmage-pong-l02-i01-standard"
+benchmark = "vmage_pong"
+family = "l02"
+
+[[tasks]]
+name = "vmage-pong-l03-i01-standard"
+benchmark = "vmage_pong"
+family = "l03"
+
+[[tasks]]
+name = "vmage-race-l01-i01-standard"
+benchmark = "vmage_race"
+family = "l01"
+
+[[tasks]]
+name = "vmage-race-l02-i01-standard"
+benchmark = "vmage_race"
+family = "l02"
+
+[[tasks]]
+name = "vmage-race-l03-i01-standard"
+benchmark = "vmage_race"
+family = "l03"
+
+[[tasks]]
+name = "vmage-race-l04-i01-standard"
+benchmark = "vmage_race"
+family = "l04"
+
+[[tasks]]
+name = "vmage-race-l05-i01-standard"
+benchmark = "vmage_race"
+family = "l05"
+
+[[tasks]]
+name = "vmage-race-l06-i01-standard"
+benchmark = "vmage_race"
+family = "l06"
+
+[[tasks]]
+name = "vmage-race-l07-i01-standard"
+benchmark = "vmage_race"
+family = "l07"
+
+[[tasks]]
+name = "vmage-race-l08-i01-standard"
+benchmark = "vmage_race"
+family = "l08"
+
+[[tasks]]
+name = "vmage-race-l09-i01-standard"
+benchmark = "vmage_race"
+family = "l09"
+
+[[tasks]]
+name = "vmage-tempestrun-l01-i01-standard"
+benchmark = "vmage_tempestrun"
+family = "l01"
+
+[[tasks]]
+name = "vmage-tempestrun-l02-i01-standard"
+benchmark = "vmage_tempestrun"
+family = "l02"
+
+[[tasks]]
+name = "vmage-tempestrun-l03-i01-standard"
+benchmark = "vmage_tempestrun"
+family = "l03"
+
+[[tasks]]
+name = "vmage-tempestrun-l04-i01-standard"
+benchmark = "vmage_tempestrun"
+family = "l04"

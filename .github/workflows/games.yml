@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        benchmark: [common, minigrid, crafter, textworld, babaisai, minihack]
+        benchmark: [common, minigrid, crafter, textworld, babaisai, minihack, vmage]
     steps:
       - uses: actions/checkout@v4
         with: {persist-credentials: false}
@@ -41,6 +41,7 @@ jobs:
         with: {python-version: '3.12'}
       - run: python -m pip install -e .
       - run: harbor run --game-suite minihack-balrog --standard --list
+      - run: harbor run --game-suite vmage-smoke --standard --list
       - run: python game_first_exam/tests/test_game_harbor.py
   fresh-clone-smoke:
     runs-on: ubuntu-latest
@@ -77,8 +78,38 @@ jobs:
           name: fresh-clone-room-evidence
           path: jobs/
           retention-days: 7
+  fresh-clone-vmage-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      # Start without cached game images or a preloaded local files image.
+      - uses: docker/setup-docker-action@v5
+        with:
+          version: v29.5.2
+          set-host: true
+          daemon-config: '{"features":{"containerd-snapshotter":true}}'
+      - run: python -m pip install -e .
+      - name: Run one V-MAGE oracle per game without model or registry credentials
+        run: |
+          harbor run --game-suite vmage-smoke --standard \
+            -c configs/harbor/oracle.json --plugin game_harbor:GameRecords \
+            --jobs-dir "$PWD/jobs" --job-name fresh-clone-vmage -y
+      - name: Check all five scores, end states, and evidence
+        run: python ci_checks/check-vmage-smoke-result.py jobs/fresh-clone-vmage
+      - name: Decode all five replays
+        run: |
+          if ! command -v ffmpeg >/dev/null; then
+            sudo apt-get update && sudo apt-get install -y ffmpeg
+          fi
+          for replay in jobs/fresh-clone-vmage/*/artifacts/data/replay.mp4; do
+            ffmpeg -v error -xerror -i "$replay" -f null -
+          done
   invariants:
-    needs: [static, adapters, harbor, fresh-clone-smoke]
+    needs: [static, adapters, harbor, fresh-clone-smoke, fresh-clone-vmage-smoke]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
@@ -87,4 +118,7 @@ jobs:
           ADAPTERS: ${{ needs.adapters.result }}
           HARBOR: ${{ needs.harbor.result }}
           SMOKE: ${{ needs.fresh-clone-smoke.result }}
-        run: test "$STATIC" = success && test "$ADAPTERS" = success && test "$HARBOR" = success && test "$SMOKE" = success
+          VMAGE_SMOKE: ${{ needs.fresh-clone-vmage-smoke.result }}
+        run: |
+          test "$STATIC" = success && test "$ADAPTERS" = success && test "$HARBOR" = success &&
+            test "$SMOKE" = success && test "$VMAGE_SMOKE" = success
