@@ -4,7 +4,7 @@
 
 Game Exam 基于 [Embodied First Exam](https://github.com/mll-lab-nu/embodied-first-exam) 的任务封装和 [Harbor](https://github.com/laude-institute/harbor) 执行方式构建。本仓库只包含游戏任务、游戏适配器和它们依赖的公共工具，不包含机器人 benchmark、网站源码、个人配置或历史评测日志。
 
-模型通过 Harbor 原生 coding agent 阅读任务的 `instruction.md`，在容器内编写并执行 Python 等程序，通过客户端操作游戏。游戏环境负责推进状态，独立 verifier 根据可信记录评分。这里没有另建直接 LLM 对话式动作入口或 RL 训练入口。
+冻结任务通过 Harbor 原生 coding agent 阅读 `instruction.md`，在容器内编写并执行程序，通过客户端操作游戏。Collab-Overcooked 使用作者的双角色协议。游戏环境负责推进状态，独立 verifier 根据可信记录评分。
 
 > 当前是开发与接入验证版本。冻结任务是已确定环境、实例、seed、观测方式和预算的可复现配置，不等于 benchmark 的全部任务，也不是新的官方排行榜。网站源码在单独的私人仓库维护。
 
@@ -24,7 +24,7 @@ Game Exam 基于 [Embodied First Exam](https://github.com/mll-lab-nu/embodied-fi
 
 ## 已接入的游戏
 
-当前共有 **5 个 benchmark、42 个 standard 任务配置，另外有 1 个 privileged 和 1 个 realtime 配置，共 44 个任务目录**。同一原生任务的不同模式单独计数。
+当前接入 **6 个 benchmark**。其中 5 个提供冻结任务，共 42 个 standard、1 个 privileged 和 1 个 realtime 配置。Collab-Overcooked 另提供论文的 30 道菜，可用 `harbor run --game-suite collab-overcooked --list` 查看。
 
 | Benchmark | standard | 其他模式 | 主要内容 | 说明 |
 |---|---:|---|---|---|
@@ -33,8 +33,9 @@ Game Exam 基于 [Embodied First Exam](https://github.com/mll-lab-nu/embodied-fi
 | TextWorld | 9 | — | 文字探索、寻宝、烹饪 | 冻结 `.z8` 游戏，通过原生引擎执行 |
 | Baba Is AI | 2 | — | 移动文字、改变规则、解谜 | 基础关卡与复合关卡的最小 smoke 验证 |
 | MiniHack | 10 | 1 privileged | Room、River、导航、战斗、Quest、Boxoban | 原生 MiniHack/NLE 环境；Room 另有 privileged 版本 |
+| Collab-Overcooked | — | 原生双角色 | Chef 和 Assistant 合作完成 6 档食谱 | [运行与隔离说明](game_first_exam/benchmarks/collab_overcooked/README.md) |
 
-套件由 [configs/game_suites/](configs/game_suites/) 定义，可以重叠，数量不能直接相加：
+以下冻结任务套件可以重叠，完整清单见 [configs/game_suites/](configs/game_suites/)。
 
 | `--game-suite` | 配置数 | 用途 |
 |---|---:|---|
