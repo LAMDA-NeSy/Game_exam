@@ -19,9 +19,9 @@ import tempfile
 from contracts import Capabilities, Transition
 
 try:
-    from .source_loader import verify_source, manifest
+    from .source_loader import verify_source
 except ImportError:
-    from source_loader import verify_source, manifest
+    from source_loader import verify_source
 
 _CONSTRUCTED = False
 CLASSES = {'race': 'RaceGame', 'flappybird': 'FlappyBirdGame', 'pong': 'PongGame',
@@ -84,7 +84,7 @@ class NativeAdapter:
         self._output.mkdir()
         cls = getattr(importlib.import_module('game.' + self.GAME + '_game'), CLASSES[self.GAME])
         _CONSTRUCTED = True
-        self.env = self.game = cls(str(self._output))
+        self.env = cls(str(self._output))
         if self.env.sample_frames != instance['frames_per_decision'] or self.env.action_in_sample_frames != instance['passive_action']:
             raise ValueError('effective native action sampling mismatch')
         if list(self.env.valid_actions) != instance['native_actions']:

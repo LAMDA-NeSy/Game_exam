@@ -2,7 +2,6 @@
 import copy
 import json
 import os
-from pathlib import Path
 import sys
 import unittest
 from unittest.mock import patch
@@ -42,7 +41,6 @@ class VMageLevels(unittest.TestCase):
 
     def test_all_frozen_reference_traces_match_unmodified_native_loop(self):
         helper=native.VMageNative()
-        results=[]
         for task in self.tasks():
             instance=json.loads((task/'tests/instance.json').read_text())
             game=instance['native_game'];level=instance['native_level']
@@ -66,9 +64,6 @@ class VMageLevels(unittest.TestCase):
                     self.assertEqual(bridge['pixels'],upstream['pixels'])
                     self.assertEqual(bridge['frame_pixels'],upstream['pixels'])
                     self.assertEqual(bridge['observation'],upstream['observation'])
-                results.append(dict(task=task.name,score=upstream['final']['score'],steps=len(bridge['transitions']),terminated=bridge['transitions'][-1]['terminated'] if bridge['transitions'] else False,truncated=bridge['transitions'][-1]['truncated'] if bridge['transitions'] else False,native_calls=len(upstream['calls']),cosmetic_death_pixels_excluded=bool(cosmetic)))
-                print('native-equivalent',task.name,results[-1]['score'],results[-1]['steps'],flush=True)
-        output=os.environ.get('VMAGE_LEVEL_RESULTS')
-        if output:Path(output).write_text(json.dumps(results,indent=2)+'\n')
+                print('native-equivalent', task.name, upstream['final']['score'], len(bridge['transitions']), flush=True)
 
 if __name__=='__main__':unittest.main()

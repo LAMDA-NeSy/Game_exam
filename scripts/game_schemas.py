@@ -60,18 +60,11 @@ def schema_paths():
     return {name: row['schema'] for name, row in registrations().items()}
 
 
-def runtime_files(name):
+def benchmark_registration(name):
     rows = registrations()
     if name not in rows:
         raise ValueError('unregistered benchmark: ' + str(name))
-    return rows[name]['runtime_files']
-
-
-def benchmark_paths(name):
-    rows = registrations()
-    if name not in rows:
-        raise ValueError('unregistered benchmark: ' + str(name))
-    return {key: rows[name][key] for key in ('schema', 'adapter', 'metric_rules')}
+    return rows[name]
 
 
 @cache

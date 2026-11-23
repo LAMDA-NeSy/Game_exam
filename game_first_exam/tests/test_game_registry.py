@@ -76,7 +76,7 @@ class RegistryTests(unittest.TestCase):
             with self.subTest(benchmark=benchmark):
                 self.assertEqual(rows[benchmark]['schema'], ROOT / f'game_first_exam/benchmarks/vmage/{game}/instance_schema.py')
                 self.assertEqual(rows[benchmark]['adapter'], ROOT / f'game_first_exam/benchmarks/vmage/{game}/adapter.py')
-                self.assertEqual(rows[benchmark]['metric_rules'], ROOT / f'game_first_exam/benchmarks/vmage/{game}/metric_rules.py')
+                self.assertEqual(rows[benchmark]['metric_rules'], ROOT / 'game_first_exam/benchmarks/vmage/common/metric_rules.py')
                 self.assertEqual(rows[benchmark]['runtime_files'], {
                     '/srv/' + filename: ROOT / 'game_first_exam/benchmarks/vmage/common' / filename
                     for filename in ('vmage_bridge.py', 'source_loader.py', 'SOURCE.json')
@@ -95,6 +95,8 @@ class RegistryTests(unittest.TestCase):
         row = suite['tasks'][0]
         source = ROOT / 'game_first_exam/benchmarks/minigrid/adapter.py'
         original = files_image.copied_from
+        registration = {**game_schemas.benchmark_registration(row['benchmark']),
+                        'runtime_files': {'/srv/native_helper.py': source}}
         for copied_source in (None, ROOT / 'game_first_exam/benchmarks/crafter/adapter.py', source):
             def copied(path):
                 bindings, errors = original(path)
@@ -102,7 +104,7 @@ class RegistryTests(unittest.TestCase):
                     bindings['/srv/native_helper.py'] = copied_source
                 return bindings, errors
             with self.subTest(source=copied_source), \
-                    patch('game_preflight.runtime_files', return_value={'/srv/native_helper.py': source}), \
+                    patch('game_preflight.benchmark_registration', return_value=registration), \
                     patch('files_image.copied_from', side_effect=copied):
                 if copied_source == source:
                     validate_task(row)
@@ -113,7 +115,9 @@ class RegistryTests(unittest.TestCase):
     def test_extra_runtime_files_cannot_override_core_service_bindings(self):
         import tomllib
         row = tomllib.loads((ROOT / 'configs/game_suites/minigrid.toml').read_text())['tasks'][0]
-        with patch('game_preflight.runtime_files', return_value={'/srv/server.py': Path('/tmp/evil.py')}), \
+        registration = {**game_schemas.benchmark_registration(row['benchmark']),
+                        'runtime_files': {'/srv/server.py': Path('/tmp/evil.py')}}
+        with patch('game_preflight.benchmark_registration', return_value=registration), \
                 self.assertRaisesRegex(ValueError, 'runtime binding conflicts'):
             validate_task(row)
 

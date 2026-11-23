@@ -1,7 +1,7 @@
 schema_version = "game-suite/2.1"
-version = "0.2.3"
+version = "0.2.4"
 tier = "development"
-name = "games-vmage-v0.2.3"
+name = "games-vmage-v0.2.4"
 files_images = ["connection-files", "game-files", "vmage-files"]
 
 [[tasks]]

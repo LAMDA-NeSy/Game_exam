@@ -10,7 +10,7 @@ including `step("None", 0)`. A decision performs 3 native
 frames at literal dt 0.033 with 30 FPS pacing. Later frames repeat the selected action.
 Native first-action and passive-terminal capture asymmetry is preserved.
 The frozen levels have no native capture-ledger limit.
-Native death terminates the episode.
+The episode terminates when the ball passes either paddle.
 
 Observations only return the cached PNG at 480×360 using
 native pygame scaling. Queries never render or advance RNG. Native full-size RGB

@@ -3,8 +3,8 @@ COPY test.sh instance.json /tests/
 COPY --from=ghcr.io/mll-lab-nu/efe:game-files-0.6.0@sha256:bfb708928954d5cc194a614ab772a65b1e56f381b49dfeb2227c3d609e5f2ecc /grade.py /tests/grade.py
 COPY --from=ghcr.io/mll-lab-nu/efe:game-files-0.6.0@sha256:bfb708928954d5cc194a614ab772a65b1e56f381b49dfeb2227c3d609e5f2ecc /reducers.py /tests/reducers.py
 COPY --from=ghcr.io/mll-lab-nu/efe:game-files-0.6.0@sha256:bfb708928954d5cc194a614ab772a65b1e56f381b49dfeb2227c3d609e5f2ecc /config_schema.py /tests/config_schema.py
-COPY --from=ghcr.io/mll-lab-nu/efe:vmage-files-0.2.1@sha256:e7e84a16ce785ff78ca7ef18f915ff5d0927b5c76937c66c485082d7024eb3ee /tempestrun/instance_schema.py /tests/instance_schema.py
-COPY --from=ghcr.io/mll-lab-nu/efe:vmage-files-0.2.1@sha256:e7e84a16ce785ff78ca7ef18f915ff5d0927b5c76937c66c485082d7024eb3ee /tempestrun/metric_rules.py /tests/metric_rules.py
+COPY --from=ghcr.io/mll-lab-nu/efe:vmage-files-0.2.2@sha256:a87602cb77629f80d55dcfe849bfc1d32527c92ae486a641aafa6ba5755d7b17 /tempestrun/instance_schema.py /tests/instance_schema.py
+COPY --from=ghcr.io/mll-lab-nu/efe:vmage-files-0.2.2@sha256:a87602cb77629f80d55dcfe849bfc1d32527c92ae486a641aafa6ba5755d7b17 /common/metric_rules.py /tests/metric_rules.py
 RUN chmod +x /tests/test.sh
 # resources (PROTOCOL §6) # rcb-monitor
 COPY --from=ghcr.io/mll-lab-nu/efe:monitor-0.5.0@sha256:ecc5f24f1516ca11711d7c2d3ac07c89f79cd9220812c1244498ec71e352402a /opt/rcb_monitor/rcb_limits.py /tests/rcb_limits.py

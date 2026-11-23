@@ -1,9 +1,6 @@
 """Stdlib checks for trusted native V-MAGE evidence; no engine or replay claims."""
 import math
 
-GAME = 'tempestrun'
-
-
 def _number(value, label, minimum=0):
     if type(value) not in (int, float) or not math.isfinite(value) or value < minimum:
         raise ValueError('invalid ' + label)
@@ -17,6 +14,7 @@ def _integer(value, label, minimum=0):
 
 
 def validate_metrics(final, instance):
+    game = instance['native_game']
     m = final['metrics']
     common = {'native_score', 'initial_native_score', 'native_frame_count', 'native_step_calls',
               'native_frames_advanced', 'native_initialization_calls', 'decision_count',
@@ -25,8 +23,8 @@ def validate_metrics(final, instance):
     extra = {'race': {'native_win', 'native_completion_degree'},
              'flappybird': {'pipe_pair_score', 'counted_live_pipe_halves'},
              'pong': {'score_a', 'score_b'},
-             'supermario': {'dashboard_points', 'dashboard_coins', 'dashboard_ticks', 'mario_restart'},
-             'tempestrun': {'distance_z', 'player_dead', 'player_mode'}}[GAME]
+             'supermario': {'dashboard_points', 'dashboard_coins', 'dashboard_ticks', 'dashboard_time', 'mario_restart'},
+             'tempestrun': {'distance_z', 'player_dead', 'player_mode'}}[game]
     if set(m) != common | extra:
         raise ValueError('wrong native metric fields')
     score = _number(m['native_score'], 'native score')
@@ -61,12 +59,12 @@ def validate_metrics(final, instance):
     passive_terminal = done and (calls - 2) % sample != 0
     if frames != calls - int(passive_terminal):
         raise ValueError('native capture ledger asymmetry mismatch')
-    if advanced != calls - 1 - int(GAME == 'race' and truncated):
+    if advanced != calls - 1 - int(game == 'race' and truncated):
         raise ValueError('inconsistent native update count')
     limit = instance['native_frame_limit']
     if m['native_frame_limit'] != limit or (truncated and (limit is None or frames < limit)):
         raise ValueError('inconsistent native frame limit')
-    if type(m['visual_wallclock_dependency']) is not bool or m['visual_wallclock_dependency'] != (GAME == 'tempestrun'):
+    if type(m['visual_wallclock_dependency']) is not bool or m['visual_wallclock_dependency'] != (game == 'tempestrun'):
         raise ValueError('wrong native visual clock declaration')
     cause = m['terminal_cause']
     if not done:
@@ -74,11 +72,11 @@ def validate_metrics(final, instance):
             raise ValueError('nonterminal native state has a terminal cause')
     elif truncated:
         expected = 'native_frame_limit+native_death' if terminated else 'native_frame_limit'
-        if cause != expected or GAME not in {'race', 'supermario'} or (GAME == 'race' and terminated):
+        if cause != expected or game not in {'race', 'supermario'} or (game == 'race' and terminated):
             raise ValueError('wrong native limit terminal cause')
-    elif cause != ('native_win' if GAME == 'race' and score == 100 else 'native_collision' if GAME == 'race' else 'native_missed_paddle' if GAME == 'pong' else 'native_death'):
+    elif cause != ('native_win' if game == 'race' and score == 100 else 'native_collision' if game == 'race' else 'native_missed_paddle' if game == 'pong' else 'native_death'):
         raise ValueError('wrong native termination cause')
-    if GAME == 'race':
+    if game == 'race':
         if score not in (0, 100) or type(m['native_win']) is not bool or m['native_win'] != (score == 100):
             raise ValueError('inconsistent native Race win/score')
         if m['native_win'] and not terminated:
@@ -90,22 +88,22 @@ def validate_metrics(final, instance):
         success = score > 0
     if final['success'] != success:
         raise ValueError('inconsistent native or auxiliary success flag')
-    if GAME == 'pong':
+    if game == 'pong':
         a, b = _integer(m['score_a'], 'Pong score A'), _integer(m['score_b'], 'Pong score B')
         if score != a + b:
             raise ValueError('Pong native score must sum both paddles')
-    elif GAME == 'flappybird':
+    elif game == 'flappybird':
         halves = _integer(m['counted_live_pipe_halves'], 'counted live pipe halves')
         if m['pipe_pair_score'] != score or score * 2 != int(score * 2) or halves > score * 2 or halves % 2:
             raise ValueError('inconsistent Flappy pipe score')
-    elif GAME == 'supermario':
+    elif game == 'supermario':
         points = _integer(m['dashboard_points'], 'Mario points')
         _integer(m['dashboard_coins'], 'Mario coins')
-        if points != score or _integer(m['dashboard_ticks'], 'Mario dashboard ticks', 1) != calls:
+        if points != score or _integer(m['dashboard_ticks'], 'Mario dashboard ticks') != calls % 60 or _integer(m['dashboard_time'], 'Mario dashboard time') != calls // 60:
             raise ValueError('inconsistent Mario dashboard score/ticks')
         if type(m['mario_restart']) is not bool or m['mario_restart'] != terminated:
             raise ValueError('inconsistent native Mario restart')
-    elif GAME == 'tempestrun':
+    elif game == 'tempestrun':
         z = _number(m['distance_z'], 'Tempest distance')
         if score != int(z / 10) * 10:
             raise ValueError('Tempest score is quantized native distance')

@@ -25,13 +25,6 @@ ROOT = Path(__file__).resolve().parents[2]
 RUNTIME = ROOT / 'game_first_exam/runtime'
 GAMES = ('race', 'flappybird', 'pong', 'supermario', 'tempestrun')
 CLASSES = dict(zip(GAMES, ('RaceGame', 'FlappyBirdGame', 'PongGame', 'SuperMarioGame', 'TempestRunGame')))
-REFERENCES = {
-    'race': ['RIGHT'] * 3 + ['DOWN'],
-    'flappybird': ['UP'] * 3 + ['KEEP'] * 37,
-    'pong': ['RIGHTUP', 'NONE', 'NONE', 'RIGHTDOWN', 'NONE', 'NONE', 'RIGHTDOWN', 'NONE', 'RIGHTDOWN', 'NONE', 'NONE', 'RIGHTDOWN', 'NONE', 'RIGHTDOWN', 'NONE', 'NONE', 'RIGHTDOWN', 'NONE', 'RIGHTDOWN', 'NONE', 'NONE', 'RIGHTDOWN', 'NONE', 'RIGHTDOWN', 'NONE', 'NONE', 'RIGHTDOWN', 'NONE', 'RIGHTDOWN'],
-    'supermario': ['UP+RIGHT'] * 11,
-    'tempestrun': ['NONE'] * 2,
-}
 EXPECTED_SCORE = {'race': 100, 'flappybird': 1, 'pong': 1, 'supermario': 100, 'tempestrun': 10}
 
 
@@ -57,6 +50,9 @@ def task_for(game):
     if len(tasks) != 1:
         raise AssertionError('expected one frozen task for ' + game)
     return tasks[0]
+
+def reference_actions(game):
+    return json.loads((task_for(game) / 'solution/actions.json').read_text())
 
 
 def digest(value):
@@ -215,10 +211,10 @@ def worker(mode, game, actions, destination):
             task = task_for(game)
             instance = json.loads((task / 'tests/instance.json').read_text())
             adapter_module = module('tested_vmage_adapter', ROOT / f'game_first_exam/benchmarks/vmage/{game}/adapter.py')
+            rules = module('tested_vmage_rules', ROOT / 'game_first_exam/benchmarks/vmage/common/metric_rules.py')
             if mode == 'construction-fault':
                 from server import Game
                 from grade import grade
-                rules = module('tested_fault_rules', ROOT / f'game_first_exam/benchmarks/vmage/{game}/metric_rules.py')
                 service = Game.open(adapter_module.Adapter, instance, task / 'environment/sim', scratch / 'fault')
                 verdict = grade(service.final, instance, rules.validate_metrics)
                 assert verdict['infra_error'] == 1 and verdict['primary_score'] is None
@@ -270,7 +266,6 @@ def worker(mode, game, actions, destination):
             assert_pure()
             from server import Game
             from grade import grade
-            rules = module('tested_vmage_rules', ROOT / f'game_first_exam/benchmarks/vmage/{game}/metric_rules.py')
             service_instance = copy.deepcopy(instance)
             assert instance['initial_state_sha256'] == adapter.fingerprint(), 'frozen initial audit hash mismatch'
             service = Game(adapter, service_instance, scratch / 'service', wall_clock=600)
@@ -410,8 +405,7 @@ class VMageNative(unittest.TestCase):
     def test_original_native_run_positive_references(self):
         for game in GAMES:
             with self.subTest(game=game):
-                self.assertEqual(json.loads((task_for(game) / 'solution/actions.json').read_text()), REFERENCES[game])
-                result = self.assert_equivalent(game, REFERENCES[game], EXPECTED_SCORE[game])
+                result = self.assert_equivalent(game, reference_actions(game), EXPECTED_SCORE[game])
                 self.assertEqual(result['initial']['state']['score'], 0)
                 self.assertEqual(result['initial']['state']['ledger'], 1)
                 self.assertEqual(result['initial']['observation']['size'], [202 if game == 'flappybird' else 480, 360])
@@ -426,8 +420,8 @@ class VMageNative(unittest.TestCase):
     def test_fresh_process_same_seed_preserves_state_rng_and_pixels(self):
         for game in GAMES:
             with self.subTest(game=game):
-                first = self.run_episode('bridge', game, REFERENCES[game][:2])
-                second = self.run_episode('bridge', game, REFERENCES[game][:2])
+                first = self.run_episode('bridge', game, reference_actions(game)[:2])
+                second = self.run_episode('bridge', game, reference_actions(game)[:2])
                 for key in ('initial', 'calls', 'final', 'pixels', 'observation'):
                     self.assertEqual(first[key], second[key], game + ': ' + key)
 
@@ -443,7 +437,7 @@ class VMageNative(unittest.TestCase):
                     self.assertEqual(result['metrics']['dashboard_ticks'], calls % 60)
 
     def test_native_death_preserves_accumulated_positive_score(self):
-        result = self.assert_equivalent('flappybird', REFERENCES['flappybird'] + ['DOWN'] * 30, 1)
+        result = self.assert_equivalent('flappybird', reference_actions('flappybird') + ['DOWN'] * 30, 1)
         self.assertTrue(result['final']['over'])
         self.assertEqual(result['transitions'][-1], {'terminated': True, 'truncated': False})
         self.assertGreater(result['metrics']['native_score'], 0)

@@ -2,9 +2,9 @@
 import json
 SCHEMA_VERSION = '1.0.0'
 BENCHMARK = 'vmage_pong'
-FROZEN_FIELDS = json.loads('{"archive_sha256": "1047daa50004003eb9848205e1c420679e51d54d9a38acd3155da4aa8680e919", "dt": 0.033, "engine_versions": {"Pillow": "10.4.0", "imageio": "2.36.0", "numpy": "2.2.4", "opencv-python": "4.11.0.86", "pygame": "2.6.1", "scipy": "1.15.1", "tqdm": "4.67.1"}, "fps": 30, "frame_ledger": "pygame-base-capture-asymmetry-v1", "frames_per_decision": 3, "initialization": "native-init_run-step-None-dt0-v1", "native_actions": ["LEFTUP", "LEFTDOWN", "RIGHTUP", "RIGHTDOWN", "NONE"], "native_frame_limit": null, "native_game": "pong", "native_level": 1, "native_level_sha256": "92198287e5fbfd1b89e9cd0cba5aae9a760974df3d638a3f92ac281ee5cf588e", "native_settings_sha256": "3a132049606e1d5f4c03db318b7b94a28b3aaec2e12183c487971c806f1d2609", "observation_size": [480, 360], "passive_action": null, "python_version": "3.10.12", "sdl_version": "2.28.4", "source_manifest_sha256": "c78f261627da52a3a64a8381c66ad678553e015482d6c815db645d6df4a6da4d", "surface_size": [800, 600], "upstream_commit": "95d5d4a445bb0b75cce765c93107d87f84613e4d"}')
+FROZEN_FIELDS = json.loads('{"archive_sha256": "1047daa50004003eb9848205e1c420679e51d54d9a38acd3155da4aa8680e919", "dt": 0.033, "engine_versions": {"Pillow": "10.4.0", "imageio": "2.36.0", "numpy": "2.2.4", "opencv-python": "4.11.0.86", "pygame": "2.6.1", "scipy": "1.15.1", "tqdm": "4.67.1"}, "fps": 30, "frame_ledger": "pygame-base-capture-asymmetry-v1", "initialization": "native-init_run-step-None-dt0-v1", "native_game": "pong", "native_settings_sha256": "3a132049606e1d5f4c03db318b7b94a28b3aaec2e12183c487971c806f1d2609", "python_version": "3.10.12", "sdl_version": "2.28.4", "source_manifest_sha256": "c78f261627da52a3a64a8381c66ad678553e015482d6c815db645d6df4a6da4d", "upstream_commit": "95d5d4a445bb0b75cce765c93107d87f84613e4d"}')
 LEVEL_FIELDS = json.loads('{"1": {"frames_per_decision": 3, "native_actions": ["LEFTUP", "LEFTDOWN", "RIGHTUP", "RIGHTDOWN", "NONE"], "native_frame_limit": null, "native_level": 1, "native_level_sha256": "92198287e5fbfd1b89e9cd0cba5aae9a760974df3d638a3f92ac281ee5cf588e", "observation_size": [480, 360], "passive_action": null, "surface_size": [800, 600]}, "2": {"frames_per_decision": 3, "native_actions": ["LEFTUP", "LEFTDOWN", "RIGHTUP", "RIGHTDOWN", "NONE"], "native_frame_limit": null, "native_level": 2, "native_level_sha256": "5c89c899526d1baac1d55c0be14a338666abbf877ce9b78cf4dc162a55a68a95", "observation_size": [480, 360], "passive_action": null, "surface_size": [800, 600]}, "3": {"frames_per_decision": 3, "native_actions": ["LEFTUP", "LEFTDOWN", "RIGHTUP", "RIGHTDOWN", "NONE"], "native_frame_limit": null, "native_level": 3, "native_level_sha256": "e5184af55b1af04c56124d5f7da6535c36aa3383f1a561d1edd4f656ea56fc45", "observation_size": [480, 360], "passive_action": null, "surface_size": [800, 600]}}')
-FIELDS = set(FROZEN_FIELDS)
+FIELDS = FROZEN_FIELDS.keys() | LEVEL_FIELDS['1'].keys()
 METRICS = {'native_score'}
 PROFILES = {'vmage-rgb-h360-v1'}
 REDUCERS = {('family_macro', '1.0.0')}
@@ -16,7 +16,7 @@ def validate(value):
     level = value.get('native_level')
     if type(level) is not int or str(level) not in LEVEL_FIELDS:
         raise ValueError('unsupported native V-MAGE level')
-    expected_fields = dict(FROZEN_FIELDS, **LEVEL_FIELDS[str(level)])
+    expected_fields = FROZEN_FIELDS | LEVEL_FIELDS[str(level)]
     for key, expected in expected_fields.items():
         if type(value[key]) is not type(expected) or json.dumps(value[key], sort_keys=True, allow_nan=False) != json.dumps(expected, sort_keys=True, allow_nan=False):
             raise ValueError('unsupported frozen V-MAGE field: ' + key)
