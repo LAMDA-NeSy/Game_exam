@@ -25,6 +25,9 @@ def main():
     if not task.is_relative_to(run) or task.name != "connectfour-match-i01-standard":
         raise RuntimeError("The prepared task is not a frozen Connect Four match")
     shutil.copyfile(Path(__file__).with_name("route.json"), task / "solution/route.json")
+    sys.path.insert(0, str(root / "scripts"))
+    import task_conventions
+    task_conventions.normalize(task)
     subprocess.run([sys.executable, "scripts/stamp_mtimes.py", "--full", str(task)], check=True)
     subprocess.run(["harbor", "run", "-c", str(config), "-a", "oracle",
                     "--jobs-dir", str(root / "jobs"), "--job-name", "connectfour-loss", "-y"], check=True)
