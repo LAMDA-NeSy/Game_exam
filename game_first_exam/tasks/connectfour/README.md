@@ -14,3 +14,6 @@ Two scored native previews of the same frozen opening:
 
 The previews use reference and control routes, not a model's policy. Generate them
 with `python game_first_exam/tests/benchmarks/connectfour/record_demos.py`.
+
+On a host with Docker Desktop and Harbor, run both full container trials with
+`bash game_first_exam/tests/benchmarks/connectfour/verify_harbor.command`.
