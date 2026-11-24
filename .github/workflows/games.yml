@@ -41,6 +41,7 @@ jobs:
         with: {python-version: '3.12'}
       - run: python -m pip install -e .
       - run: harbor run --game-suite minihack-balrog --standard --list
+      - run: harbor run --game-suite vex3 --standard --list
       - run: python game_first_exam/tests/test_game_harbor.py
   fresh-clone-smoke:
     runs-on: ubuntu-latest
@@ -77,8 +78,50 @@ jobs:
           name: fresh-clone-room-evidence
           path: jobs/
           retention-days: 7
+  browser-game-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {suite: vex3, control: vex3/missed_jump}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: docker/setup-docker-action@v5
+        with:
+          version: v29.5.2
+          set-host: true
+          daemon-config: '{"features":{"containerd-snapshotter":true}}'
+      - run: python -m pip install -e .
+      - name: Run the reference solution
+        env:
+          SUITE: ${{ matrix.suite }}
+        run: |
+          harbor run --game-suite "$SUITE" --standard -c configs/harbor/oracle.json \
+            --jobs-dir "$PWD/jobs" --job-name browser-reference -y
+          python ci_checks/check-browser-game-result.py jobs/browser-reference 1
+      - name: Run the failure control
+        env:
+          CONTROL: ${{ matrix.control }}
+        run: |
+          python "game_first_exam/tests/benchmarks/$CONTROL/run_harbor.py"
+          python ci_checks/check-browser-game-result.py jobs 0
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ matrix.suite }}-smoke-evidence
+          path: |
+            jobs/*/result.json
+            jobs/*/*/artifacts/data/final.json
+            jobs/*/*/verifier/reward.json
+            jobs/*/*/trial.log
+          retention-days: 7
   invariants:
-    needs: [static, adapters, harbor, fresh-clone-smoke]
+    needs: [static, adapters, harbor, fresh-clone-smoke, browser-game-smoke]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
@@ -87,4 +130,5 @@ jobs:
           ADAPTERS: ${{ needs.adapters.result }}
           HARBOR: ${{ needs.harbor.result }}
           SMOKE: ${{ needs.fresh-clone-smoke.result }}
-        run: test "$STATIC" = success && test "$ADAPTERS" = success && test "$HARBOR" = success && test "$SMOKE" = success
+          BROWSER_SMOKE: ${{ needs.browser-game-smoke.result }}
+        run: test "$BROWSER_SMOKE" = success && test "$STATIC" = success && test "$ADAPTERS" = success && test "$HARBOR" = success && test "$SMOKE" = success
