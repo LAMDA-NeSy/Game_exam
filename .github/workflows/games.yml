@@ -41,6 +41,7 @@ jobs:
         with: {python-version: '3.12'}
       - run: python -m pip install -e .
       - run: harbor run --game-suite minihack-balrog --standard --list
+      - run: harbor run --game-suite pacman --standard --list
       - run: python game_first_exam/tests/test_game_harbor.py
   fresh-clone-smoke:
     runs-on: ubuntu-latest
@@ -77,8 +78,43 @@ jobs:
           name: fresh-clone-room-evidence
           path: jobs/
           retention-days: 7
+  pacman-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: docker/setup-docker-action@v5
+        with:
+          version: v29.5.2
+          set-host: true
+          daemon-config: '{"features":{"containerd-snapshotter":true}}'
+      - run: python -m pip install -e .
+      - name: Assemble the pinned Pac-Man files image
+        run: python scripts/files_image.py build pacman-files
+      - name: Run the 600-point reference
+        run: |
+          harbor run --game-suite pacman --standard -c configs/harbor/oracle.json \
+            --jobs-dir "$PWD/jobs" --job-name pacman-clear -y
+          python ci_checks/check-pacman-result.py jobs/pacman-clear 1
+      - name: Run the ghost-collision control
+        run: |
+          python game_first_exam/tests/benchmarks/pacman/ghost_collision/run_harbor.py
+          python ci_checks/check-pacman-result.py jobs/pacman-failure-control 0
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pacman-smoke-evidence
+          path: |
+            jobs/*/result.json
+            jobs/*/*/artifacts/data/final.json
+            jobs/*/*/verifier/reward.json
+            jobs/*/*/trial.log
+          retention-days: 7
   invariants:
-    needs: [static, adapters, harbor, fresh-clone-smoke]
+    needs: [static, adapters, harbor, fresh-clone-smoke, pacman-smoke]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
@@ -87,4 +123,5 @@ jobs:
           ADAPTERS: ${{ needs.adapters.result }}
           HARBOR: ${{ needs.harbor.result }}
           SMOKE: ${{ needs.fresh-clone-smoke.result }}
-        run: test "$STATIC" = success && test "$ADAPTERS" = success && test "$HARBOR" = success && test "$SMOKE" = success
+          PACMAN_SMOKE: ${{ needs.pacman-smoke.result }}
+        run: test "$STATIC" = success && test "$ADAPTERS" = success && test "$HARBOR" = success && test "$SMOKE" = success && test "$PACMAN_SMOKE" = success

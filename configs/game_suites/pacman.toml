@@ -1,0 +1,10 @@
+schema_version = "game-suite/2.1"
+version = "1.0.0"
+tier = "smoke"
+name = "games-pacman-minimal-v1.0.0"
+files_images = ["connection-files", "game-files", "pacman-files"]
+
+[[tasks]]
+name = "pacman-600-i01-standard"
+benchmark = "pacman"
+family = "score-600"

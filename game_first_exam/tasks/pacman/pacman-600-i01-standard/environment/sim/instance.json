@@ -1,0 +1,25 @@
+{
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": true,
+    "action_mode": "enum",
+    "timing": "action-stepped",
+    "native_truncation": false
+  },
+  "benchmark": "pacman",
+  "env_id": "pacman",
+  "family": "score-600",
+  "seed": 42,
+  "max_steps": 500,
+  "engine_commit": "e5ddb16df85b91a1d17bb0577621cc7c5e65d738",
+  "observation_profile": "native-rgb-v1",
+  "metric_spec": {
+    "primary": "success",
+    "reducer": "family_macro",
+    "reducer_version": "1.0.0",
+    "success_label": "act_one_clear"
+  },
+  "initial_state_sha256": "628cb4ead38e34e34a34f78fa4481f2a0ccf8e9139acfae69d79dc997e90e36b"
+}
