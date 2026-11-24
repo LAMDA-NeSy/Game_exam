@@ -19,14 +19,14 @@ def main():
                    check=True)
     rows = json.loads(config.read_text())["tasks"]
     if len(rows) != 1:
-        raise RuntimeError("Expected one Vex 3 task.")
+        raise RuntimeError("Expected one Pac-Man task.")
     task = Path(rows[0]["path"]).resolve()
     if not task.is_relative_to(run) or task.name != "pacman-600-i01-standard":
         raise RuntimeError("Expected a staged copy of Pac-Man 600 points.")
     shutil.copyfile(Path(__file__).with_name("solve.py"), task / "solution/solve.py")
     subprocess.run([sys.executable, str(root / "scripts/stamp_mtimes.py"), "--full", str(task)], check=True)
     subprocess.run(["harbor", "run", "-c", str(config), "-a", "oracle",
-                    "--jobs-dir", str(root / "jobs"), "-y"], check=True)
+                    "--jobs-dir", str(root / "jobs"), "--job-name", "pacman-failure-control", "-y"], check=True)
 
 
 if __name__ == "__main__":
