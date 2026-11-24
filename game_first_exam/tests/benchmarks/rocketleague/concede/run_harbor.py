@@ -25,7 +25,8 @@ def main():
         raise RuntimeError("Expected a staged copy of Rocket League first goal.")
     shutil.copyfile(Path(__file__).with_name("solve.py"), task / "solution/solve.py")
     subprocess.run([sys.executable, str(root / "scripts/stamp_mtimes.py"), "--full", str(task)], check=True)
-    subprocess.run(["harbor", "run", "-c", str(config), "-a", "oracle", "-y"], check=True)
+    subprocess.run(["harbor", "run", "-c", str(config), "-a", "oracle",
+                    "--jobs-dir", str(root / "jobs"), "-y"], check=True)
 
 
 if __name__ == "__main__":
