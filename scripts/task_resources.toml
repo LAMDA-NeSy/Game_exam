@@ -21,3 +21,9 @@ match = "^minihack-.*-standard$"
 main = { cpus = 1, memory_gb = 1, pids = 256, disk_gb = 2 }
 sim = { cpus = 1, memory_gb = 1, pids = 128 }
 measured = "Initial CPU-only integration caps; measure during validation"
+
+[[cap]]
+match = "^connectfour-.*-standard$"
+main = { cpus = 1, memory_gb = 1, pids = 256, disk_gb = 2 }
+sim = { cpus = 1, memory_gb = 1, pids = 128 }
+measured = "Initial Connect Four CPU-only integration caps"
