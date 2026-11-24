@@ -1,0 +1,25 @@
+{
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": true,
+    "action_mode": "enum",
+    "timing": "action-stepped",
+    "native_truncation": false
+  },
+  "benchmark": "vex3",
+  "env_id": "vex-3",
+  "family": "act-one",
+  "seed": 42,
+  "max_steps": 1500,
+  "engine_commit": "e5ddb16df85b91a1d17bb0577621cc7c5e65d738",
+  "initial_state_sha256": "3852adf0c4e3ecbaa330477c70b184934972c484568355fa1e8f8cac4cd4d4a2",
+  "observation_profile": "native-rgb-v1",
+  "metric_spec": {
+    "primary": "success",
+    "reducer": "family_macro",
+    "reducer_version": "1.0.0",
+    "success_label": "act_one_clear"
+  }
+}

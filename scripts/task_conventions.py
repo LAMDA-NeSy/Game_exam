@@ -73,6 +73,7 @@ TEXT_REPLACEMENTS = [  # (old, new), applied to task text files in order (a task
 # ci_checks/ci_scope.py --check holds its UNITS / FILES_IMAGE to it. A new benchmark adds one row here.
 BENCHMARK_TABLE = [
     ("minihack-", "MiniHack", "minihack"),
+    ("vex3-", "GameWorld Vex 3", "vex3"),
     ("babaisai-", "Baba Is AI", "babaisai"),
     ("crafter-", "Crafter", "crafter"),
     ("textworld-", "TextWorld", "textworld"),

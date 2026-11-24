@@ -1,0 +1,10 @@
+schema_version = "game-suite/2.1"
+version = "1.0.0"
+tier = "smoke"
+name = "games-vex3-minimal-v1.0.0"
+files_images = ["connection-files", "game-files", "vex3-files"]
+
+[[tasks]]
+name = "vex3-act-one-i01-standard"
+benchmark = "vex3"
+family = "act-one"

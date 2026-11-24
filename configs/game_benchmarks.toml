@@ -14,3 +14,6 @@ schema = "game_first_exam/benchmarks/babaisai/instance_schema.py"
 
 [benchmarks.minihack]
 schema = "game_first_exam/benchmarks/minihack/instance_schema.py"
+
+[benchmarks.vex3]
+schema = "game_first_exam/benchmarks/vex3/instance_schema.py"

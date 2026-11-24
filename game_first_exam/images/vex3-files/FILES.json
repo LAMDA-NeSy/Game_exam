@@ -1,0 +1,10 @@
+{
+  "source": "game_first_exam/benchmarks/vex3",
+  "files": {
+    "adapter.py": "b9bc530426cf8f8712786a3bb4c55545a32980e71ec301d0d9448c81a10fc2b2",
+    "instance_schema.py": "a999b2c2d4e27914f92d8db1d9eb67949c6c73bc71bb8575957e246b6e412fa0",
+    "metric_rules.py": "9765b7395cbc73570c99b18a738864fbda3439fc5ea1eb96396cb1aa1f52f2c1",
+    "requirements.txt": "f7b63cd5e9d2d806613a620bb7340f27ce6735ba76c9d5a08f77d48e527d4733"
+  },
+  "image": "ghcr.io/mll-lab-nu/efe:vex3-files-0.1.0@sha256:e1eb278ee4601219ca01e409b7b3759ffed8771c65a7300422bac5e192eb2ae6"
+}
