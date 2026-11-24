@@ -51,3 +51,5 @@ jobs:
           PY
           docker run --rm --network none -v "$PWD/jobs:/jobs:ro" slimevolley-native sh -ec \
             '"$(python -c "import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())")" -v error -xerror -i /jobs/fresh-slimevolley/*/artifacts/data/replay.mp4 -f null -'
+      - name: Verify the practice and scored match isolation
+        run: python scripts/run_slimevolley_exam.py --smoke --output "$PWD/jobs/slimevolley-exam-smoke"

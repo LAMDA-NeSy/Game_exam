@@ -8,7 +8,7 @@ You control the player on the right. Make the ball land on the left side of the 
 - Each accepted action advances one frame. The world waits for your next action. Play ends when either side runs out of lives or you reach 3000 frames. Stop when `done` is true.
 
 ## Scoring
-Your score is points won minus points conceded, from −5 to +5. Your current score counts at the time limit. A native match ending with a positive score counts as a win.
+A point won on the left counts as +1. A point conceded on the right counts as −1. Your score is points won minus points conceded, from −5 to +5. Your current score counts at the time limit. A native match ending with a positive score counts as a win.
 
 ## Client (`/app/game_client.py`)
 ```python
@@ -24,6 +24,8 @@ game.save_image(obs, "/app/output/view.png")  # save the RGB frame for inspectio
 ```
 
 `observe()` and `step()` return one 168×84 RGB PNG in `observation["image_png_base64"]`, along with `step`, `done` and `time_left_s`. Use the returned step number in your next call. If the response is lost or your step is stale, call `observe()` to recover the current frame and step.
+
+The coins at the upper right show your remaining lives. The coins at the upper left show the computer's. Five lives show four coins. One life and zero lives both show zero coins.
 
 Use `left` toward the net or `right` toward the outside wall. `left_jump` and `right_jump` combine movement and jump. `jump` moves vertically, and `idle` advances a frame with no input.
 
