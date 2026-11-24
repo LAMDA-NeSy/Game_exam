@@ -41,7 +41,8 @@ def main():
         raise RuntimeError("Expected a staged copy of Forest Temple level one.")
     stage_control(task, root / "game_first_exam/benchmarks/firewater/adapter.py")
     subprocess.run([sys.executable, str(root / "scripts/stamp_mtimes.py"), "--full", str(task)], check=True)
-    subprocess.run(["harbor", "run", "-c", str(config), "-a", "oracle"], check=True)
+    subprocess.run(["harbor", "run", "-c", str(config), "-a", "oracle",
+                    "--jobs-dir", str(root / "jobs"), "-y"], check=True)
 
 
 if __name__ == "__main__":
