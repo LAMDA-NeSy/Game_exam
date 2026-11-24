@@ -2,7 +2,7 @@
 
 Score 600 in GameWorld's Pac-Man using native RGB screenshots and keyboard moves. A game over or action limit scores zero. Five original GameWorld task presets cover score thresholds; this integration freezes the first threshold.
 
-When the pinned files image is available locally or in the registry, run from the repository root: `harbor run --game-suite pacman --standard -a oracle -y`.
+Run from the repository root (the pinned files image is assembled locally): `harbor run --game-suite pacman --standard -a oracle -y`.
 
 | Replay | Native result |
 | --- | --- |

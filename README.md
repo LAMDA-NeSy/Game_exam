@@ -33,7 +33,7 @@ Game Exam 基于 [Embodied First Exam](https://github.com/mll-lab-nu/embodied-fi
 | TextWorld | 9 | — | 文字探索、寻宝、烹饪 | 冻结 `.z8` 游戏，通过原生引擎执行 |
 | Baba Is AI | 2 | — | 移动文字、改变规则、解谜 | 基础关卡与复合关卡的最小 smoke 验证 |
 | MiniHack | 10 | 1 privileged | Room、River、导航、战斗、Quest、Boxoban | 原生 MiniHack/NLE 环境；Room 另有 privileged 版本 |
-| Pac-Man | 1 | — | 浏览器吃豆与躲避幽灵 | GameWorld 固定 600 分目标；成功和失败录像已录制，Harbor 待验证 |
+| Pac-Man | 1 | — | 浏览器吃豆与躲避幽灵 | GameWorld 固定 600 分目标；通关 1.0、死亡对照 0.0，含录像 |
 
 套件由 [configs/game_suites/](configs/game_suites/) 定义，可以重叠，数量不能直接相加：
 
