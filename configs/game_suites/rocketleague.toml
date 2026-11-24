@@ -1,0 +1,10 @@
+schema_version = "game-suite/2.1"
+version = "1.0.0"
+tier = "smoke"
+name = "games-rocketleague-minimal-v1.0.0"
+files_images = ["connection-files", "game-files", "rocketleague-files"]
+
+[[tasks]]
+name = "rocketleague-first-goal-i01-standard"
+benchmark = "rocketleague"
+family = "first-goal"

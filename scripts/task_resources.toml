@@ -9,7 +9,7 @@ measured = "CPU-only initial integration; caps chosen conservatively, to be meas
 # Initial CPU-only game integration caps; measure before increasing concurrency.
 
 [[cap]]
-match = "^(crafter|textworld|babaisai)-.*-standard$"
+match = "^(crafter|textworld|babaisai|rocketleague)-.*-standard$"
 main = { cpus = 1, memory_gb = 1, pids = 256, disk_gb = 2 }
 sim = { cpus = 1, memory_gb = 1, pids = 128 }
 measured = "Initial integration caps; CPU only, fixed-model evaluation"
