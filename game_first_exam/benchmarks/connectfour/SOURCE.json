@@ -1,0 +1,6 @@
+{
+  "repository": "https://github.com/Farama-Foundation/PettingZoo",
+  "environment": "classic/connect_four-v3",
+  "package": "pettingzoo==1.26.1",
+  "opponent": "block-win-hash-v1, implemented in opponent.py"
+}

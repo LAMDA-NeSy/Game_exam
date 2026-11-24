@@ -1,0 +1,28 @@
+{
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": true,
+    "action_mode": "enum",
+    "timing": "action-stepped",
+    "native_truncation": true
+  },
+  "benchmark": "connectfour",
+  "env_id": "connect_four_v3",
+  "family": "fixed-opponent",
+  "seed": 42,
+  "max_steps": 21,
+  "observation_profile": "native-rgb-board-v1",
+  "metric_spec": {
+    "primary": "success",
+    "reducer": "family_macro",
+    "reducer_version": "1.0.0",
+    "success_label": "native_red_win"
+  },
+  "initial_state_sha256": "4ec0ec6910bf45819c9a0eb90537d736d278ed8529bffc20c9d0d1136b02f128",
+  "engine_version": "1.26.1",
+  "controlled_agent": "player_0",
+  "opponent_policy": "block-win-hash-v1",
+  "opponent_seed": 2117382936
+}

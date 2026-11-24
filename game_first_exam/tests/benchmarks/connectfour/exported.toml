@@ -1,0 +1,7 @@
+[protocols]
+standard = ["game-standard/2.2"]
+
+[[tasks]]
+name = "connectfour-match-i01-standard"
+source_task = "PettingZoo-classic-connect_four_v3"
+protocol = "game-standard/2.2"

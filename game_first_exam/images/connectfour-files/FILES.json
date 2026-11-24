@@ -1,0 +1,11 @@
+{
+  "image": "ghcr.io/mll-lab-nu/efe:connectfour-files-0.1.0@sha256:6c81b2a06c9246b4471a343f9657a4d48485fa02c827672cfbefd43cd473b850",
+  "source": "game_first_exam/benchmarks/connectfour",
+  "files": {
+    "adapter.py": "3d2beadbbe11f922b84b0f2c5252741a06d5bfaa9999b8bec18ca7d862bd8e18",
+    "instance_schema.py": "74efb24967206186c10e2396bda091b79a8a0a73ac040d6b0d20f14d67e62cdf",
+    "metric_rules.py": "6f21179d6f23f0b62220beec4248591098ac35b614080e209114fa538aa1e8af",
+    "opponent.py": "73b1e85a3297c40643e0ac4b59557351bfab2e23d163b1e3f0bfab8be8082f7d",
+    "requirements.txt": "73b46aec000241c5a2168a0309476eef7d01b721927c3dcc6ba8a405fa5d3fa0"
+  }
+}
