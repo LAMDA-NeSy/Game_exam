@@ -27,6 +27,7 @@ from game_runtime import report_code_metadata
 from prepare_games import load_suite, prepare, select_tasks
 import efe
 import run_games
+import task_conventions as tc
 
 
 class GameSelection(unittest.TestCase):
@@ -36,12 +37,17 @@ class GameSelection(unittest.TestCase):
             with self.subTest(flags=flags), contextlib.redirect_stdout(io.StringIO()) as output, \
                     patch("efe.harbor") as launch, patch("efe.prepull") as pull:
                 self.assertEqual(efe.run(flags), 0)
+            launch.assert_not_called()
+            pull.assert_not_called()
+            if "--all" in flags:
+                registered = [task.name for task in tc.iter_tasks() if tc.mode_of(task) == "standard"]
+                self.assertGreaterEqual(len(registered), expected)
+                self.assertCountEqual(output.getvalue().splitlines(), registered)
+                continue
             names = output.getvalue().splitlines()
             self.assertEqual(len(names), expected)
             self.assertTrue(all(name.startswith(("minigrid-", "crafter-", "textworld-", "babaisai-", "minihack-"))
                                 for name in names))
-            launch.assert_not_called()
-            pull.assert_not_called()
 
     def test_checkout_discovery_works_without_upstream_task_tree(self):
         self.assertTrue(efe.is_tree(ROOT))

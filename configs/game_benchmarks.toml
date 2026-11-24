@@ -12,5 +12,8 @@ schema = "game_first_exam/benchmarks/textworld/instance_schema.py"
 [benchmarks.babaisai]
 schema = "game_first_exam/benchmarks/babaisai/instance_schema.py"
 
+[benchmarks.slimevolley]
+schema = "game_first_exam/benchmarks/slimevolley/instance_schema.py"
+
 [benchmarks.minihack]
 schema = "game_first_exam/benchmarks/minihack/instance_schema.py"

@@ -14,6 +14,12 @@ main = { cpus = 1, memory_gb = 1, pids = 256, disk_gb = 2 }
 sim = { cpus = 1, memory_gb = 1, pids = 128 }
 measured = "Initial integration caps; CPU only, fixed-model evaluation"
 
+[[cap]]
+match = "^slimevolley-.*-standard$"
+main = { cpus = 1, memory_gb = 1, pids = 256, disk_gb = 2 }
+sim = { cpus = 1, memory_gb = 1, pids = 128 }
+measured = "CPU-only native RGB match"
+
 # MiniHack native CPU integration; caps are not native game parameters.
 
 [[cap]]

@@ -1,0 +1,33 @@
+{
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": true,
+    "action_mode": "enum",
+    "timing": "action-stepped",
+    "native_truncation": true
+  },
+  "benchmark": "slimevolley",
+  "env_id": "SlimeVolleyNoFrameskip-v0",
+  "family": "pixel-vs-baseline",
+  "seed": 2117382936,
+  "max_steps": null,
+  "native_max_steps": 3000,
+  "observation_profile": "native-rgb-v1",
+  "metric_spec": {
+    "primary": "native_return",
+    "reducer": "family_macro",
+    "reducer_version": "1.0.0",
+    "success_label": "positive_native_match"
+  },
+  "engine_commit": "8ac22434fc5a587a3395311f7854aeda17d10303",
+  "engine_versions": {
+    "slimevolleygym": "0.1.0",
+    "gym": "0.25.0",
+    "numpy": "1.26.4",
+    "opencv-python-headless": "4.11.0.86"
+  },
+  "opponent": "native-baseline",
+  "initial_state_sha256": "95325587a31c2c6b0344ce17a8367e89bdfc9789f8765ed395928a32967ddff9"
+}
