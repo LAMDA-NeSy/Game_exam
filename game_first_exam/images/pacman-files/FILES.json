@@ -1,0 +1,10 @@
+{
+  "source": "game_first_exam/benchmarks/pacman",
+  "files": {
+    "adapter.py": "0a33907c604133a5a5af6cc03c7db35b572f0b331cdd3fa6b865064969466ae7",
+    "instance_schema.py": "a86fb55845148f97828faacb8194633ee4a9f1ec7f7c5f6549355c9afc7898c7",
+    "metric_rules.py": "fda0b03387377d98e4e2a4ef04a862668a0fe6ef2eedb90b6ca445cb05fff788",
+    "requirements.txt": "f7b63cd5e9d2d806613a620bb7340f27ce6735ba76c9d5a08f77d48e527d4733"
+  },
+  "image": "ghcr.io/mll-lab-nu/efe:pacman-files-0.1.0@sha256:6bec51b36730d5c42218d0cb7eccea95243a642665e780e50f4b33948a2984eb"
+}
