@@ -4,4 +4,4 @@ GameWorld's pinned `23_pacman` browser snapshot. An agent controls Pac-Man with 
 
 This is an integration task based on the first GameWorld score threshold, not a claim of reproducing the GameWorld leaderboard. The source is https://github.com/gameworld-project/GameWorld-Games/tree/e5ddb16df85b91a1d17bb0577621cc7c5e65d738/benchmark/23_pacman ; see `RIGHTS.md` in that directory.
 
-Local integration status: static game checks pass. The `pacman-files` OCI digest is calculated from the local sources but has not been published to GHCR. A native Chromium replay, successful oracle, failed contrast run and both demo recordings are still required before this branch can be submitted.
+The 24-action reference route reached 600 points on the unmodified pinned browser game at seed 42. A stationary control ended in native game over at 120 points. Both browser runs were recorded. The `pacman-files` OCI digest was calculated locally but has not yet been published to GHCR. Harbor oracle and verifier runs are pending Docker access.

@@ -20,7 +20,7 @@ family = "score-600"
 dynamics = "static"
 protocol = "game-standard/2.2"
 oracle = "partial"
-oracle_evidence = "Native reference controller and Harbor replay are pending a Docker and browser-enabled runner; solution/solve.py is only a client smoke check."
+oracle_evidence = "A 24-action route reached 600 points on the unmodified pinned browser game; Harbor oracle and verifier are pending Docker access."
 instance_seed = 42
 expert_time_estimate_hours = 0.5
 
