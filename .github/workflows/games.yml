@@ -77,8 +77,10 @@ jobs:
           name: fresh-clone-room-evidence
           path: jobs/
           retention-days: 7
+  factorio:
+    uses: ./.github/workflows/factorio.yml
   invariants:
-    needs: [static, adapters, harbor, fresh-clone-smoke]
+    needs: [static, adapters, harbor, fresh-clone-smoke, factorio]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
@@ -87,4 +89,5 @@ jobs:
           ADAPTERS: ${{ needs.adapters.result }}
           HARBOR: ${{ needs.harbor.result }}
           SMOKE: ${{ needs.fresh-clone-smoke.result }}
-        run: test "$STATIC" = success && test "$ADAPTERS" = success && test "$HARBOR" = success && test "$SMOKE" = success
+          FLE: ${{ needs.factorio.result }}
+        run: test "$STATIC" = success && test "$ADAPTERS" = success && test "$HARBOR" = success && test "$SMOKE" = success && test "$FLE" = success
