@@ -36,9 +36,11 @@ def check(job):
         runtime = containers(project + "__env")
         assert set(runtime) == {"main", "engine", "recorder"}
         verifier = containers(project + "__verifier__trial")
-        assert set(verifier) == {"main"}
+        # Harbor may run its own egress-control service alongside a verifier.
+        # The grading process itself must still have a private, offline namespace.
+        assert "main" in verifier and set(verifier) <= {"main", "harbor-docker-egress-control-sidecar"}, set(verifier)
         agent, engine, recorder, grader = runtime["main"], runtime["engine"], runtime["recorder"], verifier["main"]
-        for row in (agent, engine, recorder, grader):
+        for row in (*runtime.values(), *verifier.values()):
             config = row["HostConfig"]
             assert not config["Privileged"] and config["PidMode"] != "host" and config["IpcMode"] != "host"
             for mount in row["Mounts"]:
@@ -57,8 +59,10 @@ def check(job):
         bridge = volume(engine, "/tmp", True)
         assert volume(agent, "/channel", False) == channel
         assert volume(recorder, "/native", False) == bridge
-        for row, hidden in ((agent, {bridge}), (engine, {channel}), (grader, {channel, bridge})):
+        for row, hidden in ((agent, {bridge}), (engine, {channel})):
             assert hidden.isdisjoint(m.get("Name") for m in row["Mounts"])
+        for row in verifier.values():
+            assert {channel, bridge}.isdisjoint(m.get("Name") for m in row["Mounts"])
         assert bridge != channel and volumes.isdisjoint({bridge, channel}), "Cross-trial shared volume"
         volumes.update((bridge, channel))
         assert engine["State"]["Status"] == "exited"
