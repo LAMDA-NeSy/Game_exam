@@ -1,0 +1,40 @@
+services:
+  main:
+    depends_on:
+      recorder: {condition: service_healthy}
+    volumes: ["channel:/channel:ro"]
+  engine:
+    image: game-exam-fle:6439e18b7870770454cf91eb36b3d1e6412724f4
+    pull_policy: never
+    network_mode: none
+    init: true
+    cpus: 1.5
+    mem_limit: 2048m
+    security_opt: ["no-new-privileges:true"]
+    environment:
+      FLE_ENV_ID: iron_plate_throughput
+      FLE_SCENARIO: default_lab_scenario
+      FLE_NUM_AGENTS: "1"
+    volumes: ["bridge:/tmp"]
+    healthcheck:
+      test: ["CMD", "/opt/fle-venv/bin/python3", "/opt/fle/bridge_client.py", "health"]
+      interval: 3s
+      timeout: 5s
+      retries: 80
+  recorder:
+    build: {context: ., target: recorder}
+    network_mode: none
+    init: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    volumes: ["bridge:/native:ro", "channel:/channel"]
+    depends_on:
+      engine: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "python", "/opt/fle_client.py", "status"]
+      interval: 3s
+      timeout: 5s
+      retries: 80
+volumes:
+  channel: {}
+  bridge: {}

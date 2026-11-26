@@ -335,6 +335,12 @@ def run(argv: list[str], app=None) -> int:
     games = _Scripts("prepare_games")
     if game_suite is None:
         game_suite = "all" if which == "all" else "core"
+    if game_suite == "factorio":
+        if modes or benches or paths or set(families) - {"lab-play"}:
+            print("Factorio uses the native Lab-play task. Select with --family lab-play or -i.", file=sys.stderr)
+            return 2
+        return _Scripts("factorio").launch(find_root(), inc, exc, n_tasks, listing, rest,
+                                            lambda args: harbor(args, app))
     if game_suite is not None:
         try:
             suite, plans = games.load_suite(game_suite)

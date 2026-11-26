@@ -1,0 +1,25 @@
+schema_version = "1.3"
+artifacts = [{ source = "/evidence", service = "recorder" }]
+
+[task]
+name = "game-exam/iron_plate_throughput"
+description = "Factorio Learning Environment Lab-play iron plate throughput"
+
+[metadata]
+source = "https://github.com/JackHopkins/factorio-learning-environment.git"
+source_commit = "6439e18b7870770454cf91eb36b3d1e6412724f4"
+upstream_release = "v0.4.3"
+env_id = "iron_plate_throughput"
+protocol = "fle/lab-play-text"
+
+[agent]
+timeout_sec = 14400
+
+[verifier]
+environment_mode = "separate"
+network_mode = "no-network"
+timeout_sec = 600
+
+[[verifier.collect]]
+service = "recorder"
+command = "python /opt/fle_client.py seal"

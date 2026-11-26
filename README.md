@@ -24,7 +24,7 @@ Game Exam 基于 [Embodied First Exam](https://github.com/mll-lab-nu/embodied-fi
 
 ## 已接入的游戏
 
-当前共有 **5 个 benchmark、42 个 standard 任务配置，另外有 1 个 privileged 和 1 个 realtime 配置，共 44 个任务目录**。同一原生任务的不同模式单独计数。
+当前接入 **6 个 benchmark**。其中 5 个提供冻结任务，共 42 个 standard、1 个 privileged 和 1 个 realtime 配置。Factorio Learning Environment 另提供 Lab-play 自动铁板生产任务。
 
 | Benchmark | standard | 其他模式 | 主要内容 | 说明 |
 |---|---:|---|---|---|
@@ -33,6 +33,7 @@ Game Exam 基于 [Embodied First Exam](https://github.com/mll-lab-nu/embodied-fi
 | TextWorld | 9 | — | 文字探索、寻宝、烹饪 | 冻结 `.z8` 游戏，通过原生引擎执行 |
 | Baba Is AI | 2 | — | 移动文字、改变规则、解谜 | 基础关卡与复合关卡的最小 smoke 验证 |
 | MiniHack | 10 | 1 privileged | Room、River、导航、战斗、Quest、Boxoban | 原生 MiniHack/NLE 环境；Room 另有 privileged 版本 |
+| Factorio Learning Environment | — | Lab-play 文本交互 | 通过 Python REPL 搭建自动铁板生产线 | [运行与评分说明](game_first_exam/benchmarks/factorio/README.md) |
 
 套件由 [configs/game_suites/](configs/game_suites/) 定义，可以重叠，数量不能直接相加：
 
