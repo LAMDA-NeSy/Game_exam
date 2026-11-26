@@ -3,6 +3,8 @@ import hashlib
 import json
 import math
 import os
+import selectors
+import sys
 from http.server import BaseHTTPRequestHandler
 from pathlib import Path
 
@@ -10,6 +12,7 @@ from fle_client import request
 
 TASK = "iron_plate_throughput"
 LIMIT = 64  # Checked against the upstream task in the verifier.
+COLLECT_SOCKET = "/tmp/fle-collect.sock"  # Recorder-private filesystem.
 
 
 def native(command, payload=None):
@@ -75,10 +78,6 @@ class Episode:
             return self.status()
         if self.fault:
             raise RuntimeError(self.fault)
-        if (method, path) == ("POST", "/seal"):
-            self.sealed = True
-            self.save()
-            return self.status()
         if (method, path) == ("GET", "/prompt"):
             return {"system_prompt": self.prompt}
         if (method, path) == ("GET", "/observe"):
@@ -87,10 +86,20 @@ class Episode:
             return self.execute(payload.get("number"), payload.get("code"))
         raise ValueError("Unknown operation")
 
+    def seal(self):
+        if self.fault:
+            raise RuntimeError(self.fault)
+        self.sealed = True
+        self.save()
+        return self.status()
+
 
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         pass
+
+    def dispatch(self, episode, payload):
+        return episode.dispatch(self.command, self.path, payload)
 
     def handle_request(self):
         episode = self.server.episode
@@ -101,7 +110,7 @@ class Handler(BaseHTTPRequestHandler):
             payload = json.loads(self.rfile.read(length)) if length else {}
             if not isinstance(payload, dict):
                 raise ValueError("Expected a JSON object")
-            result = episode.dispatch(self.command, self.path, payload)
+            result = self.dispatch(episode, payload)
             status = 200
         except ValueError as error:
             status, result = 400, {"error": str(error)}
@@ -121,11 +130,33 @@ class Handler(BaseHTTPRequestHandler):
     timeout = 15
 
 
-if __name__ == "__main__":
+class CollectHandler(Handler):
+    def dispatch(self, episode, payload):
+        if (self.command, self.path) != ("POST", "/seal"):
+            raise ValueError("Unknown collection operation")
+        return episode.seal()
+
+
+def serve():
     from socketserver import UnixStreamServer
 
     sock = Path("/channel/game.sock")
-    with UnixStreamServer(str(sock), Handler) as server:
-        server.episode = Episode(native, Path("/evidence/episode.json"))
+    with (UnixStreamServer(str(sock), Handler) as public,
+          UnixStreamServer(COLLECT_SOCKET, CollectHandler) as private,
+          selectors.DefaultSelector() as ready):
         os.chmod(sock, 0o666)
-        server.serve_forever()
+        os.chmod(COLLECT_SOCKET, 0o600)
+        public.episode = private.episode = Episode(native, Path("/evidence/episode.json"))
+        for server in (public, private):
+            ready.register(server, selectors.EVENT_READ)
+        # Both listeners use the same thread. A collection waits for an in-flight step.
+        while True:
+            for key, _ in ready.select():
+                key.fileobj.handle_request()
+
+
+if __name__ == "__main__":
+    if sys.argv[1:] == ["seal"]:
+        print(json.dumps(request(COLLECT_SOCKET, "seal", {})))
+    else:
+        serve()

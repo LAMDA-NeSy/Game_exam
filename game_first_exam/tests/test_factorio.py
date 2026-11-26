@@ -37,9 +37,10 @@ class FactorioTests(unittest.TestCase):
             self.session.execute(1, "print(2)")
         self.assertEqual([call.args for call in self.bridge.call_args_list if call.args[0] == "execute"],
                          [("execute", {"agent_idx": 0, "code": "print(1)"})])
-        for route in ("/reset", "/game-state", "/execute"):
+        for route in ("/reset", "/game-state", "/execute", "/seal"):
             with self.assertRaises(ValueError):
                 self.session.dispatch("POST", route, {})
+        self.assertFalse(self.session.sealed)
 
     def test_native_end_and_budget(self):
         for i in range(1, 65):
@@ -78,6 +79,8 @@ class FactorioTests(unittest.TestCase):
         saved = json.loads(self.output.read_text())
         self.assertIsNotNone(saved["fault"])
         self.assertFalse(saved["sealed"])
+        with self.assertRaises(RuntimeError):
+            self.session.seal()
 
     def test_native_scorer_and_target_are_distinct(self):
         from fle.eval.tasks.task_definitions.lab_play.throughput_tasks import iron_plate_throughput
@@ -85,7 +88,7 @@ class FactorioTests(unittest.TestCase):
         self.session.execute(1, "print(1)")
         with self.assertRaises(ValueError):
             validate(json.loads(self.output.read_text()), iron_plate_throughput)
-        self.session.dispatch("POST", "/seal", {})
+        self.session.seal()
         with self.assertRaises(ValueError):
             self.session.execute(2, "print(2)")
         episode = json.loads(self.output.read_text())

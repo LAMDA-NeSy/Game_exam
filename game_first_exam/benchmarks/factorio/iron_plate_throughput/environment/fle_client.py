@@ -36,7 +36,7 @@ def request(path, command, payload=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     commands = parser.add_subparsers(dest="command", required=True)
-    for command in ("status", "prompt", "observe", "seal"):
+    for command in ("status", "prompt", "observe"):
         commands.add_parser(command)
     step = commands.add_parser("step")
     step.add_argument("number", type=int)
@@ -46,6 +46,4 @@ if __name__ == "__main__":
     if args.command == "step":
         code = sys.stdin.read() if args.file == "-" else Path(args.file).read_text(encoding="utf-8")
         payload = {"number": args.number, "code": code}
-    if args.command == "seal":
-        payload = {}
     print(json.dumps(request("/channel/game.sock", args.command, payload), ensure_ascii=False))
