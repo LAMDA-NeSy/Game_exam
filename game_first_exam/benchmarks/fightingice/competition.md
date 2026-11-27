@@ -177,6 +177,36 @@ per-match native evidence, and `league-report.json` for a complete schedule.
 `python "$FTG/competition.py" summarize RUN_DIR` rechecks the native CSVs against
 the verified match records. Partial MCTS-only results stay explicitly marked.
 
+## Export match videos
+
+For a completed 7.1 duel or speedrun, export native `.dat` replays to silent
+960×640 H.264 MP4 files for browser playback. The export rechecks the stored
+scores, compares each replay's character, frame count, and final round HP to
+the verified match, and runs the pinned 7.1 engine in a separate offline
+container with a virtual display. It checks the lengths of all three rounds
+reported by the replay player before publishing the video.
+
+```bash
+FTG=game_first_exam/benchmarks/fightingice
+docker build -f "$FTG/competition.Dockerfile" \
+  -t game-exam:fightingice-competition "$FTG"
+docker build -f "$FTG/replay.Dockerfile" \
+  -t game-exam:fightingice-replay "$FTG"
+
+python "$FTG/replay.py" /path/to/completed-run \
+  --release /path/to/DareFightingICE-7.1.zip \
+  --resources /path/to/resource-7.1.zip \
+  --output /tmp/opencode/ftg-video \
+  --match 1 --match 2
+```
+
+Omit `--match` to export the entire run. Each match produces a `replay.mp4`
+and a `poster.jpg`. The browser can load `replays.json` for the competitors,
+starting sides, verified round results, and relative paths to the media.
+A failed export has a status in the manifest and local render logs. The
+export continues with the remaining matches and exits nonzero if any failed.
+The original run is read-only during export.
+
 ## Verification
 
 The focused regression is `python game_first_exam/tests/test_fightingice_competition.py`

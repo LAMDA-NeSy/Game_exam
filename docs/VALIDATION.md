@@ -186,3 +186,15 @@ This workflow is separate from the frozen 7.0 smoke tasks above.
   and undelayed-state callbacks. Local Oracle jobs made no model API calls.
 - The 46-task static check, 55 common tests, 17 Harbor configuration tests,
   8 native FightingICE tests, and 12 competition tests passed.
+
+## FightingICE video export
+
+- The replay exporter recorded four verified 7.1 matches with the native
+  graphical engine, including both Rushdown sides, a Zoning match, and a
+  duel. The renderer reproduced all twelve original round lengths. FFmpeg
+  decoded each 960×640 H.264 video through the end.
+- A missing `.dat` produced a failed manifest entry, the next match still
+  exported, and the saved league report kept the same SHA256.
+- A local browser preview outside the checkout played the videos, switched
+  sides and tracks, and displayed the verified round results at desktop and
+  mobile widths.

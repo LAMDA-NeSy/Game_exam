@@ -5,6 +5,7 @@ from io import StringIO
 import json
 from pathlib import Path
 import socket
+from struct import pack, pack_into
 import sys
 import tempfile
 import unittest
@@ -19,9 +20,30 @@ from competition_results import (
 )
 from competition_match import relay
 from competition_wire import packet, public_state, receive, send
+from replay import check_recording, match_rounds
 
 
 class CompetitionTests(unittest.TestCase):
+    def test_replay_export_binds_native_recording_to_score(self):
+        rounds = match_rounds({"rounds": [[1, 0, 300, 1], [2, 400, 0, 1], [3, 400, 400, 1]]})
+        data = bytearray(pack(">6i", -1, 400, 3, -1, 400, 3) + bytes(120))
+        for row in rounds:
+            offset = 24 + (row["round"] - 1) * 40
+            pack_into(">i", data, offset + 3, row["p1_hp"])
+            pack_into(">i", data, offset + 23, row["p2_hp"])
+        pack_into(">i", data, 27, -5)  # The DAT preserves KO overkill before CSV clamping.
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "match.dat"
+            path.write_bytes(data)
+            check_recording(path, "NEZ", rounds)
+            with self.assertRaisesRegex(ValueError, "character header"):
+                check_recording(path, "GARNET", rounds)
+            with self.assertRaisesRegex(ValueError, "verified round 1"):
+                check_recording(path, "NEZ", [{**rounds[0], "p2_hp": 299}, *rounds[1:]])
+            path.write_bytes(data[:-1])
+            with self.assertRaisesRegex(ValueError, "replay size"):
+                check_recording(path, "NEZ", rounds)
+
     def test_speedrun_model_uses_track_instructions_and_one_authoring_job(self):
         import tomllib
 
