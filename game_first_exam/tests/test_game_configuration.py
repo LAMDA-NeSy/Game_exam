@@ -79,7 +79,7 @@ for bad in ({**x, 'benchmark': 'unregistered'}, {**x, 'schema_path': 'evil.py'},
             validate_instance(missing)
 
     def test_native_ci_and_runtime_dependency_locks_match(self):
-        for benchmark in ('minigrid', 'crafter', 'textworld', 'babaisai', 'minihack'):
+        for benchmark in ('minigrid', 'crafter', 'textworld', 'babaisai', 'minihack', 'fightingice'):
             filename = 'requirements-v2.txt' if benchmark == 'minigrid' else 'requirements.txt'
             runtime = ROOT / 'game_first_exam/benchmarks' / benchmark / filename
             lock = ROOT / 'game_first_exam/tests/envs/locks' / (benchmark + '.txt')

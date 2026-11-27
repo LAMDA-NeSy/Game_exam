@@ -1,0 +1,32 @@
+{
+  "schema_version": "game-instance/2.2",
+  "protocol": "game-standard/2.2",
+  "adapter_version": "1.0.0",
+  "capabilities": {
+    "images": false,
+    "action_mode": "enum",
+    "timing": "action-stepped",
+    "native_truncation": false
+  },
+  "benchmark": "fightingice",
+  "env_id": "DareFightingICE-ZEN-KickAI-v7.0",
+  "family": "zen-kick",
+  "seed": 0,
+  "max_steps": null,
+  "initial_state_sha256": "ee2eec694cae65c044567771ceb256357c5c10111e9338abbe91ad4799415146",
+  "observation_profile": "native-delayed-framedata-v1",
+  "metric_spec": {
+    "primary": "round_win_score",
+    "reducer": "family_macro",
+    "reducer_version": "1.0.0",
+    "success_label": "match_won"
+  },
+  "engine_versions": {"fightingice": "7.0", "pyftg": "2.3"},
+  "player": 1,
+  "characters": ["ZEN", "ZEN"],
+  "opponent": "pyftg-kick-b-v1",
+  "rounds": 3,
+  "round_frames": 3600,
+  "initial_hp": 400,
+  "native_seed_policy": "no-native-seed;deterministic-opponent"
+}

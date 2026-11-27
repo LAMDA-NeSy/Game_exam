@@ -1,0 +1,14 @@
+{
+  "source": "game_first_exam/benchmarks/fightingice",
+  "files": {
+    "LICENSE-pyftg": "5b81f7cd430181999f4024883eb3c6f3f1c00367862c1bbc3d2d853505f6276e",
+    "SOURCE.json": "68da0606b71159110c2f6345bbc3b75904c3e14cc5b2c10b743845a75af41ecd",
+    "adapter.py": "93c85825cf47d3cc11464d40db1fbb8a280fc0309460723f04e85065625c06b5",
+    "bridge.py": "3fd3cc218baedcc11dda25a0390e18d7fe60e3e1260ace188c633b8cc2148960",
+    "install_native.py": "aee6d873e297ed30a7bf46afb9ac129343220921c4a0e3224288b3197aa242a7",
+    "instance_schema.py": "dd507778a2623b320e10351ef34f8478dd9bb3de30b4bb2324de30e51e6d4aae",
+    "metric_rules.py": "5046ddb1669ecb66f610a315cb74ae5fbf980d394cf152acf61424867390995f",
+    "requirements.txt": "5b1b1fa3de3a50f041fe4d5158436e53bb2be83026ffa4d6c543be67ff2ba11a"
+  },
+  "image": "ghcr.io/mll-lab-nu/efe:fightingice-files-0.1.0@sha256:20832c27e23b258cb2a489c6614e531e35b535d83c662bb5e99ab2db47830e71"
+}

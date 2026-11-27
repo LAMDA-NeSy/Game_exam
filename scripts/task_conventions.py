@@ -72,6 +72,7 @@ TEXT_REPLACEMENTS = [  # (old, new), applied to task text files in order (a task
 # benchmark's game_first_exam/benchmarks/<folder>/; BENCHMARKS and BENCHMARK_DIRS below are views of this table, and
 # ci_checks/ci_scope.py --check holds its UNITS / FILES_IMAGE to it. A new benchmark adds one row here.
 BENCHMARK_TABLE = [
+    ("fightingice-", "FightingICE", "fightingice"),
     ("minihack-", "MiniHack", "minihack"),
     ("babaisai-", "Baba Is AI", "babaisai"),
     ("crafter-", "Crafter", "crafter"),
@@ -218,6 +219,7 @@ CUTOFF_NOTE_TASK["minihack-room-i01-standard"] = (
     "`/run/rcb-limits/usage.json` to plan around the agent deadline. The client's `time_left_s` counts from the "
     "first `observe()` or accepted action, whichever comes first. `spec()` does not start that clock."
 )
+CUTOFF_NOTE_OWN[("FightingICE", "standard")] = CUTOFF_NOTE_TASK["minihack-room-i01-standard"]
 CUTOFF_NOTE_START = "This is wall-clock time from the start of your session;"   # how an earlier note is recognised
 WALL_CLOCK_ENV = "RCB_WALL_CLOCK_S"              # the standard modes' sim service: what its /spec budget and time_left_s report
 CUTOFF_CAP = 14400                               # PROTOCOL §2, no benchmark excepted (ci_checks/check-cutoffs.py)

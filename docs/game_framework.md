@@ -30,7 +30,7 @@ instruction.md → Harbor 原生 coding agent → agent 写的程序
 
 - `game_first_exam/runtime/`：游戏公共协议、预算、错误类型、评分、录像和 reducer。
 - `game_first_exam/runtime/modes/`：独立的 privileged 和 realtime 执行方式。
-- `game_first_exam/benchmarks/`：五个原生环境的薄适配器、专属 schema、指标和依赖。
+- `game_first_exam/benchmarks/`：六个原生环境的薄适配器、专属 schema、指标和依赖。
 - `game_first_exam/tasks/`：自包含冻结任务；运行不依赖宿主源码路径。
 - `shared/connection/`：从上游原样保留的就绪等待、地址选择和连接处理。
 - `images/connection-files/`、`images/monitor/`：共用连接镜像与资源监控。
