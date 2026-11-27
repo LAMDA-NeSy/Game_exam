@@ -4,6 +4,10 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$root"
 case "${1:-common}" in
+  fightingice)
+    python3 game_first_exam/tests/test_fightingice.py --native
+    python3 game_first_exam/tests/test_fightingice_competition.py
+    ;;
   common)
     python3 -m unittest discover -s game_first_exam/tests -p 'test_layout.py'
     python3 -m unittest discover -s game_first_exam/tests -p 'test_game_service.py'
@@ -12,6 +16,7 @@ case "${1:-common}" in
     python3 -m unittest discover -s game_first_exam/tests -p 'test_game_runtime.py'
     python3 -m unittest discover -s game_first_exam/tests -p 'test_game_connection.py'
     python3 -m unittest discover -s game_first_exam/tests -p 'test_game_modes.py'
+    python3 game_first_exam/tests/test_fightingice.py
     ;;
   minihack)
     export GAME_TEST_BENCHMARK=minihack

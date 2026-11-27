@@ -1,0 +1,12 @@
+[protocols]
+standard = ["game-standard/2.2"]
+
+[[tasks]]
+name = "fightingice-zen-kick-p1-i01-standard"
+source_task = "DareFightingICE-ZEN-KickAI-v7.0"
+protocol = "game-standard/2.2"
+
+[[tasks]]
+name = "fightingice-zen-kick-p2-i01-standard"
+source_task = "DareFightingICE-ZEN-KickAI-v7.0"
+protocol = "game-standard/2.2"

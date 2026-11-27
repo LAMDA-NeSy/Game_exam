@@ -1,0 +1,13 @@
+{
+  "engine_version": "7.0",
+  "engine_commit": "3780b5efa3f5ecf142369e567a43a8c292013a58",
+  "engine_url": "https://github.com/TeamFightingICE/FightingICE/releases/download/v7.0/DareFightingICE-7.0.zip",
+  "engine_sha256": "d14ce73530b190686abe787416f178fe03400b8c48b328497a57a4978a8e2e9a",
+  "resources_url": "https://github.com/TeamFightingICE/FightingICE/releases/download/v6.3/resources-6.3.zip",
+  "resources": {
+    "data/characters/ZEN/gSetting.txt": "bae5b37d64ddd80c149eeae969903c9a97a0b262ff635263275b3ae31bc2c30a",
+    "data/characters/ZEN/Motion.csv": "9a7260d3429d50e021b76b4e10b4889a5c6f0ca5e4c2cc41c7bb4f212d1e755f"
+  },
+  "opponent_source": "https://github.com/TeamFightingICE/pyftg/blob/e18af08769b02b021bb823fba01f15850aa88c05/examples/KickAI.py",
+  "license_note": "pyftg is MIT. Engine and Dimps resources retain upstream terms; redistribution not established."
+}

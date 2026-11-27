@@ -1,6 +1,12 @@
 # Game task resource caps; shared rendering and monitor enforcement are inherited from upstream.
 
 [[cap]]
+match = "^fightingice-.*-standard$"
+main = { cpus = 1, memory_gb = 1, pids = 256, disk_gb = 2 }
+sim = { cpus = 1, memory_gb = 1, pids = 128 }
+measured = "Local native container tests passed with 1 CPU, 1 GiB of memory, and a 128-process limit. The native Harbor rerun recorded the Docker limits in runtime-images.json."
+
+[[cap]]
 match = "^minigrid-.*-standard$"
 main = { cpus = 1, memory_gb = 1, pids = 256, disk_gb = 2 }
 sim = { cpus = 1, memory_gb = 1, pids = 128 }

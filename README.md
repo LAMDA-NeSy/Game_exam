@@ -24,7 +24,7 @@ Game Exam 基于 [Embodied First Exam](https://github.com/mll-lab-nu/embodied-fi
 
 ## 已接入的游戏
 
-当前共有 **5 个 benchmark、42 个 standard 任务配置，另外有 1 个 privileged 和 1 个 realtime 配置，共 44 个任务目录**。同一原生任务的不同模式单独计数。
+当前共有 **6 个 benchmark、44 个 standard 任务配置，另外有 1 个 privileged 和 1 个 realtime 配置，共 46 个任务目录**。同一原生任务的不同模式单独计数。
 
 | Benchmark | standard | 其他模式 | 主要内容 | 说明 |
 |---|---:|---|---|---|
@@ -33,6 +33,7 @@ Game Exam 基于 [Embodied First Exam](https://github.com/mll-lab-nu/embodied-fi
 | TextWorld | 9 | — | 文字探索、寻宝、烹饪 | 冻结 `.z8` 游戏，通过原生引擎执行 |
 | Baba Is AI | 2 | — | 移动文字、改变规则、解谜 | 基础关卡与复合关卡的最小 smoke 验证 |
 | MiniHack | 10 | 1 privileged | Room、River、导航、战斗、Quest、Boxoban | 原生 MiniHack/NLE 环境；Room 另有 privileged 版本 |
+| FightingICE | 2 | — | 双人格斗、动作时序、对手策略 | ZEN 对固定 KickAI，分别控制 P1/P2；原生 Harbor oracle/nop 与隔离验证通过 |
 
 套件由 [configs/game_suites/](configs/game_suites/) 定义，可以重叠，数量不能直接相加：
 
@@ -46,11 +47,16 @@ Game Exam 基于 [Embodied First Exam](https://github.com/mll-lab-nu/embodied-fi
 | `babaisai` | 2 | Baba Is AI smoke |
 | `minihack` | 3 | Room/River standard + Room privileged |
 | `minihack-balrog` | 8 | 参考 BALROG 选取的原生 MiniHack 任务 |
-| `all` | 44 | 所有套件去重后的任务；汇总时应选择一种模式 |
+| `fightingice` | 2 | 延迟 FrameData、同步 standard；原生三回合 smoke |
+| `all` | 46 | 所有套件去重后的任务；汇总时应选择一种模式 |
 
 `minihack-balrog` 包含 MazeWalk 9×9、MazeWalk 15×15、Corridor R3、CorridorBattle Dark、Quest Easy、Quest Medium、Boxoban Medium、Boxoban Hard。**使用相同原生环境名称不意味着与 BALROG 的 LLM 输入、prompt、agent、seed 和预算完全相同**，成绩不能直接当作 BALROG 排行榜成绩。
 
 每个游戏的原生版本、观测、冻结参数与已知差异，见对应 [benchmark README](game_first_exam/tasks/)；具体实例以任务的 `tests/instance.json`、`task.toml` 和 `instruction.md` 为准。
+
+FightingICE 另有[双模型对决](game_first_exam/benchmarks/fightingice/competition.md#two-model-duel)：两份 Harbor 模型配置分别生成控制器，冻结程序后用原生 7.1 引擎换边对战，按标准赛规则计分。它独立于上表的 7.0 smoke 套件。
+
+7.1 赛事工具也提供 [Rushdown 和 Zoning 的 MCTS 速通模式](game_first_exam/benchmarks/fightingice/competition.md#mcts-speedrun)。每条赛道用一份 Harbor 模型配置生成控制器，或直接接收已经冻结的控制器。每份控制器与固定基准换边打 10 场，按全部回合的平均计分帧数排名。
 
 ## 安装与第一次运行
 
@@ -153,7 +159,7 @@ harbor run --game-suite minihack --standard --family room \
 
 | 模式 | 执行方式 | 当前覆盖 |
 |---|---|---|
-| `standard` | agent 通过客户端操作可信模拟器，按动作推进；对 live episode 评分 | 5 个游戏、42 个配置 |
+| `standard` | agent 通过客户端操作可信模拟器，按动作推进；对 live episode 评分 | 6 个游戏、44 个配置 |
 | `privileged` | agent 可本地探索和规划；最终动作序列由独立 verifier 重新执行 | MiniHack Room |
 | `realtime` | 首次有效动作计划启动固定 tick；程序与模型思考期间游戏继续推进 | Crafter survival i01 |
 
@@ -247,6 +253,7 @@ harbor view jobs
 | TextWorld | 原生 score / max_score | 原生得分、胜负、步数 |
 | MiniHack | 完成 100，未完成 0 | 原生 return、end status、动作数；100 是分数，不是 100 步 |
 | Crafter | 单局成就比例；跨局另计算成就成功率的 Crafter score | 22 个成就、原生 return、存活状态；木镐是辅助目标 |
+| FightingICE | 原生获胜回合数 / 3 × 100 | 每回合 HP、帧数、胜负平；同步条件不等于官方实时竞赛 |
 
 普通 reducer 按任务族汇总，Crafter 使用独立、带版本的成就 reducer。缺失局、重复局、环境故障和有效失败分开处理；模型未完成应计为有效失败，不能随意删掉。单局成就比例不是官方完整评测集的总分。
 
@@ -326,12 +333,12 @@ docker build -f game_first_exam/tests/envs/common.Dockerfile -t game-tests:commo
 docker run --rm -v "$PWD:/repo:ro" game-tests:common \
   bash game_first_exam/tests/run.sh common
 
-# 将 common 换成 minigrid / crafter / textworld / babaisai / minihack
+# 将 common 换成 minigrid / crafter / textworld / babaisai / minihack / fightingice
 # Harbor 选择、配置合并、锁定和报告测试：
 python game_first_exam/tests/test_game_harbor.py
 ```
 
-GitHub Actions 执行静态检查、公共测试、5 个原生 adapter 环境及 Harbor 集成测试；不调用真实模型，不部署网站，不发布 PyPI 包或镜像。
+GitHub Actions 执行静态检查、公共测试、6 个原生 adapter 环境及 Harbor 集成测试；不调用真实模型，不部署网站，不发布 PyPI 包或镜像。
 
 - **`harbor` 不识别 `--game-suite`：**确认当前环境执行过 `pip install -e .`，并检查 `which harbor`。也可用 `game-exam run ...`；单独安装 Harbor 不包含本仓库选择逻辑。
 - **选不到任务：**先 `--list`；只有 Room 有 MiniHack privileged，只有 Crafter i01 有 realtime。模式不匹配会拒绝启动。

@@ -1,0 +1,15 @@
+schema_version = "game-suite/2.1"
+version = "0.1.0"
+tier = "smoke"
+name = "games-fightingice-native-smoke-v0.1.0"
+files_images = ["connection-files", "game-files", "fightingice-files"]
+
+[[tasks]]
+name = "fightingice-zen-kick-p1-i01-standard"
+benchmark = "fightingice"
+family = "zen-kick"
+
+[[tasks]]
+name = "fightingice-zen-kick-p2-i01-standard"
+benchmark = "fightingice"
+family = "zen-kick"

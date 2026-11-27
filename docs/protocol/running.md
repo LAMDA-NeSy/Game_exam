@@ -12,6 +12,15 @@
 
 TextWorld 的冻结游戏经原生 Jericho 执行；不调用异构 wheel 中的游戏生成程序。MiniHack 使用固定 NLE/MiniHack 和模拟器日历设置，详情见游戏 README。
 
+Harbor 0.23.0 的 `no-network`/allowlist 能力还取决于 Docker 服务端内核。
+当 `/proc/config.gz` 可读时，其探针要求 `CONFIG_NFT_FIB_INET=y` 或 `m`。
+旧版 WSL 内核 `5.15.167.4` 未包含此功能：容器和游戏可以启动，但独立 verifier
+会因 `network_mode='no-network' is not supported` 被拒绝。需要更新 WSL 并重启
+Docker Desktop，或使用支持该能力的 Linux Docker 服务端；不能将 verifier 改为
+public 来绕过。`docker version` 成功不等于 Harbor 网络隔离已可用。
+本机更新至 `6.18.58.1` 后，该配置为 `m`，Harbor 探针及 FightingICE 的独立
+verifier 已通过实际运行验证；其他主机仍需检查自己的服务端内核。
+
 ## 时间、网络与资源
 
 Harbor 的 agent 超时包括模型调用和工具执行；服务预算不延长外层截止。标准模式由动作推进。Crafter realtime 首次请求开始服务计时、首次计划开始游戏时钟，后台控制程序在工具调用结束后应持续运行。
